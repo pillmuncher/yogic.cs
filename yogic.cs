@@ -16,29 +16,14 @@ public delegate Ma Mf(Solution value);
 
 public class Variable {
 
-  private int id; 
   private string name;
   
-  public Variable(int id, string name) {
-    this.id = id;
+  public Variable(string name) {
     this.name = name;
   }
   
-  public virtual bool Equals(Variable that) {
-    return that == null ? false : this == that;
-  }
-  
-  public override bool Equals(object? that) {
-    Variable thatvar = that as Variable;
-    return thatvar == null ? false : Equals(thatvar);
-  }
-
-  public override int GetHashCode() {
-    return id.GetHashCode() | name.GetHashCode();
-  }
-
   public override string? ToString() {
-    return $"Variable({this.id}, {this.name})";
+    return $"Variable({this.name})";
   }
 
 }
@@ -46,17 +31,8 @@ public class Variable {
 
 public static class Combinators {
 
-  private static IEnumerable<int> count() {
-    for (int i = 0; true; i++) {
-      yield return i;
-    };
-  }
-
-  private static IEnumerator<int> counter = count().GetEnumerator();
-
   public static Variable var(string name) {
-    counter.MoveNext();
-    return new Variable(counter.Current, name);
+    return new Variable(name);
   }
 
   public static Solutions success(Solution s, Failure n) {
@@ -169,13 +145,12 @@ public static class Combinators {
     return seq_from_iterable(from oo in oos select _unify(oo));
   }
 
-
-private static object deref(Solution s, object o) {
-  while (o is Variable && s.ContainsKey((Variable) o)) {
-    o = s[(Variable)o];
-  };
-  return o;
-}
+  private static object deref(Solution s, object o) {
+    while (o is Variable && s.ContainsKey((Variable) o)) {
+      o = s[(Variable)o];
+    };
+    return o;
+  }
 
   public static Solutions resolve(Mf goal) {
     return run(goal, Solution.Empty);
@@ -185,7 +160,9 @@ private static object deref(Solution s, object o) {
     return amb(
       unify((a, "jim"), (b, "bob")),
       unify((a, "joe"), (b, "bob")),
-      unify((a, "ian"), (b, "jim"))
+      unify((a, "ian"), (b, "jim")),
+      unify((a, "fiffi"), (b, "fluffy")),
+      unify((a, "fluffy"), (b, "daisy"))
     );
   }
 
@@ -200,11 +177,46 @@ private static object deref(Solution s, object o) {
     return mf;
   }
 
+  public static Mf human(Variable a) {
+    return amb(
+      unify((a, "socrates")),
+      unify((a, "plato")),
+      unify((a, "archimedes"))
+    );
+  }
+
+  public static Mf dog(Variable a) {
+    return amb(
+      unify((a, "fifi")),
+      seq(unify((a, "fluffy")), cut),
+      unify((a, "daisy"))
+    );
+  }
+
+  public static Mf not_dog(Variable a) {
+    return no(dog(a));
+  }
+
+  public static Mf mortal(Variable a) {
+    Ma mf(Solution subst) {
+      Variable b = var("b");
+      return amb(
+        human(a),
+        dog(a),
+        seq(descendant(a, b), mortal(b))
+      )(subst);
+    }
+    return mf;
+  }
+
   public static void Main() {
     Variable x = var("x");
     Variable y = var("y");
     foreach (Solution subst in resolve(descendant(x, y))) {
       Console.WriteLine(subst[x] + " is the descendant of " + subst[y]);
+    };
+    foreach (Solution subst in resolve(mortal(x))) {
+      Console.WriteLine(subst[x] + " is mortal");
     };
   }
 
