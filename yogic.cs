@@ -4,10 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 
-using Deref = System.Func<Variable, object>;
-using Pair = System.Collections.Generic.KeyValuePair<Variable, object>;
-using Solution = System.Collections.Immutable.ImmutableStack<System.Collections.Generic.KeyValuePair<Variable, object>>;
-using Solutions = System.Collections.Generic.IEnumerable<System.Collections.Immutable.ImmutableStack<System.Collections.Generic.KeyValuePair<Variable, object>>>;
+using Solution = System.Collections.Immutable.ImmutableDictionary<Variable, object>;
+using Solutions = System.Collections.Generic.IEnumerable<System.Collections.Immutable.ImmutableDictionary<Variable, object>>;
 
 
 public delegate Solutions Failure();
@@ -26,6 +24,19 @@ public class Variable {
     this.name = name;
   }
   
+  public virtual bool Equals(Variable that) {
+    return that == null ? false : this == that;
+  }
+  
+  public override bool Equals(object? that) {
+    Variable thatvar = that as Variable;
+    return thatvar == null ? false : Equals(thatvar);
+  }
+
+  public override int GetHashCode() {
+    return id.GetHashCode() | name.GetHashCode();
+  }
+
   public override string? ToString() {
     return $"Variable({this.id}, {this.name})";
   }
@@ -60,26 +71,24 @@ public static class Combinators {
   }
 
   public static Ma bind(Ma ma, Mf mf) {
-    Solutions bound(Success y, Failure n, Failure e) {
+    Solutions mb(Success y, Failure n, Failure e) {
       Solutions on_success(Solution s, Failure m) {
-        foreach (Solution each in mf(s)(y, m, e)) {
-          yield return each;
-        };
+        return mf(s)(y, m, e);
       }
       return ma(on_success, n, e);
     }
-    return bound;
+    return mb;
   }
 
   public static Ma unit(Solution s) {
-  Solutions ma(Success y, Failure n, Failure e) {
+    Solutions ma(Success y, Failure n, Failure e) {
       return y(s, n);
     }
     return ma;
   }
 
   public static Ma cut(Solution s) {
-  Solutions ma(Success y, Failure n, Failure e) {
+    Solutions ma(Success y, Failure n, Failure e) {
       return y(s, e);
     }
     return ma;
@@ -143,35 +152,33 @@ public static class Combinators {
     return mf(s)(success, failure, failure);
   }
 
-  private static Solution trail(Solution stack, Variable v, object o) {
-    return stack.Push(new Pair(v, o));
+  private static Mf _unify(ValueTuple<object, object> vo) {
+    (var v, var o) = vo;
+    Ma unifier(Solution s) {
+      return (deref(s, v), deref(s, o)) switch {
+        (object o1, object o2) when o1 == o2 => unit(s),
+        (Variable o1, object o2) => unit(s.Add(o1, o2)),
+        (object o1, Variable o2) => unit(s.Add(o2, o1)),
+        _ => fail(s),
+      };
+    }
+    return unifier;
   }
 
-  private static Mf _unify<T1, T2>(ValueTuple<T1, T2> two_tuple) {
-    return two_tuple switch {
-      (object e1, object e2) when e1 is object o1 && e2 is object o2 && o1 == o2 => unit,
-      (object e1, object e2) when e1 is Variable v => ((s) => unit(trail(s, v, e2))),
-      (object e1, object e2) when e2 is Variable v => ((s) => unit(trail(s, v, e1))),
-      _ => fail,
-    };
+  public static Mf unify(params ValueTuple<object, object>[] oos) {
+    return seq_from_iterable(from oo in oos select _unify(oo));
   }
 
-  public static Mf unify(params ValueTuple<object, object>[] two_tuples) {
-    return seq_from_iterable(from two_tuple in two_tuples select _unify(two_tuple));
-  }
 
-  public static IEnumerable<Deref> resolve(Mf goal) {
-    foreach(Solution stack in run(goal, Solution.Empty)) {
-      object deref(Variable v) {
-        Pair result = stack.ToList().Find((pair) => v == pair.Key);
-        if (result is object r) {
-          return result.Value;
-        } else {
-          return v;
-        }
-      }
-      yield return deref;
-    };
+private static object deref(Solution s, object o) {
+  while (o is Variable && s.ContainsKey((Variable) o)) {
+    o = s[(Variable)o];
+  };
+  return o;
+}
+
+  public static Solutions resolve(Mf goal) {
+    return run(goal, Solution.Empty);
   }
    
   public static Mf child(Variable a, Variable b) {
@@ -187,7 +194,7 @@ public static class Combinators {
       Variable b = var("b");
       return amb(
         child(a, c), 
-        seq(child(a, b), descendant(b, c), cut)
+        seq(child(a, b), descendant(b, c))
       )(subst);
     }
     return mf;
@@ -196,8 +203,8 @@ public static class Combinators {
   public static void Main() {
     Variable x = var("x");
     Variable y = var("y");
-    foreach (Deref deref in resolve(descendant(x, y))) {
-      Console.WriteLine(deref(x) + " is the descendant of " + deref(y));
+    foreach (Solution subst in resolve(descendant(x, y))) {
+      Console.WriteLine(subst[x] + " is the descendant of " + subst[y]);
     };
   }
 
