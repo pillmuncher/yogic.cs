@@ -183,12 +183,14 @@ public static class Combinators {
   }
 
   public static Mf descendant(Variable a, Variable c) {
-    Variable b = var("b");
-    return (subst) =>
-      amb(
+    Ma func(Solution subst) {
+      Variable b = var("b");
+      return amb(
         child(a, c), 
         seq(child(a, b), descendant(b, c), cut)
       )(subst);
+    }
+    return func;
   }
 
   public static void Main() {
