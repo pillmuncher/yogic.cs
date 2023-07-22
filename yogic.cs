@@ -23,7 +23,7 @@ public class Variable {
   }
 
   public override string? ToString() {
-    return $"Variable({this.name})";
+    return $"Variable( {this.name})";
   }
 
 }
@@ -42,7 +42,7 @@ public static class Combinators {
     };
   }
 
-  public static Solutions failure(){
+  public static Solutions failure() {
     yield break;
   }
 
