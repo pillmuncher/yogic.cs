@@ -171,14 +171,12 @@ public static class Combinators {
   }
 
   public static Mf descendant(Variable a, Variable c) {
-    Ma mf(Solution subst) {
-      Variable b = var("b");
-      return amb(
+    Variable b = var("b");
+    return (subst) =>
+      amb(
         child(a, c),
         seq(child(a, b), descendant(b, c))
-      )(subst);
-    }
-    return mf;
+    )(subst);
   }
 
   public static Mf human(Variable a) {
@@ -203,14 +201,12 @@ public static class Combinators {
 
   public static Mf mortal(Variable a) {
     Variable b = var("b");
-    Ma mf(Solution subst) {
-      return amb(
+    return (subst) =>
+      amb(
         human(a),
         dog(a),
         seq(descendant(a, b), mortal(b))
       )(subst);
-    }
-    return mf;
   }
 
   public static void Main() {
