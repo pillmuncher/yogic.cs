@@ -17,11 +17,11 @@ public delegate Ma Mf(Solution value);
 public class Variable {
 
   private string name;
-  
+
   public Variable(string name) {
     this.name = name;
   }
-  
+
   public override string? ToString() {
     return $"Variable({this.name})";
   }
@@ -155,7 +155,11 @@ public static class Combinators {
   public static Solutions resolve(Mf goal) {
     return run(goal, Solution.Empty);
   }
-   
+
+
+//---8<--------8<--------8<--------8<--------8<--------8<--------8<--------8<---
+
+
   public static Mf child(Variable a, Variable b) {
     return amb(
       unify((a, "jim"), (b, "bob")),
@@ -170,7 +174,7 @@ public static class Combinators {
     Ma mf(Solution subst) {
       Variable b = var("b");
       return amb(
-        child(a, c), 
+        child(a, c),
         seq(child(a, b), descendant(b, c))
       )(subst);
     }
@@ -198,8 +202,8 @@ public static class Combinators {
   }
 
   public static Mf mortal(Variable a) {
+    Variable b = var("b");
     Ma mf(Solution subst) {
-      Variable b = var("b");
       return amb(
         human(a),
         dog(a),
