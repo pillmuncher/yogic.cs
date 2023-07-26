@@ -9,7 +9,7 @@
 // together combinator functions.
 //
 // - Logical Variables: Represented by the Variable class, they can be bound
-// to values and other variables during computation.
+// to arbitrary values and other variables during computation.
 //
 // - Substitution and Unification: The Subst class provides an environment of
 // variable bindings that is incrementally constructed during resolution.
