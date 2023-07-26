@@ -1,52 +1,31 @@
-// This module implements a backtracking monad for the resolution of Horn
-// clauses, a concept used in logic programming. It is an embedded DSL for
-// Prolog-like programs. It enables non-deterministic computations, allowing
-// for multiple possible solutions for logical goals, and pruning of search
-// branches.
+// This module provides an embeded DSL to simply express First-Order
+// predicates and perform resolution of logical goal.
 //
-// The key features of the code are as follows:
+// Key features:
 //
-//   Horn Clauses: The code allows expressing Horn clauses, which are logical
-//   statements with a head and a body. These clauses are used in logic
-//   programming and represent implications.
+// - Horn Clauses: Express logical facts and implications as simple functions.
 //
-//   Logical Variables: The code introduces the concept of logical variables,
-//   represented by the Variable class. These variables can be bound to values
-//   during the computation.
+// - Logical Variables: Represented by the Variable class, they can be bound
+// to values and other variables during computation.
 //
-//   Substitution and Unification: The code uses the Subst class to represent
-//   variable substitutions. When a logical variable and another object are
-//   unified, the binding is added to the substitution environment.
+// - Substitution and Unification: The Subst class provides an environment of
+// variable bindings that is incrementally constructed during resolution.
 //
-//   Backtracking: The code leverages the List Monad to enable backtracking.
-//   It yields substitution environments for a given goal, allowing the
-//   exploration of various solutions to a logical query.
+// - Backtracking: Combines the List and the Triple-Barrelled Continuation
+// Monads for resolution, non-deterministic search, backtracking, and pruning
+// of search paths.
 //
-//   Triple-Barrelled Continuation Monad: The code uses a continuation monad
-//   with three continuations: success, failure, and escape. These
-//   continuations enable backtracking, pruning of search spaces, and handling
-//   success and failure states during computation.
-//
-//   Combinators: The code provides a set of combinator functions that allow
-//   composing computations and defining choices, sequences, negation,
-//   unification, and more.
-//
-//   Algebraic Structures: The 'unit' and 'then' combinators form a monoid
-//   over the set of monadic functions, as do the 'fail' and 'choice'
-//   combinators. Togerther they form a bounded lattice with 'fail' as the
-//   least upper bound (join) and 'unit' as the greatest lower bound (meet)
-//   operators.
-//
-// In summary, this module offers a powerful mechanism for expressing logical
-// formulas, performing backtracking searches, and finding solutions to
-// logical queries. The use of the Triple-Barrelled Continuation Monad,
-// logical variables, and substitution environments allows for a concise and
-// expressive representation of complex logic-based computations.
+// - Combinators: Compose first-order logical expressions by simply sticking
+// together combinator functions.
+// 
+// - Algebraic Structures: 'unit' and 'then' form a monoid over monadic
+// functions, as fo 'fail' and 'choice'. Together they form a Bounded Lattice
+// with 'unit' as infimum and 'fail' as supremum. Because of the procedural
+// nature of the employed resolution process, the lattice is non-commutative.
 //
 // Links:
 //
-// Unification:
-// https://eli.thegreenplace.net/2018/unification/
+// Unification: https://eli.thegreenplace.net/2018/unification/
 //
 // Logical Resolution:
 // http://web.cse.ohio-state.edu/~stiff.4/cse3521/logical-resolution.html
@@ -66,11 +45,13 @@
 // The Discovery of Continuations:
 // https://www.cs.ru.nl/~freek/courses/tt-2011/papers/cps/histcont.pdf
 //
-// Monoid:
-// https://en.wikipedia.org/wiki/Monoid
+// Monoid: https://en.wikipedia.org/wiki/Monoid
 //
 // Bounded Lattice:
 // https://en.wikipedia.org/wiki/Lattice_(order)#Bounded_lattice
+
+
+
 
 
 using Subst = System.Collections.Immutable.ImmutableDictionary<Variable, object>;
