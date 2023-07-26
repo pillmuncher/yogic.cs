@@ -33,8 +33,9 @@
 //
 //   Algebraic Structures: The 'unit' and 'then' combinators form a monoid
 //   over the set of monadic functions, as do the 'fail' and 'choice'
-//   combinators. Togerther they form a lattice with 'fail' as the least upper
-//   bound (join) and 'unit' as the greatest lower bound (meet) operators.
+//   combinators. Togerther they form a bounded lattice with 'fail' as the
+//   least upper bound (join) and 'unit' as the greatest lower bound (meet)
+//   operators.
 //
 // In summary, this module offers a powerful mechanism for expressing logical
 // formulas, performing backtracking searches, and finding solutions to
@@ -44,11 +45,25 @@
 //
 // Links:
 //
-// The Discovery of Continuations:
-// https://www.cs.ru.nl/~freek/courses/tt-2011/papers/cps/histcont.pdf
+// Unification: https://eli.thegreenplace.net/2018/unification/
+//
+// Logical resolution:
+// http://web.cse.ohio-state.edu/~stiff.4/cse3521/logical-resolution.html
+//
+// Horn Clauses in Deductive Databases:
+// https://www.geeksforgeeks.org/horn-clauses-in-deductive-databases/
+//
+// Continuations Made Simple and Illustrated:
+// https://www.ps.uni-saarland.de/~duchier/python/continuations.html
 //
 // Monads explained in C# (again):
 // https://mikhail.io/2018/07/monads-explained-in-csharp-again/
+//
+// Discovering the Continuation Monad in C#:
+// https://functionalprogramming.medium.com/deriving-continuation-monad-from-callbacks-23d74e8331d0
+//
+// The Discovery of Continuations:
+// https://www.cs.ru.nl/~freek/courses/tt-2011/papers/cps/histcont.pdf
 
 
 using Subst = System.Collections.Immutable.ImmutableDictionary<Variable, object>;
