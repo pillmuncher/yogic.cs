@@ -1,17 +1,13 @@
-// See https://aka.ms/new-console-template for more information
-
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-
-using Solution = System.Collections.Immutable.ImmutableDictionary<Variable, object>;
+using Subst = System.Collections.Immutable.ImmutableDictionary<Variable, object>;
 using Solutions = System.Collections.Generic.IEnumerable<System.Collections.Immutable.ImmutableDictionary<Variable, object>>;
 
 
-public delegate Solutions Failure();
-public delegate Solutions Success(Solution value, Failure n);
-public delegate Solutions Ma(Success y, Failure n, Failure e);
-public delegate Ma Mf(Solution value);
+public delegate Solutions Retry();
+public delegate Solutions Success(Subst subst, Retry no);
+public delegate Solutions Ma(Success yes, Retry no, Retry esc);
+public delegate Ma Mf(Subst subst);
+
+
 
 
 public class Variable {
@@ -31,85 +27,147 @@ public class Variable {
 
 public static class Combinators {
 
+  // This class implements a backtracking monad for the resolution of Horn
+  // clauses, a concept used in logic programming. It is an embedded DSL for
+  // Prolog-like programs. It enables non-deterministic computations, allowing for
+  // multiple possible solutions for logical goals, and pruning of search
+  // branches.
+  //
+  // The key features of the code are as follows:
+  //
+  //   Horn Clauses: The code allows expressing Horn clauses, which are logical
+  //   statements with a head and a body. These clauses are used in logic
+  //   programming and represent implications.
+  //
+  //   Logical Variables: The code introduces the concept of logical variables,
+  //   represented by the Variable class. These variables can be bound to values
+  //   during the computation.
+  //
+  //   Triple-Barrelled Continuation Monad: The code uses a continuation monad
+  //   with three continuations: success, failure, and escape. These continuations
+  //   enable backtracking, pruning of search spaces, and handling success and
+  //   failure states during computation.
+  //
+  //   Substitution and Unification: The code uses the Subst class to represent
+  //   variable substitutions. When a logical variable is bound to a value, it is
+  //   added to the substitution dictionary.
+  //
+  //   Backtracking: The code leverages the List Monad to enable backtracking. It
+  //   yields substitution environments for a given goal, allowing the exploration
+  //   of various solutions to a logical query.
+  //
+  //   Combinators: The code provides a set of combinator functions that allow
+  //   composing computations and defining choices, sequences, negation,
+  //   unification, and more.
+  //
+  // In summary, this module offers a powerful mechanism for expressing logical
+  // formulas, performing backtracking searches, and finding solutions to logical
+  // queries. The use of the Triple-Barrelled Continuation Monad, logical
+  // variables, and substitution environments allows for a concise and expressive
+  // representation of complex logic-based computations.
+
   public static Variable var(string name) {
+    // Creates a new logical variable with the given name.
     return new Variable(name);
   }
 
-  public static Solutions success(Solution s, Failure n) {
-    yield return s;
-    foreach(Solution each in n()) {
-      yield return each;
+  public static Solutions success(Subst subst, Retry retry) {
+    // A combinator function that takes a substitution environment and a retry
+    // continuation. It first yields the substitution environment once and then
+    // invokes backtracking by delegating to the provided retry continuation.
+    yield return subst; foreach(Subst each in retry()) {
+    yield return each;
     };
   }
 
   public static Solutions failure() {
+    // A combinator function that represents a failed computation.
     yield break;
   }
 
   public static Ma bind(Ma ma, Mf mf) {
-    Solutions mb(Success y, Failure n, Failure e) {
-      Solutions on_success(Solution s, Failure m) {
-        return mf(s)(y, m, e);
+    // Applies the monadic function mf to the computation ma.
+    Solutions mb(Success yes, Retry no, Retry esc) {
+      Solutions on_success(Subst subst, Retry retry) {
+        return mf(subst)(yes, retry, esc);
       }
-      return ma(on_success, n, e);
+      return ma(on_success, no, esc);
     }
     return mb;
   }
 
-  public static Ma unit(Solution s) {
-    Solutions ma(Success y, Failure n, Failure e) {
-      return y(s, n);
+  public static Ma unit(Subst subst) {
+    // Lifts a substitution environment into a computation. It returns a new
+    // computation representing the success with the given substitution.
+    Solutions ma(Success yes, Retry no, Retry esc) {
+      return yes(subst, no);
     }
     return ma;
   }
 
-  public static Ma cut(Solution s) {
-    Solutions ma(Success y, Failure n, Failure e) {
-      return y(s, e);
+  public static Ma cut(Subst subst) {
+    // On backtracking, aborts the current computation, effectively pruning the
+    // search space.
+    Solutions ma(Success yes, Retry no, Retry esc) {
+      // we inject the current escape continuation
+      // as the subsequent backtracking path:
+      return yes(subst, esc);
     }
     return ma;
   }
 
-  public static Ma fail(Solution s) {
-    Solutions ma(Success y, Failure n, Failure e) {
-      return n();
+  public static Ma fail(Subst subst) {
+    // Represents a failed computation. Immediately initiates backtracking.
+    Solutions ma(Success yes, Retry no, Retry esc) {
+      return no();
     }
     return ma;
   }
 
   public static Mf then(Mf mf, Mf mg) {
-    Ma mh(Solution s) {
-      return bind(mf(s), mg);
+    // Composes two computations sequentially.
+    Ma mh(Subst subst) {
+      return bind(mf(subst), mg);
     }
     return mh;
   }
 
-  public static Mf seq_from_iterable(IEnumerable<Mf> mfs) {
+  public static Mf seq_from_enumerable(IEnumerable<Mf> mfs) {
+    // Composes multiple computations sequentially from an enumerable.
     return mfs.Aggregate<Mf, Mf>(unit, then);
   }
 
   public static Mf seq(params Mf[] mfs) {
-    return seq_from_iterable(mfs);
+    // Composes multiple computations sequentially.
+    return seq_from_enumerable(mfs);
   }
 
   public static Mf choice(Mf mf, Mf mg) {
-    Ma mh(Solution s) {
-      Solutions ma(Success y, Failure n, Failure e) {
+    // Represents a choice between two computations. It takes two computations mf
+    // and mg and returns a new computation that tries mf, and if that fails,
+    // falls back to mg.
+    Ma mh(Subst subst) {
+      Solutions ma(Success yes, Retry no, Retry esc) {
         Solutions on_fail() {
-          return mg(s)(y, n, e);
+          return mg(subst)(yes, no, esc);
         }
-        return mf(s)(y, on_fail, e);
+        return mf(subst)(yes, on_fail, esc);
       }
       return ma;
     }
     return mh;
   }
 
-  public static Mf amb_from_iterable(IEnumerable<Mf> mfs) {
+  public static Mf amb_from_enumerable(IEnumerable<Mf> mfs) {
+    // Represents a choice between multiple computations from an enumerable. It
+    // takes a collection of computations mfs and returns a new computation that
+    // tries all of them in sequence, allowing backtracking.
     Mf joined = mfs.Aggregate<Mf, Mf>(fail, choice);
-    Ma mf(Solution s) {
-      Solutions ma(Success y, Failure n, Failure e) {
-        return joined(s)(y, n, n);
+    Ma mf(Subst subst) {
+      Solutions ma(Success yes, Retry no, Retry esc) {
+        // we inject the current no continuation
+        // as the new escape continuation:
+        return joined(subst)(yes, no, no);
       }
       return ma;
     }
@@ -117,48 +175,50 @@ public static class Combinators {
   }
 
   public static Mf amb(params Mf[] mfs) {
-    return amb_from_iterable(mfs);
+    // Represents a choice between multiple computations.
+    // It takes a variable number of computations and returns a new computation
+    // that tries all of them, allowing backtracking.
+    return amb_from_enumerable(mfs);
   }
 
-  public static Mf no(Mf mf) {
+  public static Mf not(Mf mf) {
+    // Negates the result of a computation.
+    // Returns a new computation that succeeds if mf fails and fails otherwise.
     return amb(seq(mf, cut, fail), unit);
   }
 
-  public static Solutions run(Mf mf, Solution s) {
-    return mf(s)(success, failure, failure);
-  }
-
-  private static Mf _unify(ValueTuple<object, object> vo) {
-    (var v, var o) = vo;
-    Ma unifier(Solution s) {
-      return (deref(s, v), deref(s, o)) switch {
-        (object o1, object o2) when o1 == o2 => unit(s),
-        (Variable o1, object o2) => unit(s.Add(o1, o2)),
-        (object o1, Variable o2) => unit(s.Add(o2, o1)),
-        _ => fail(s),
+  private static Mf _unify(ValueTuple<object, object> pair) {
+    (var o1, var o2) = pair;
+    Ma unifier(Subst subst) {
+      return (deref(subst, o1), deref(subst, o2)) switch {
+        (object o1, object o2) when o1 == o2 => unit(subst),
+        (Variable o1, object o2) => unit(subst.Add(o1, o2)),
+        (object o1, Variable o2) => unit(subst.Add(o2, o1)),
+        _ => fail(subst),
       };
     }
     return unifier;
   }
 
-  public static Mf unify(params ValueTuple<object, object>[] oos) {
-    return seq_from_iterable(from oo in oos select _unify(oo));
+  public static Mf unify(params ValueTuple<object, object>[] pairs) {
+    // Tries to unify pairs of objects.
+    return seq_from_enumerable(from pair in pairs select _unify(pair));
   }
 
-  private static object deref(Solution s, object o) {
-    while (o is Variable && s.ContainsKey((Variable) o)) {
-      o = s[(Variable)o];
+  private static object deref(Subst subst, object o) {
+    // Performs variable dereferencing based on substitutions.
+    while (o is Variable && subst.ContainsKey((Variable) o)) {
+      o = subst[(Variable)o];
     };
     return o;
   }
 
   public static Solutions resolve(Mf goal) {
-    return run(goal, Solution.Empty);
+    // Perform the logical resolution of the computation represented by goal.
+    return goal(Subst.Empty)(success, failure, failure);
   }
 
-
-//---8<--------8<--------8<--------8<--------8<--------8<--------8<--------8<---
-
+  // ----8<--------8<--------8<--------8<--------8<--------8<--------8<----
 
   public static Mf child(Variable a, Variable b) {
     return amb(
@@ -189,14 +249,11 @@ public static class Combinators {
 
   public static Mf dog(Variable a) {
     return amb(
-      unify((a, "fifi")),
-      seq(unify((a, "fluffy")), cut),
-      unify((a, "daisy"))
     );
   }
 
   public static Mf not_dog(Variable a) {
-    return no(dog(a));
+    return not(dog(a));
   }
 
   public static Mf mortal(Variable a) {
@@ -211,11 +268,12 @@ public static class Combinators {
 
   public static void Main() {
     Variable x = var("x");
-    Variable y = var("y");
-    foreach (Solution subst in resolve(descendant(x, y))) {
-      Console.WriteLine(subst[x] + " is the descendant of " + subst[y]);
+    Variable yes = var("yes");
+    foreach (Subst subst in resolve(descendant(x, yes))) {
+      Console.WriteLine(subst[x] + " is the descendant of " + subst[yes]);
     };
-    foreach (Solution subst in resolve(mortal(x))) {
+    Console.WriteLine();
+    foreach (Subst subst in resolve(seq(mortal(x), not_dog(x)))) {
       Console.WriteLine(subst[x] + " is mortal");
     };
   }
