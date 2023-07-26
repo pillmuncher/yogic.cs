@@ -181,6 +181,7 @@ public static class Combinators {
   }
 
   private static Mf _unify(ValueTuple<object, object> pair) {
+    // using an ImmutableDictionary makes trailing easy:
     (var o1, var o2) = pair;
     return (subst) =>
       (deref(subst, o1), deref(subst, o2)) switch {
@@ -240,21 +241,19 @@ public static class Combinators {
 
   public static Mf descendant(Variable a, Variable c) {
     var b = var("b");
-    return (subst) =>
-      or(
-        child(a, c),
-        and(child(a, b), descendant(b, c))
+    return (subst) => or(
+      child(a, c),
+      and(child(a, b), descendant(b, c))
     )(subst);
   }
 
   public static Mf mortal(Variable a) {
     var b = var("b");
-    return (subst) =>
-      or(
-        human(a),
-        dog(a),
-        and(descendant(a, b), mortal(b))
-      )(subst);
+    return (subst) => or(
+      human(a),
+      dog(a),
+      and(descendant(a, b), mortal(b))
+    )(subst);
   }
 
   public static void Main() {
