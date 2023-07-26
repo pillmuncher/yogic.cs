@@ -33,7 +33,7 @@
 //
 //   Algebraic Structures: The 'unit' and 'then' combinators form a monoid
 //   over the set of monadic functions, as do the 'fail' and 'choice'
-//   combinators. Togerther they for a lattice with 'fail' as the join and
+//   combinators. Togerther they form a lattice with 'fail' as the join and
 //   'unit' as the meet operator.
 //
 // In summary, this module offers a powerful mechanism for expressing logical
