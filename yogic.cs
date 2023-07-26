@@ -6,7 +6,7 @@
 // - Horn Clauses: Express logical facts and implications as simple functions.
 //
 // - Combinators: Compose first-order logical expressions by simply composing
-// combinator functions tohether.
+// combinator functions.
 //
 // - Logical Variables: Represented by the Variable class, they can be bound
 // to arbitrary values and other variables during computation.
