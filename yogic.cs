@@ -1,7 +1,8 @@
-// This module implements a backtracking monad for the resolution of Horn clauses,
-// a concept used in logic programming. It is an embedded DSL for Prolog-like
-// programs. It enables non-deterministic computations, allowing for multiple
-// possible solutions for logical goals, and pruning of search branches.
+// This module implements a backtracking monad for the resolution of Horn
+// clauses, a concept used in logic programming. It is an embedded DSL for
+// Prolog-like programs. It enables non-deterministic computations, allowing
+// for multiple possible solutions for logical goals, and pruning of search
+// branches.
 //
 // The key features of the code are as follows:
 //
@@ -17,24 +18,29 @@
 //   variable substitutions. When a logical variable and another object are
 //   unified, the binding is added to the substitution environment.
 //
-//   Backtracking: The code leverages the List Monad to enable backtracking. It
-//   yields substitution environments for a given goal, allowing the exploration
-//   of various solutions to a logical query.
+//   Backtracking: The code leverages the List Monad to enable backtracking.
+//   It yields substitution environments for a given goal, allowing the
+//   exploration of various solutions to a logical query.
 //
-//   Triple-Barrelled Continuation Monad: The code uses a continuation monad with
-//   three continuations: success, failure, and escape. These continuations enable
-//   backtracking, pruning of search spaces, and handling success and failure
-//   states during computation.
+//   Triple-Barrelled Continuation Monad: The code uses a continuation monad
+//   with three continuations: success, failure, and escape. These
+//   continuations enable backtracking, pruning of search spaces, and handling
+//   success and failure states during computation.
 //
 //   Combinators: The code provides a set of combinator functions that allow
 //   composing computations and defining choices, sequences, negation,
 //   unification, and more.
 //
+//   Algebraic Structures: The 'unit' and 'then' combinators form a monoid
+//   over the set of monadic functions, as do the 'fail' and 'choice'
+//   combinators. Togerther they for a lattice with 'fail' as the join and
+//   'unit' as the meet operator.
+//
 // In summary, this module offers a powerful mechanism for expressing logical
-// formulas, performing backtracking searches, and finding solutions to logical
-// queries. The use of the Triple-Barrelled Continuation Monad, logical variables,
-// and substitution environments allows for a concise and expressive
-// representation of complex logic-based computations.
+// formulas, performing backtracking searches, and finding solutions to
+// logical queries. The use of the Triple-Barrelled Continuation Monad,
+// logical variables, and substitution environments allows for a concise and
+// expressive representation of complex logic-based computations.
 //
 // Literature:
 //
