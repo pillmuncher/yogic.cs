@@ -104,13 +104,13 @@ public static class Combinators {
 
   // Applies the monadic computation mf to ma.
   public static Ma bind(Ma ma, Mf mf) {
-    // prepend mf to before current yes continuation, making it the new one:
+    // prepend 'mf' before the current 'yes' continuation, making it the new one:
     return (yes, no, esc) => ma((subst, retry) => mf(subst)(yes, retry, esc), no, esc);
   }
 
   // Lifts a substitution environment into a computation.
   public static Ma unit(Subst subst) {
-    // we inject the current no continuation as backtracking continuation:
+    // we inject the current 'no' continuation as backtracking continuation:
     return (yes, no, esc) => yes(subst, no);
   }
 
@@ -129,7 +129,7 @@ public static class Combinators {
 
   // Composes two computations sequentially.
   public static Mf then(Mf mf, Mf mg) {
-    // sequencing is the default behavior of bind:
+    // sequencing is the default behavior of 'bind':
     return (subst) => bind(mf(subst), mg);
   }
 
@@ -150,7 +150,7 @@ public static class Combinators {
   // Takes two computations mf and mg and returns a new computation that tries
   // mf, and if that fails, falls back to mg.
   public static Mf choice(Mf mf, Mf mg) {
-    // make mg the new no continuation to allow backtracking:
+    // make 'mg' the new 'no' continuation to enable backtracking:
     return (subst) => (yes, no, esc) => mf(subst)(yes, () => mg(subst)(yes, no, esc), esc);
   }
 
@@ -159,8 +159,8 @@ public static class Combinators {
   // tries all of them in series, allowing backtracking.
   public static Mf or_from_enumerable(IEnumerable<Mf> mfs) {
     Mf joined = mfs.Aggregate<Mf, Mf>(fail, choice);
-    // 'choice' is a binary operator with 'fail' as its identity elemwnt, so
-    // we can just fold and inject the current no continuation as escape
+    // 'choice' is a binary operator with 'fail' as its identity element, so
+    // we can just fold and inject the current 'no' continuation as escape
     // continuation:
     return (subst) => (yes, no, esc) => joined(subst)(yes, no, no);
   }
@@ -181,7 +181,7 @@ public static class Combinators {
   }
 
   private static Mf _unify(ValueTuple<object, object> pair) {
-    // using an ImmutableDictionary makes trailing easy:
+    // using an 'ImmutableDictionary' makes trailing easy:
     (var o1, var o2) = pair;
     return (subst) =>
       (deref(subst, o1), deref(subst, o2)) switch {
