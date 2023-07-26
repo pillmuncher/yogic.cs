@@ -11,8 +11,8 @@
 // - Logical Variables: Represented by the Variable class, they can be bound
 // to arbitrary values and other variables during computation.
 //
-// - Substitution and Unification: The Subst class provides an environment of
-// variable bindings that is incrementally constructed during resolution.
+// - Substitution and Unification: The substitution environment provides 
+// variable bindings and is incrementally constructed during resolution.
 //
 // - Backtracking: Combines the List and the Triple-Barrelled Continuation
 // Monads for resolution, backtracking, and pruning of search paths.
