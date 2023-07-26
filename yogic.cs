@@ -1,5 +1,5 @@
-// An embedded DSL for expressing First-Order predicates and performing
-// logical resolution with backtracking and pruning of search paths.
+// An embedded DSL for expressing first-order logical predicates and
+// performing resolution with backtracking and pruning of search paths.
 //
 // Key features:
 //
