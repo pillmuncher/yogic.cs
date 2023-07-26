@@ -51,9 +51,6 @@
 // https://en.wikipedia.org/wiki/Lattice_(order)#Bounded_lattice
 
 
-
-
-
 using Subst = System.Collections.Immutable.ImmutableDictionary<Variable, object>;
 using Solutions = System.Collections.Generic.IEnumerable<System.Collections.Immutable.ImmutableDictionary<Variable, object>>;
 
