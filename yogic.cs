@@ -48,7 +48,7 @@
 // Unification:
 // https://eli.thegreenplace.net/2018/unification/
 //
-// Logical resolution:
+// Logical Resolution:
 // http://web.cse.ohio-state.edu/~stiff.4/cse3521/logical-resolution.html
 //
 // Horn Clauses in Deductive Databases:
@@ -57,7 +57,7 @@
 // Continuations Made Simple and Illustrated:
 // https://www.ps.uni-saarland.de/~duchier/python/continuations.html
 //
-// Monads explained in C# (again):
+// Monads Explained in C# (again):
 // https://mikhail.io/2018/07/monads-explained-in-csharp-again/
 //
 // Discovering the Continuation Monad in C#:
