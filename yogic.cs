@@ -229,7 +229,7 @@ public static class Combinators {
   }
 
   public static Mf descendant(Variable a, Variable c) {
-    Variable b = var("b");
+    var e b = var("b");
     return (subst) =>
       or(
         child(a, c),
@@ -238,7 +238,7 @@ public static class Combinators {
   }
 
   public static Mf mortal(Variable a) {
-    Variable b = var("b");
+    var b = var("b");
     return (subst) =>
       or(
         human(a),
@@ -248,8 +248,8 @@ public static class Combinators {
   }
 
   public static void Main() {
-    Variable x = var("x");
-    Variable y = var("y");
+    var x = var("x");
+    var y = var("y");
     foreach (var subst in resolve(descendant(x, y))) {
       Console.WriteLine($"{subst[x]} is the descendant of {subst[y]}");
     };
