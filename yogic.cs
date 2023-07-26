@@ -136,7 +136,7 @@ public static class Combinators {
     return mfs.Aggregate<Mf, Mf>(unit, then);
   }
 
-  public static Mf seq(params Mf[] mfs) {
+  public static Mf and(params Mf[] mfs) {
     // Composes multiple computations sequentially.
     return seq_from_enumerable(mfs);
   }
@@ -173,7 +173,7 @@ public static class Combinators {
     return mf;
   }
 
-  public static Mf amb(params Mf[] mfs) {
+  public static Mf or(params Mf[] mfs) {
     // Represents a choice between multiple computations.
     // Takes a variable number of computations and returns a new computation
     // that tries all of them in series, allowing backtracking.
@@ -183,16 +183,16 @@ public static class Combinators {
   public static Mf not(Mf mf) {
     // Negates the result of a computation.
     // Returns a new computation that succeeds if mf fails and vice versa.
-    return amb(seq(mf, cut, fail), unit);
+    return or(and(mf, cut, fail), unit);
   }
 
   private static Mf _unify(ValueTuple<object, object> pair) {
     (var o1, var o2) = pair;
     Ma unifier(Subst subst) {
       return (deref(subst, o1), deref(subst, o2)) switch {
-        (object o1, object o2) when o1 == o2 => unit(subst),
-        (Variable o1, object o2) => unit(subst.Add(o1, o2)),
-        (object o1, Variable o2) => unit(subst.Add(o2, o1)),
+        (var o1, var o2) when o1 == o2 => unit(subst),
+        (Variable o1, var o2) => unit(subst.Add(o1, o2)),
+        (var o1, Variable o2) => unit(subst.Add(o2, o1)),
         _ => fail(subst),
       };
     }
@@ -219,8 +219,24 @@ public static class Combinators {
 
   // ----8<--------8<--------8<--------8<--------8<--------8<--------8<----
 
+  public static Mf human(Variable a) {
+    return or(
+      unify((a, "socrates")),
+      unify((a, "plato")),
+      unify((a, "archimedes"))
+    );
+  }
+
+  public static Mf dog(Variable a) {
+    return or(
+      unify((a, "fluffy")),
+      unify((a, "daisy")),
+      unify((a, "fifi"))
+    );
+  }
+
   public static Mf child(Variable a, Variable b) {
-    return amb(
+    return or(
       unify((a, "jim"), (b, "bob")),
       unify((a, "joe"), (b, "bob")),
       unify((a, "ian"), (b, "jim")),
@@ -232,35 +248,19 @@ public static class Combinators {
   public static Mf descendant(Variable a, Variable c) {
     Variable b = var("b");
     return (subst) =>
-      amb(
+      or(
         child(a, c),
-        seq(child(a, b), descendant(b, c))
+        and(child(a, b), descendant(b, c))
     )(subst);
-  }
-
-  public static Mf human(Variable a) {
-    return amb(
-      unify((a, "socrates")),
-      unify((a, "plato")),
-      unify((a, "archimedes"))
-    );
-  }
-
-  public static Mf dog(Variable a) {
-    return amb(
-      unify((a, "fluffy")),
-      unify((a, "fifi")),
-      unify((a, "daisy"))
-    );
   }
 
   public static Mf mortal(Variable a) {
     Variable b = var("b");
     return (subst) =>
-      amb(
+      or(
         human(a),
         dog(a),
-        seq(descendant(a, b), mortal(b))
+        and(descendant(a, b), mortal(b))
       )(subst);
   }
 
@@ -268,11 +268,11 @@ public static class Combinators {
     Variable x = var("x");
     Variable y = var("y");
     foreach (Subst subst in resolve(descendant(x, y))) {
-      Console.WriteLine(subst[x] + " is the descendant of " + subst[y]);
+      Console.WriteLine($"{subst[x]} is the descendant of {subst[y]}");
     };
     Console.WriteLine();
-    foreach (Subst subst in resolve(seq(mortal(x), not(dog(x))))) {
-      Console.WriteLine(subst[x] + " is mortal");
+    foreach (Subst subst in resolve(and(mortal(x), human(x)))) {
+      Console.WriteLine($"{subst[x]} is mortal");
     };
   }
 
