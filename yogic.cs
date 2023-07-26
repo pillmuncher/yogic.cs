@@ -92,7 +92,7 @@ public static class Combinators {
     // First yields the substitution environment once and then invokes
     // backtracking by delegating to the provided retry continuation.
     yield return subst;
-    foreach(Subst each in retry()) {
+    foreach(var each in retry()) {
       yield return each;
     };
   }
@@ -288,7 +288,7 @@ public static class Combinators {
       Console.WriteLine($"{subst[x]} is the descendant of {subst[y]}");
     };
     Console.WriteLine();
-    foreach (Subst subst in resolve(and(mortal(x), not(dog(x))))) {
+    foreach (var subst in resolve(and(mortal(x), not(dog(x))))) {
       Console.WriteLine($"{subst[x]} is mortal");
     };
   }
