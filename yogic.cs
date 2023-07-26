@@ -145,14 +145,14 @@ public static class Combinators {
     return mh;
   }
 
-  public static Mf seq_from_enumerable(IEnumerable<Mf> mfs) {
+  public static Mf and_from_enumerable(IEnumerable<Mf> mfs) {
     // Composes multiple computations sequentially from an enumerable.
     return mfs.Aggregate<Mf, Mf>(unit, then);
   }
 
   public static Mf and(params Mf[] mfs) {
     // Composes multiple computations sequentially.
-    return seq_from_enumerable(mfs);
+    return and_from_enumerable(mfs);
   }
 
   public static Mf choice(Mf mf, Mf mg) {
@@ -171,7 +171,7 @@ public static class Combinators {
     return mh;
   }
 
-  public static Mf amb_from_enumerable(IEnumerable<Mf> mfs) {
+  public static Mf or_from_enumerable(IEnumerable<Mf> mfs) {
     // Represents a choice between multiple computations from an enumerable.
     // Takes a collection of computations mfs and returns a new computation that
     // tries all of them in series, allowing backtracking.
@@ -191,7 +191,7 @@ public static class Combinators {
     // Represents a choice between multiple computations.
     // Takes a variable number of computations and returns a new computation
     // that tries all of them in series, allowing backtracking.
-    return amb_from_enumerable(mfs);
+    return or_from_enumerable(mfs);
   }
 
   public static Mf not(Mf mf) {
@@ -215,7 +215,7 @@ public static class Combinators {
 
   public static Mf unify(params ValueTuple<object, object>[] pairs) {
     // Tries to unify pairs of objects. Fails if any pair is not unifiable.
-    return seq_from_enumerable(from pair in pairs select _unify(pair));
+    return and_from_enumerable(from pair in pairs select _unify(pair));
   }
 
   private static object deref(Subst subst, object o) {
