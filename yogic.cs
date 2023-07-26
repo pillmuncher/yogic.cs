@@ -35,6 +35,11 @@
 // queries. The use of the Triple-Barrelled Continuation Monad, logical variables,
 // and substitution environments allows for a concise and expressive
 // representation of complex logic-based computations.
+//
+// Literature:
+//
+// The Discovery of Continuations:
+// https://www.cs.ru.nl/~freek/courses/tt-2011/papers/cps/histcont.pdf
 
 
 using Subst = System.Collections.Immutable.ImmutableDictionary<Variable, object>;
@@ -200,7 +205,7 @@ public static class Combinators {
   }
 
   public static Mf unify(params ValueTuple<object, object>[] pairs) {
-    // Tries to unify pairs of objects.
+    // Tries to unify pairs of objects. Fails if any pair is not unifiable.
     return seq_from_enumerable(from pair in pairs select _unify(pair));
   }
 
@@ -231,7 +236,7 @@ public static class Combinators {
     return or(
       unify((a, "fluffy")),
       unify((a, "daisy")),
-      unify((a, "fifi"))
+      unify((a, "fiffi"))
     );
   }
 
@@ -271,7 +276,7 @@ public static class Combinators {
       Console.WriteLine($"{subst[x]} is the descendant of {subst[y]}");
     };
     Console.WriteLine();
-    foreach (Subst subst in resolve(and(mortal(x), human(x)))) {
+    foreach (Subst subst in resolve(and(mortal(x), not(dog(x))))) {
       Console.WriteLine($"{subst[x]} is mortal");
     };
   }
