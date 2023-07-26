@@ -27,7 +27,7 @@
 //
 // Links:
 //
-// Unification:#
+// Unification:
 // https://eli.thegreenplace.net/2018/unification/
 //
 // Logical Resolution:
