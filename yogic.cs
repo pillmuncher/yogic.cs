@@ -14,8 +14,8 @@
 //   during the computation.
 //
 //   Substitution and Unification: The code uses the Subst class to represent
-//   variable substitutions. When a logical variable is bound to a value, it is
-//   added to the substitution environment.
+//   variable substitutions. When a logical variable and another object are
+//   unified, the binding is added to the substitution environment.
 //
 //   Backtracking: The code leverages the List Monad to enable backtracking. It
 //   yields substitution environments for a given goal, allowing the exploration
