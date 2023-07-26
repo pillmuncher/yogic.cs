@@ -98,8 +98,6 @@ public static class Combinators {
 
   public static Ma unit(Subst subst) {
     // Lifts a substitution environment into a computation.
-    // Returns a new computation representing the success with the given
-    // substitution.
     Solutions ma(Success yes, Retry no, Retry esc) {
       return yes(subst, no);
     }
