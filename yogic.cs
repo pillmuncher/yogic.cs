@@ -87,9 +87,9 @@ public static class Combinators {
     return new Variable(name);
   }
 
-  // Takes a substitution environment and a retry continuation. First yields
-  // the substitution environment once and then invokes backtracking by
-  // delegating to the provided retry continuation.
+  // Takes a substitution environment and a retry continuation.
+  // First yields the substitution environment once and then invokes
+  // backtracking by delegating to the provided retry continuation.
   public static Solutions success(Subst subst, Retry retry) {
     yield return subst;
     foreach(var each in retry()) {
@@ -109,14 +109,14 @@ public static class Combinators {
 
   // Lifts a substitution environment into a computation.
   public static Ma unit(Subst subst) {
+    // we inject the current no continuation as backtracking continuation:
     return (yes, no, esc) => yes(subst, no);
   }
 
   // Succeeds once, and on backtracking aborts the current computation,
   // effectively pruning the search space.
   public static Ma cut(Subst subst) {
-    // we inject the current escape continuation
-    // as the subsequent backtracking path:
+    // we inject the current escape continuation as backtracking continuation:
     return (yes, no, esc) => yes(subst, esc);
   }
 
@@ -152,7 +152,7 @@ public static class Combinators {
   // tries all of them in series, allowing backtracking.
   public static Mf or_from_enumerable(IEnumerable<Mf> mfs) {
     Mf joined = mfs.Aggregate<Mf, Mf>(fail, choice);
-    // we inject the current no continuation as the new escape continuation:
+    // we inject the current no continuation as escape continuation:
     return (subst) => (yes, no, esc) => joined(subst)(yes, no, no);
   }
 
