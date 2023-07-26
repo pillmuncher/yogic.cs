@@ -251,10 +251,6 @@ public static class Combinators {
     );
   }
 
-  public static Mf not_dog(Variable a) {
-    return not(dog(a));
-  }
-
   public static Mf mortal(Variable a) {
     Variable b = var("b");
     return (subst) =>
@@ -272,7 +268,7 @@ public static class Combinators {
       Console.WriteLine(subst[x] + " is the descendant of " + subst[yes]);
     };
     Console.WriteLine();
-    foreach (Subst subst in resolve(seq(mortal(x), not_dog(x)))) {
+    foreach (Subst subst in resolve(seq(mortal(x), not(dog(x))))) {
       Console.WriteLine(subst[x] + " is mortal");
     };
   }
