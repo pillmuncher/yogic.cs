@@ -86,7 +86,7 @@ public static class Combinators {
   }
 
   public static Ma bind(Ma ma, Mf mf) {
-    // Applies the monadic function mf to the computation ma.
+    // Applies the monadic computation mf to ma.
     Solutions mb(Success yes, Retry no, Retry esc) {
       Solutions on_success(Subst subst, Retry retry) {
         return mf(subst)(yes, retry, esc);
@@ -107,7 +107,7 @@ public static class Combinators {
   }
 
   public static Ma cut(Subst subst) {
-    // Succeeds once and On backtracking, aborts the current computation,
+    // Succeeds once, and on backtracking aborts the current computation,
     // effectively pruning the search space.
     Solutions ma(Success yes, Retry no, Retry esc) {
       // we inject the current escape continuation
@@ -162,7 +162,7 @@ public static class Combinators {
   public static Mf amb_from_enumerable(IEnumerable<Mf> mfs) {
     // Represents a choice between multiple computations from an enumerable.
     // Takes a collection of computations mfs and returns a new computation that
-    // tries all of them, allowing backtracking.
+    // tries all of them in series, allowing backtracking.
     Mf joined = mfs.Aggregate<Mf, Mf>(fail, choice);
     Ma mf(Subst subst) {
       Solutions ma(Success yes, Retry no, Retry esc) {
@@ -178,7 +178,7 @@ public static class Combinators {
   public static Mf amb(params Mf[] mfs) {
     // Represents a choice between multiple computations.
     // Takes a variable number of computations and returns a new computation
-    // that tries all of them, allowing backtracking.
+    // that tries all of themin series, allowing backtracking.
     return amb_from_enumerable(mfs);
   }
 
