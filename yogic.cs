@@ -266,9 +266,9 @@ public static class Combinators {
 
   public static void Main() {
     Variable x = var("x");
-    Variable yes = var("yes");
-    foreach (Subst subst in resolve(descendant(x, yes))) {
-      Console.WriteLine(subst[x] + " is the descendant of " + subst[yes]);
+    Variable y = var("y");
+    foreach (Subst subst in resolve(descendant(x, y))) {
+      Console.WriteLine(subst[x] + " is the descendant of " + subst[y]);
     };
     Console.WriteLine();
     foreach (Subst subst in resolve(seq(mortal(x), not(dog(x))))) {
