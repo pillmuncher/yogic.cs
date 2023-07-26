@@ -13,11 +13,6 @@
 //   represented by the Variable class. These variables can be bound to values
 //   during the computation.
 //
-//   Triple-Barrelled Continuation Monad: The code uses a continuation monad with
-//   three continuations: success, failure, and escape. These continuations enable
-//   backtracking, pruning of search spaces, and handling success and failure
-//   states during computation.
-//
 //   Substitution and Unification: The code uses the Subst class to represent
 //   variable substitutions. When a logical variable is bound to a value, it is
 //   added to the substitution environment.
@@ -25,6 +20,11 @@
 //   Backtracking: The code leverages the List Monad to enable backtracking. It
 //   yields substitution environments for a given goal, allowing the exploration
 //   of various solutions to a logical query.
+//
+//   Triple-Barrelled Continuation Monad: The code uses a continuation monad with
+//   three continuations: success, failure, and escape. These continuations enable
+//   backtracking, pruning of search spaces, and handling success and failure
+//   states during computation.
 //
 //   Combinators: The code provides a set of combinator functions that allow
 //   composing computations and defining choices, sequences, negation,
