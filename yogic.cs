@@ -104,7 +104,7 @@ public static class Combinators {
 
   // Applies the monadic computation mf to ma.
   public static Ma bind(Ma ma, Mf mf) {
-    // prepend mf to the current success continuation, making it the new one:
+    // prepend mf to before current yes continuation, making it the new one:
     return (yes, no, esc) => ma((subst, retry) => mf(subst)(yes, retry, esc), no, esc);
   }
 
@@ -129,6 +129,7 @@ public static class Combinators {
 
   // Composes two computations sequentially.
   public static Mf then(Mf mf, Mf mg) {
+    // sequencing is the default behavior of bind:
     return (subst) => bind(mf(subst), mg);
   }
 
@@ -181,15 +182,13 @@ public static class Combinators {
 
   private static Mf _unify(ValueTuple<object, object> pair) {
     (var o1, var o2) = pair;
-    Ma unifier(Subst subst) {
-      return (deref(subst, o1), deref(subst, o2)) switch {
+    return (subst) =>
+      (deref(subst, o1), deref(subst, o2)) switch {
         (var o1, var o2) when o1 == o2 => unit(subst),
         (Variable o1, var o2) => unit(subst.Add(o1, o2)),
         (var o1, Variable o2) => unit(subst.Add(o2, o1)),
         _ => fail(subst),
       };
-    }
-    return unifier;
   }
 
   // Tries to unify pairs of objects. Fails if any pair is not unifiable.
@@ -225,7 +224,7 @@ public static class Combinators {
     return or(
       unify((a, "fluffy")),
       unify((a, "daisy")),
-      unify((a, "fiffi"))
+      unify((a, "fifi"))
     );
   }
 
@@ -234,7 +233,7 @@ public static class Combinators {
       unify((a, "jim"), (b, "bob")),
       unify((a, "joe"), (b, "bob")),
       unify((a, "ian"), (b, "jim")),
-      unify((a, "fiffi"), (b, "fluffy")),
+      unify((a, "fifi"), (b, "fluffy")),
       unify((a, "fluffy"), (b, "daisy"))
     );
   }
@@ -262,11 +261,11 @@ public static class Combinators {
     var x = var("x");
     var y = var("y");
     foreach (var subst in resolve(descendant(x, y))) {
-      Console.WriteLine($"{subst[x]} is the descendant of {subst[y]}");
+      Console.WriteLine($"{subst[x]} is the descendant of {subst[y]}.");
     };
     Console.WriteLine();
     foreach (var subst in resolve(and(mortal(x), not(dog(x))))) {
-      Console.WriteLine($"{subst[x]} is mortal");
+      Console.WriteLine($"{subst[x]} is mortal and no dog.");
     };
   }
 
