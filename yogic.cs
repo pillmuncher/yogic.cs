@@ -27,7 +27,8 @@
 //
 // Links:
 //
-// Unification: https://eli.thegreenplace.net/2018/unification/
+// Unification:#
+// https://eli.thegreenplace.net/2018/unification/
 //
 // Logical Resolution:
 // http://web.cse.ohio-state.edu/~stiff.4/cse3521/logical-resolution.html
