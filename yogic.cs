@@ -1,9 +1,12 @@
 // An embedded DSL for expressing First-Order predicates and performing
-// logical resolution.
+// logical resolution with backtracking and pruning of search paths.
 //
 // Key features:
 //
 // - Horn Clauses: Express logical facts and implications as simple functions.
+//
+// - Combinators: Compose first-order logical expressions by simply sticking
+// together combinator functions.
 //
 // - Logical Variables: Represented by the Variable class, they can be bound
 // to values and other variables during computation.
@@ -12,11 +15,7 @@
 // variable bindings that is incrementally constructed during resolution.
 //
 // - Backtracking: Combines the List and the Triple-Barrelled Continuation
-// Monads for resolution, non-deterministic search, backtracking, and pruning
-// of search paths.
-//
-// - Combinators: Compose first-order logical expressions by simply sticking
-// together combinator functions.
+// Monads for resolution, backtracking, and pruning of search paths.
 //
 // - Algebraic Structures: 'unit' and 'then' form a monoid over monadic
 // functions, as do 'fail' and 'choice'. Together they form a Bounded Lattice
