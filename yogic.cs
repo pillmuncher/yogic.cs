@@ -1,3 +1,41 @@
+// This module implements a backtracking monad for the resolution of Horn clauses,
+// a concept used in logic programming. It is an embedded DSL for Prolog-like
+// programs. It enables non-deterministic computations, allowing for multiple
+// possible solutions for logical goals, and pruning of search branches.
+//
+// The key features of the code are as follows:
+//
+//   Horn Clauses: The code allows expressing Horn clauses, which are logical
+//   statements with a head and a body. These clauses are used in logic
+//   programming and represent implications.
+//
+//   Logical Variables: The code introduces the concept of logical variables,
+//   represented by the Variable class. These variables can be bound to values
+//   during the computation.
+//
+//   Triple-Barrelled Continuation Monad: The code uses a continuation monad with
+//   three continuations: success, failure, and escape. These continuations enable
+//   backtracking, pruning of search spaces, and handling success and failure
+//   states during computation.
+//
+//   Substitution and Unification: The code uses the Subst class to represent
+//   variable substitutions. When a logical variable is bound to a value, it is
+//   added to the substitution environment.
+//
+//   Backtracking: The code leverages the List Monad to enable backtracking. It
+//   yields substitution environments for a given goal, allowing the exploration
+//   of various solutions to a logical query.
+//
+//   Combinators: The code provides a set of combinator functions that allow
+//   composing computations and defining choices, sequences, negation,
+//   unification, and more.
+//
+// In summary, this module offers a powerful mechanism for expressing logical
+// formulas, performing backtracking searches, and finding solutions to logical
+// queries. The use of the Triple-Barrelled Continuation Monad, logical variables,
+// and substitution environments allows for a concise and expressive
+// representation of complex logic-based computations.
+
 using Subst = System.Collections.Immutable.ImmutableDictionary<Variable, object>;
 using Solutions = System.Collections.Generic.IEnumerable<System.Collections.Immutable.ImmutableDictionary<Variable, object>>;
 
@@ -24,45 +62,6 @@ public class Variable {
 
 
 public static class Combinators {
-
-  // This class implements a backtracking monad for the resolution of Horn
-  // clauses, a concept used in logic programming. It is an embedded DSL for
-  // Prolog-like programs. It enables non-deterministic computations, allowing for
-  // multiple possible solutions for logical goals, and pruning of search
-  // branches.
-  //
-  // The key features of the code are as follows:
-  //
-  //   Horn Clauses: The code allows expressing Horn clauses, which are logical
-  //   statements with a head and a body. These clauses are used in logic
-  //   programming and represent implications.
-  //
-  //   Logical Variables: The code introduces the concept of logical variables,
-  //   represented by the Variable class. These variables can be bound to values
-  //   during the computation.
-  //
-  //   Triple-Barrelled Continuation Monad: The code uses a continuation monad
-  //   with three continuations: success, failure, and escape. These continuations
-  //   enable backtracking, pruning of search spaces, and handling success and
-  //   failure states during computation.
-  //
-  //   Substitution and Unification: The code uses the Subst class to represent
-  //   variable substitutions. When a logical variable is bound to a value, it is
-  //   added to the substitution dictionary.
-  //
-  //   Backtracking: The code leverages the List Monad to enable backtracking. It
-  //   yields substitution environments for a given goal, allowing the exploration
-  //   of various solutions to a logical query.
-  //
-  //   Combinators: The code provides a set of combinator functions that allow
-  //   composing computations and defining choices, sequences, negation,
-  //   unification, and more.
-  //
-  // In summary, this module offers a powerful mechanism for expressing logical
-  // formulas, performing backtracking searches, and finding solutions to logical
-  // queries. The use of the Triple-Barrelled Continuation Monad, logical
-  // variables, and substitution environments allows for a concise and expressive
-  // representation of complex logic-based computations.
 
   public static Variable var(string name) {
     // Creates a new logical variable with the given name.
