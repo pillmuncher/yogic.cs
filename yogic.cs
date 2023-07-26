@@ -1,5 +1,5 @@
-// This module provides an embeded DSL to simply express First-Order
-// predicates and perform resolution of logical goal.
+// An embedded DSL for expressing First-Order predicates and logical
+// resolution.
 //
 // Key features:
 //
@@ -9,7 +9,7 @@
 // to values and other variables during computation.
 //
 // - Substitution and Unification: The Subst class provides an environment of
-// variable bindings that is incrementally constructed during resolution.
+// variable bindings constructed during resolution.
 //
 // - Backtracking: Combines the List and the Triple-Barrelled Continuation
 // Monads for resolution, non-deterministic search, backtracking, and pruning
