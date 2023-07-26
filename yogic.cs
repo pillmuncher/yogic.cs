@@ -248,6 +248,9 @@ public static class Combinators {
 
   public static Mf dog(Variable a) {
     return amb(
+      unify((a, "fluffy")),
+      unify((a, "fifi")),
+      unify((a, "daisy"))
     );
   }
 
