@@ -36,6 +36,7 @@
 // and substitution environments allows for a concise and expressive
 // representation of complex logic-based computations.
 
+
 using Subst = System.Collections.Immutable.ImmutableDictionary<Variable, object>;
 using Solutions = System.Collections.Generic.IEnumerable<System.Collections.Immutable.ImmutableDictionary<Variable, object>>;
 
@@ -47,6 +48,7 @@ public delegate Ma Mf(Subst subst);
 
 
 public class Variable {
+  // Represents named logical variables.
 
   private string name;
 
@@ -69,11 +71,12 @@ public static class Combinators {
   }
 
   public static Solutions success(Subst subst, Retry retry) {
-    // A combinator function that takes a substitution environment and a retry
-    // continuation. It first yields the substitution environment once and then
-    // invokes backtracking by delegating to the provided retry continuation.
-    yield return subst; foreach(Subst each in retry()) {
-    yield return each;
+    // Takes a substitution environment and a retry continuation.
+    // First yields the substitution environment once and then invokes
+    // backtracking by delegating to the provided retry continuation.
+    yield return subst;
+    foreach(Subst each in retry()) {
+      yield return each;
     };
   }
 
@@ -103,8 +106,8 @@ public static class Combinators {
   }
 
   public static Ma cut(Subst subst) {
-    // On backtracking, aborts the current computation, effectively pruning the
-    // search space.
+    // Succeeds once and On backtracking, aborts the current computation,
+    // effectively pruning the search space.
     Solutions ma(Success yes, Retry no, Retry esc) {
       // we inject the current escape continuation
       // as the subsequent backtracking path:
@@ -140,9 +143,9 @@ public static class Combinators {
   }
 
   public static Mf choice(Mf mf, Mf mg) {
-    // Represents a choice between two computations. It takes two computations mf
-    // and mg and returns a new computation that tries mf, and if that fails,
-    // falls back to mg.
+    // Represents a choice between two computations.
+    // Takes two computations mf and mg and returns a new computation that tries
+    // mf, and if that fails, falls back to mg.
     Ma mh(Subst subst) {
       Solutions ma(Success yes, Retry no, Retry esc) {
         Solutions on_fail() {
@@ -156,9 +159,9 @@ public static class Combinators {
   }
 
   public static Mf amb_from_enumerable(IEnumerable<Mf> mfs) {
-    // Represents a choice between multiple computations from an enumerable. It
-    // takes a collection of computations mfs and returns a new computation that
-    // tries all of them in sequence, allowing backtracking.
+    // Represents a choice between multiple computations from an enumerable.
+    // Takes a collection of computations mfs and returns a new computation that
+    // tries all of them, allowing backtracking.
     Mf joined = mfs.Aggregate<Mf, Mf>(fail, choice);
     Ma mf(Subst subst) {
       Solutions ma(Success yes, Retry no, Retry esc) {
@@ -173,14 +176,14 @@ public static class Combinators {
 
   public static Mf amb(params Mf[] mfs) {
     // Represents a choice between multiple computations.
-    // It takes a variable number of computations and returns a new computation
+    // Takes a variable number of computations and returns a new computation
     // that tries all of them, allowing backtracking.
     return amb_from_enumerable(mfs);
   }
 
   public static Mf not(Mf mf) {
     // Negates the result of a computation.
-    // Returns a new computation that succeeds if mf fails and fails otherwise.
+    // Returns a new computation that succeeds if mf fails and vice versa.
     return amb(seq(mf, cut, fail), unit);
   }
 
@@ -203,7 +206,7 @@ public static class Combinators {
   }
 
   private static object deref(Subst subst, object o) {
-    // Performs variable dereferencing based on substitutions.
+    // Performs variable dereferencing based on substitutions in an environment.
     while (o is Variable && subst.ContainsKey((Variable) o)) {
       o = subst[(Variable)o];
     };
