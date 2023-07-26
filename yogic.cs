@@ -9,7 +9,7 @@
 // to values and other variables during computation.
 //
 // - Substitution and Unification: The Subst class provides an environment of
-// variable bindings constructed during resolution.
+// variable bindings that is incrementally constructed during resolution.
 //
 // - Backtracking: Combines the List and the Triple-Barrelled Continuation
 // Monads for resolution, non-deterministic search, backtracking, and pruning
@@ -17,11 +17,13 @@
 //
 // - Combinators: Compose first-order logical expressions by simply sticking
 // together combinator functions.
-// 
+//
 // - Algebraic Structures: 'unit' and 'then' form a monoid over monadic
-// functions, as fo 'fail' and 'choice'. Together they form a Bounded Lattice
-// with 'unit' as infimum and 'fail' as supremum. Because of the procedural
-// nature of the employed resolution process, the lattice is non-commutative.
+// functions, as do 'fail' and 'choice'. Together they form a Bounded Lattice
+// with 'then' as the meet (infimum) and 'choice' as the join (supremum)
+// operator, with 'unit' and 'fail' as their respective identity elements.
+// Because of the sequential nature of the employed resolution algorithm, the
+// lattice is non-commutative.
 //
 // Links:
 //
