@@ -20,7 +20,7 @@
 // - Algebraic Structures: 'unit' and 'then' form a monoid over monadic
 // functions, as do 'fail' and 'choice'. Together they form a Bounded Lattice
 // with 'then' as the meet (infimum) and 'choice' as the join (supremum)
-// operators, and 'unit' and 'fail' as their respective identity elements.
+// operator, and 'unit' and 'fail' as their respective identity elements.
 // Because of the sequential nature of the employed resolution algorithm, the
 // lattice is non-commutative.
 //
@@ -193,7 +193,7 @@ public static class Combinators {
 
   // Tries to unify pairs of objects. Fails if any pair is not unifiable.
   public static Mf unify(params ValueTuple<object, object>[] pairs) {
-    // we make unification requests a continuation:
+    // we turn multiple unification requests into a continuation:
     return and_from_enumerable(from pair in pairs select _unify(pair));
   }
 
