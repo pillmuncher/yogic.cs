@@ -42,10 +42,13 @@
 // logical variables, and substitution environments allows for a concise and
 // expressive representation of complex logic-based computations.
 //
-// Literature:
+// Links:
 //
 // The Discovery of Continuations:
 // https://www.cs.ru.nl/~freek/courses/tt-2011/papers/cps/histcont.pdf
+//
+// Monads explained in C# (again):
+// https://mikhail.io/2018/07/monads-explained-in-csharp-again/
 
 
 using Subst = System.Collections.Immutable.ImmutableDictionary<Variable, object>;
