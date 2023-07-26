@@ -45,7 +45,8 @@
 //
 // Links:
 //
-// Unification: https://eli.thegreenplace.net/2018/unification/
+// Unification:
+// https://eli.thegreenplace.net/2018/unification/
 //
 // Logical resolution:
 // http://web.cse.ohio-state.edu/~stiff.4/cse3521/logical-resolution.html
@@ -64,6 +65,12 @@
 //
 // The Discovery of Continuations:
 // https://www.cs.ru.nl/~freek/courses/tt-2011/papers/cps/histcont.pdf
+//
+// Monoid:
+// https://en.wikipedia.org/wiki/Monoid
+//
+// Bounded Lattice:
+// https://en.wikipedia.org/wiki/Lattice_(order)#Bounded_lattice
 
 
 using Subst = System.Collections.Immutable.ImmutableDictionary<Variable, object>;
