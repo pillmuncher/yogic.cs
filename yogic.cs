@@ -82,124 +82,91 @@ public class Variable {
 
 public static class Combinators {
 
+  // Creates a new logical variable with the given name.
   public static Variable var(string name) {
-    // Creates a new logical variable with the given name.
     return new Variable(name);
   }
 
+  // Takes a substitution environment and a retry continuation.
+  // First yields the substitution environment once and then invokes
+  // backtracking by delegating to the provided retry continuation.
   public static Solutions success(Subst subst, Retry retry) {
-    // Takes a substitution environment and a retry continuation.
-    // First yields the substitution environment once and then invokes
-    // backtracking by delegating to the provided retry continuation.
     yield return subst;
     foreach(var each in retry()) {
       yield return each;
     };
   }
 
+  // Represents a failed computation.
   public static Solutions failure() {
-    // Represents a failed computation.
     yield break;
   }
 
+  // Applies the monadic computation mf to ma.
   public static Ma bind(Ma ma, Mf mf) {
-    // Applies the monadic computation mf to ma.
-    Solutions mb(Success yes, Retry no, Retry esc) {
-      Solutions on_success(Subst subst, Retry retry) {
-        return mf(subst)(yes, retry, esc);
-      }
-      return ma(on_success, no, esc);
-    }
-    return mb;
+    return (yes, no, esc) => ma((subst, retry) => mf(subst)(yes, retry, esc), no, esc);
   }
 
+  // Lifts a substitution environment into a computation.
   public static Ma unit(Subst subst) {
-    // Lifts a substitution environment into a computation.
-    Solutions ma(Success yes, Retry no, Retry esc) {
-      return yes(subst, no);
-    }
-    return ma;
+    return (yes, no, esc) => yes(subst, no);
   }
 
+  // Succeeds once, and on backtracking aborts the current computation,
+  // effectively pruning the search space.
   public static Ma cut(Subst subst) {
-    // Succeeds once, and on backtracking aborts the current computation,
-    // effectively pruning the search space.
-    Solutions ma(Success yes, Retry no, Retry esc) {
-      // we inject the current escape continuation
-      // as the subsequent backtracking path:
-      return yes(subst, esc);
-    }
-    return ma;
+    // we inject the current escape continuation
+    // as the subsequent backtracking path:
+    return (yes, no, esc) => yes(subst, esc);
   }
 
+  // Represents a failed computation. Immediately initiates backtracking.
   public static Ma fail(Subst subst) {
-    // Represents a failed computation. Immediately initiates backtracking.
-    Solutions ma(Success yes, Retry no, Retry esc) {
-      return no();
-    }
-    return ma;
+    return (yes, no, esc) => no();
   }
 
+  // Composes two computations sequentially.
   public static Mf then(Mf mf, Mf mg) {
-    // Composes two computations sequentially.
-    Ma mh(Subst subst) {
-      return bind(mf(subst), mg);
-    }
-    return mh;
+    return (subst) => bind(mf(subst), mg);
   }
 
+  // Composes multiple computations sequentially from an enumerable.
   public static Mf and_from_enumerable(IEnumerable<Mf> mfs) {
-    // Composes multiple computations sequentially from an enumerable.
     return mfs.Aggregate<Mf, Mf>(unit, then);
   }
 
+  // Composes multiple computations sequentially.
   public static Mf and(params Mf[] mfs) {
-    // Composes multiple computations sequentially.
     return and_from_enumerable(mfs);
   }
 
+  // Represents a choice between two computations.
+  // Takes two computations mf and mg and returns a new computation that tries
+  // mf, and if that fails, falls back to mg.
   public static Mf choice(Mf mf, Mf mg) {
-    // Represents a choice between two computations.
-    // Takes two computations mf and mg and returns a new computation that tries
-    // mf, and if that fails, falls back to mg.
-    Ma mh(Subst subst) {
-      Solutions ma(Success yes, Retry no, Retry esc) {
-        Solutions on_fail() {
-          return mg(subst)(yes, no, esc);
-        }
-        return mf(subst)(yes, on_fail, esc);
-      }
-      return ma;
-    }
-    return mh;
+    return (subst) => (yes, no, esc) => mf(subst)(yes, () => mg(subst)(yes, no, esc), esc);
   }
 
+  // Represents a choice between multiple computations from an enumerable.
+  // Takes a collection of computations mfs and returns a new computation that
+  // tries all of them in series, allowing backtracking.
   public static Mf or_from_enumerable(IEnumerable<Mf> mfs) {
-    // Represents a choice between multiple computations from an enumerable.
-    // Takes a collection of computations mfs and returns a new computation that
-    // tries all of them in series, allowing backtracking.
     Mf joined = mfs.Aggregate<Mf, Mf>(fail, choice);
-    Ma mf(Subst subst) {
-      Solutions ma(Success yes, Retry no, Retry esc) {
         // we inject the current no continuation
         // as the new escape continuation:
-        return joined(subst)(yes, no, no);
-      }
-      return ma;
-    }
-    return mf;
+    return (subst) => (yes, no, esc) => joined(subst)(yes, no, no);
   }
 
+  // Represents a choice between multiple computations.
+  // Takes a variable number of computations and returns a new computation
+  // that tries all of them in series, allowing backtracking.
   public static Mf or(params Mf[] mfs) {
-    // Represents a choice between multiple computations.
-    // Takes a variable number of computations and returns a new computation
-    // that tries all of them in series, allowing backtracking.
     return or_from_enumerable(mfs);
   }
 
+  // Negates the result of a computation.
+  // Returns a new computation that succeeds if mf fails and vice versa.
   public static Mf not(Mf mf) {
-    // Negates the result of a computation.
-    // Returns a new computation that succeeds if mf fails and vice versa.
     return or(and(mf, cut, fail), unit);
   }
 
@@ -216,21 +183,21 @@ public static class Combinators {
     return unifier;
   }
 
+  // Tries to unify pairs of objects. Fails if any pair is not unifiable.
   public static Mf unify(params ValueTuple<object, object>[] pairs) {
-    // Tries to unify pairs of objects. Fails if any pair is not unifiable.
     return and_from_enumerable(from pair in pairs select _unify(pair));
   }
 
+  // Performs variable dereferencing based on substitutions in an environment.
   private static object deref(Subst subst, object o) {
-    // Performs variable dereferencing based on substitutions in an environment.
     while (o is Variable && subst.ContainsKey((Variable) o)) {
       o = subst[(Variable)o];
     };
     return o;
   }
 
+  // Perform the logical resolution of the computation represented by goal.
   public static Solutions resolve(Mf goal) {
-    // Perform the logical resolution of the computation represented by goal.
     return goal(Subst.Empty)(success, failure, failure);
   }
 
