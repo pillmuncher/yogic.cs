@@ -11,11 +11,11 @@
 // - Logical Variables: Represented by the Variable class, they can be bound
 // to arbitrary values and other variables during computation.
 //
-// - Substitution and Unification: The substitution environment provides 
+// - Substitution and Unification: The substitution environment provides
 // variable bindings and is incrementally constructed during resolution.
 //
-// - Backtracking: Combines the List and the Triple-Barrelled Continuation
-// Monads for resolution, backtracking, and pruning of search paths.
+// - Backtracking: The monad combines the List and the Triple-Barrelled
+// Continuation Monads for resolution, backtracking, and pruning.
 //
 // - Algebraic Structures: 'unit' and 'then' form a monoid over monadic
 // functions, as do 'fail' and 'choice'. Together they form a Bounded Lattice
@@ -284,7 +284,7 @@ public static class Combinators {
   public static void Main() {
     Variable x = var("x");
     Variable y = var("y");
-    foreach (Subst subst in resolve(descendant(x, y))) {
+    foreach (var subst in resolve(descendant(x, y))) {
       Console.WriteLine($"{subst[x]} is the descendant of {subst[y]}");
     };
     Console.WriteLine();
