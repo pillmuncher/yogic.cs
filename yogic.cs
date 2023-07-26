@@ -176,7 +176,7 @@ public static class Combinators {
   public static Mf amb(params Mf[] mfs) {
     // Represents a choice between multiple computations.
     // Takes a variable number of computations and returns a new computation
-    // that tries all of themin series, allowing backtracking.
+    // that tries all of them in series, allowing backtracking.
     return amb_from_enumerable(mfs);
   }
 
