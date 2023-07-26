@@ -104,6 +104,7 @@ public static class Combinators {
 
   // Applies the monadic computation mf to ma.
   public static Ma bind(Ma ma, Mf mf) {
+    // prepend mf to the current success continuation, making it the new one:
     return (yes, no, esc) => ma((subst, retry) => mf(subst)(yes, retry, esc), no, esc);
   }
 
@@ -122,6 +123,7 @@ public static class Combinators {
 
   // Represents a failed computation. Immediately initiates backtracking.
   public static Ma fail(Subst subst) {
+    // immediately invoke backtracking, omitting the success continuation:
     return (yes, no, esc) => no();
   }
 
@@ -132,11 +134,14 @@ public static class Combinators {
 
   // Composes multiple computations sequentially from an enumerable.
   public static Mf and_from_enumerable(IEnumerable<Mf> mfs) {
+    // 'then' is a binary operator with 'unit' as its identity elemwnt, so we
+    // can just fold:
     return mfs.Aggregate<Mf, Mf>(unit, then);
   }
 
   // Composes multiple computations sequentially.
   public static Mf and(params Mf[] mfs) {
+    // we delegate:
     return and_from_enumerable(mfs);
   }
 
@@ -144,6 +149,7 @@ public static class Combinators {
   // Takes two computations mf and mg and returns a new computation that tries
   // mf, and if that fails, falls back to mg.
   public static Mf choice(Mf mf, Mf mg) {
+    // make mg the new no continuation to allow backtracking:
     return (subst) => (yes, no, esc) => mf(subst)(yes, () => mg(subst)(yes, no, esc), esc);
   }
 
@@ -152,7 +158,9 @@ public static class Combinators {
   // tries all of them in series, allowing backtracking.
   public static Mf or_from_enumerable(IEnumerable<Mf> mfs) {
     Mf joined = mfs.Aggregate<Mf, Mf>(fail, choice);
-    // we inject the current no continuation as escape continuation:
+    // 'choice' is a binary operator with 'fail' as its identity elemwnt, so
+    // we can just fold and inject the current no continuation as escape
+    // continuation:
     return (subst) => (yes, no, esc) => joined(subst)(yes, no, no);
   }
 
@@ -160,12 +168,14 @@ public static class Combinators {
   // Takes a variable number of computations and returns a new computation
   // that tries all of them in series, allowing backtracking.
   public static Mf or(params Mf[] mfs) {
+    // we delegate:
     return or_from_enumerable(mfs);
   }
 
   // Negates the result of a computation.
   // Returns a new computation that succeeds if mf fails and vice versa.
   public static Mf not(Mf mf) {
+    // negation as failure:
     return or(and(mf, cut, fail), unit);
   }
 
@@ -184,6 +194,7 @@ public static class Combinators {
 
   // Tries to unify pairs of objects. Fails if any pair is not unifiable.
   public static Mf unify(params ValueTuple<object, object>[] pairs) {
+    // we make unification requests a continuation:
     return and_from_enumerable(from pair in pairs select _unify(pair));
   }
 
