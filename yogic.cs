@@ -8,8 +8,6 @@ public delegate Solutions Ma(Success yes, Retry no, Retry esc);
 public delegate Ma Mf(Subst subst);
 
 
-
-
 public class Variable {
 
   private string name;
