@@ -1,5 +1,5 @@
-// An embedded DSL for expressing First-Order predicates and logical
-// resolution.
+// An embedded DSL for expressing First-Order predicates and performing
+// logical resolution.
 //
 // Key features:
 //
