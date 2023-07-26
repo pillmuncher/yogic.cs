@@ -229,7 +229,7 @@ public static class Combinators {
   }
 
   public static Mf descendant(Variable a, Variable c) {
-    var e b = var("b");
+    var b = var("b");
     return (subst) =>
       or(
         child(a, c),
