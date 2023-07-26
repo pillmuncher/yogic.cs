@@ -18,11 +18,11 @@
 // Continuation Monads for resolution, backtracking, and pruning.
 //
 // - Algebraic Structures: 'unit' and 'then' form a monoid over monadic
-// functions, as do 'fail' and 'choice'. Together they form a Bounded Lattice
-// with 'then' as the meet (infimum) and 'choice' as the join (supremum)
-// operator, and 'unit' and 'fail' as their respective identity elements.
-// Because of the sequential nature of the employed resolution algorithm, the
-// lattice is non-commutative.
+// combinator functions, as do 'fail' and 'choice'. Together they form a
+// Bounded Lattice with 'then' as the meet (infimum) and 'choice' as the join
+// (supremum) operator, and 'unit' and 'fail' as their respective identity
+// elements. Because of the sequential nature of the employed resolution
+// algorithm, the lattice is non-commutative.
 //
 // Links:
 //
