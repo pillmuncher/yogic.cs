@@ -42,7 +42,7 @@ using Solutions = System.Collections.Generic.IEnumerable<System.Collections.Immu
 
 
 public delegate Solutions Retry();
-public delegate Solutions Success(Subst subst, Retry no);
+public delegate Solutions Success(Subst subst, Retry retry);
 public delegate Solutions Ma(Success yes, Retry no, Retry esc);
 public delegate Ma Mf(Subst subst);
 
