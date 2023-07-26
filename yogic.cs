@@ -81,7 +81,7 @@ public static class Combinators {
   }
 
   public static Solutions failure() {
-    // A combinator function that represents a failed computation.
+    // Represents a failed computation.
     yield break;
   }
 
