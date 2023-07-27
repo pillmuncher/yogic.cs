@@ -3,13 +3,13 @@
 //
 // Key features:
 //
-// - Horn Clauses: Express logical facts and implications as simple functions.
+// - Horn Clauses: Express logical facts and rules as simple functions.
 //
-// - Combinators: Compose first-order logical expressions by simply composing
-// combinator functions.
+// - Combinators: Compose expressions of first-order logic by simply
+// composing combinator functions.
 //
-// - Logical Variables: Represented by the Variable class, they can be bound
-// to arbitrary values and other variables during computation.
+// - Logical Variables: Represented by the Variable class, they can be
+// bound to arbitrary values and other variables during resolution.
 //
 // - Substitution and Unification: The substitution environment provides
 // variable bindings and is incrementally constructed during resolution.
@@ -19,11 +19,11 @@
 //
 // - Algebraic Structures: 'unit' and 'then' form a monoid over monadic
 // combinator functions, as do 'fail' and 'choice'. Together they form a
-// Distributive Lattice with 'then' as the meet (infimum) and 'choice' as the join
-// (supremum) operator, and 'unit' and 'fail' as their respective identity
-// elements. Because of the sequential nature of the employed resolution
-// algorithm, the lattice is non-commutative.
-//
+// Distributive Lattice with 'then' as the meet (infimum) and 'choice'
+// as the join (supremum) operator, and 'unit' and 'fail' as their
+// respective identity elements. Because of the sequential nature of the
+// employed resolution algorithm, the lattice is non-commutative.
+
 // Links:
 //
 // Unification:
@@ -144,7 +144,7 @@ public static class Combinators {
     return and_from_enumerable(mfs);
   }
 
-  // Represents a choice between two computations.
+  // Represents a choice between two computations. 
   // Takes two computations mf and mg and returns a new computation that tries
   // mf, and if that fails, falls back to mg.
   public static Mf choice(Mf mf, Mf mg) {
@@ -164,8 +164,8 @@ public static class Combinators {
   }
 
   // Represents a choice between multiple computations.
-  // Takes a variable number of computations and returns a new computation
-  // that tries all of them in series, allowing backtracking.
+  // Takes a variable number of computations and returns a new computation that
+  // tries all of them in series, allowing backtracking.
   public static Mf or(params Mf[] mfs) {
     return or_from_enumerable(mfs);
   }
