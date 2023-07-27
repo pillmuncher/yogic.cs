@@ -143,7 +143,7 @@ public static class Combinators {
 
   // Composes multiple computations sequentially from an enumerable.
   public static Mf and_from_enumerable(IEnumerable<Mf> mfs) {
-    // 'then' and 'unit' form a monoid, so we can just fold:
+    // 'unit' and 'then' form a monoid, so we can just fold:
     return mfs.Aggregate<Mf, Mf>(unit, then);
   }
 
@@ -164,7 +164,7 @@ public static class Combinators {
   // Takes a collection of computations mfs and returns a new computation that
   // tries all of them in series, allowing backtracking.
   public static Mf or_from_enumerable(IEnumerable<Mf> mfs) {
-    // 'choice' and 'fail' form a monoid, so we can just fold:
+    // 'fail' and 'choice' form a monoid, so we can just fold:
     Mf joined = mfs.Aggregate<Mf, Mf>(fail, choice);
     // we also inject the current 'no' continuation as escape
     // continuation, so we can jump out of a computation:
