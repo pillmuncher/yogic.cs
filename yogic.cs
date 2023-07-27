@@ -73,10 +73,6 @@ public class Variable {
     this.name = name;
   }
 
-  public static implicit operator Variable(string s) {
-    return new Variable(s);
-  }
-
   public override string? ToString() {
     return $"Variable( {this.name})";
   }
@@ -241,7 +237,7 @@ public static class Combinators {
   }
 
   public static Mf descendant(Variable a, Variable c) {
-    Variable b = "b";
+    var b = new Variable("b");
     return (subst) => or(
       child(a, c),
       and(child(a, b), descendant(b, c))
@@ -249,7 +245,7 @@ public static class Combinators {
   }
 
   public static Mf mortal(Variable a) {
-    Variable b = "b";
+    var b = new Variable("b");
     return (subst) => or(
       human(a),
       dog(a),
@@ -258,8 +254,8 @@ public static class Combinators {
   }
 
   public static void Main() {
-    Variable x = "x";
-    Variable y = "y";
+    var x = new Variable("x");
+    var y = new Variable("y");
     foreach (var subst in resolve(descendant(x, y))) {
       Console.WriteLine($"{subst[x]} is the descendant of {subst[y]}.");
     };
