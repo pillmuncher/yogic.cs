@@ -74,7 +74,7 @@ public class Variable {
   }
 
   public override string? ToString() {
-    return $"Variable( {this.name})";
+    return $"Variable({this.name})";
   }
 
 }
