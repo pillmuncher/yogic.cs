@@ -87,6 +87,7 @@ public static class Combinators {
     return new Variable(name);
   }
 
+  // Represents a successful resolution.
   // Takes a substitution environment and a retry continuation.
   // First yields the substitution environment once and then invokes
   // backtracking by delegating to the provided retry continuation.
@@ -97,7 +98,7 @@ public static class Combinators {
     };
   }
 
-  // Represents a failed computation.
+  // Represents a failed resolution.
   public static Solutions failure() {
     yield break;
   }
@@ -154,7 +155,7 @@ public static class Combinators {
 
   // Represents a choice between multiple computations from an enumerable.
   // Takes a collection of computations mfs and returns a new computation that
-  // tries all of them in series, allowing backtracking.
+  // tries all of them in series with backtracking.
   public static Mf or_from_enumerable(IEnumerable<Mf> mfs) {
     // 'fail' and 'choice' form a monoid, so we can just fold:
     Mf joined = mfs.Aggregate<Mf, Mf>(fail, choice);
@@ -165,7 +166,7 @@ public static class Combinators {
 
   // Represents a choice between multiple computations.
   // Takes a variable number of computations and returns a new computation that
-  // tries all of them in series, allowing backtracking.
+  // tries all of them in series with backtracking.
   public static Mf or(params Mf[] mfs) {
     return or_from_enumerable(mfs);
   }
