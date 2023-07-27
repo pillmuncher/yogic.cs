@@ -19,7 +19,7 @@
 //
 // - Algebraic Structures: 'unit' and 'then' form a monoid over monadic
 // combinator functions, as do 'fail' and 'choice'. Together they form a
-// Bounded Lattice with 'then' as the meet (infimum) and 'choice' as the join
+// Distributive Lattice with 'then' as the meet (infimum) and 'choice' as the join
 // (supremum) operator, and 'unit' and 'fail' as their respective identity
 // elements. Because of the sequential nature of the employed resolution
 // algorithm, the lattice is non-commutative.
@@ -50,8 +50,8 @@
 // Monoid:
 // https://en.wikipedia.org/wiki/Monoid
 //
-// Bounded Lattice:
-// https://en.wikipedia.org/wiki/Lattice_(order)#Bounded_lattice
+// Distributive Lattice:
+// https://en.wikipedia.org/wiki/Distributive_lattice
 
 
 using Subst = System.Collections.Immutable.ImmutableDictionary<string, object>;
