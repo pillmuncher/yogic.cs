@@ -158,7 +158,7 @@ public static class Combinators {
   // Takes two computations mf and mg and returns a new computation that tries
   // mf, and if that fails, falls back to mg.
   public static Mf choice(Mf mf, Mf mg) {
-    // make 'mg' the new 'no' continuation to enable backtracking:
+    // prepend 'mg' before the current 'no' continuation, making it the new one:
     return subst => (yes, no, esc) => mf(subst)(yes, () => mg(subst)(yes, no, esc), esc);
   }
 
