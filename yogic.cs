@@ -143,14 +143,13 @@ public static class Combinators {
 
   // Composes multiple computations sequentially from an enumerable.
   public static Mf and_from_enumerable(IEnumerable<Mf> mfs) {
-    // 'then' is a binary operator with 'unit' as its identity elemwnt, so we
+    // 'then' is a binary operator with 'unit' as its identity element, so we
     // can just fold:
     return mfs.Aggregate<Mf, Mf>(unit, then);
   }
 
   // Composes multiple computations sequentially.
   public static Mf and(params Mf[] mfs) {
-    // we delegate:
     return and_from_enumerable(mfs);
   }
 
@@ -168,7 +167,7 @@ public static class Combinators {
   public static Mf or_from_enumerable(IEnumerable<Mf> mfs) {
     Mf joined = mfs.Aggregate<Mf, Mf>(fail, choice);
     // 'choice' is a binary operator with 'fail' as its identity element, so
-    // we can just fold and inject the current 'no' continuation as escape
+    // we can just fold. we also inject the current 'no' continuation as escape
     // continuation:
     return subst => (yes, no, esc) => joined(subst)(yes, no, no);
   }
@@ -177,7 +176,6 @@ public static class Combinators {
   // Takes a variable number of computations and returns a new computation
   // that tries all of them in series, allowing backtracking.
   public static Mf or(params Mf[] mfs) {
-    // we delegate:
     return or_from_enumerable(mfs);
   }
 
