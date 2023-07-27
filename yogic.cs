@@ -164,8 +164,8 @@ public static class Combinators {
   // Takes a collection of computations mfs and returns a new computation that
   // tries all of them in series, allowing backtracking.
   public static Mf or_from_enumerable(IEnumerable<Mf> mfs) {
+    // 'choice' and 'fail' form a monoid, so we can just fold:
     Mf joined = mfs.Aggregate<Mf, Mf>(fail, choice);
-    // 'choice' and 'fail' form a monoid, so we can just fold.
     // we also inject the current 'no' continuation as escape
     // continuation, so we can jump out of a computation:
     return subst => (yes, no, esc) => joined(subst)(yes, no, no);
