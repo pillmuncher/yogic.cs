@@ -67,10 +67,18 @@ public delegate Ma Mf(Subst subst);
 public class Variable {
   // Represents named logical variables.
 
-  private string name;
+  private readonly string name;
 
   public Variable(string name) {
     this.name = name;
+  }
+
+  public static implicit operator string(Variable v) {
+    return v.name;
+  }
+
+  public static implicit operator Variable(string s) {
+    return new Variable(s);
   }
 
   public override string? ToString() {
@@ -257,8 +265,8 @@ public static class Combinators {
   }
 
   public static void Main() {
-    var x = var("x");
-    var y = var("y");
+    Variable x = "x";
+    var y = "y";
     foreach (var subst in resolve(descendant(x, y))) {
       Console.WriteLine($"{subst[x]} is the descendant of {subst[y]}.");
     };
