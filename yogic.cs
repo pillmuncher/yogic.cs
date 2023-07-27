@@ -64,8 +64,8 @@ public delegate Solutions Ma(Success yes, Retry no, Retry esc);
 public delegate Ma Mf(Subst subst);
 
 
+// Represents named logical variables.
 public class Variable {
-  // Represents named logical variables.
 
   private readonly string name;
 
