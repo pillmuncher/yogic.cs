@@ -15,7 +15,7 @@
 // variable bindings and is incrementally constructed during resolution.
 //
 // - Backtracking: The monad combines the List and the Triple-Barrelled
-// Continuation Monads for resolution, backtracking, and pruning.
+// Continuation Monads for resolution, backtracking, and branch pruning.
 //
 // - Algebraic Structures: 'unit' and 'then' form a monoid over monadic
 // combinator functions, as do 'fail' and 'choice'. Together they form a
