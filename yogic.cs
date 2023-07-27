@@ -32,8 +32,8 @@
 // Logical Resolution:
 // http://web.cse.ohio-state.edu/~stiff.4/cse3521/logical-resolution.html
 //
-// Horn Clauses in Deductive Databases:
-// https://www.geeksforgeeks.org/horn-clauses-in-deductive-databases/
+// Horn Clauses:
+// https://en.wikipedia.org/wiki/Horn_clause
 //
 // Continuations Made Simple and Illustrated:
 // https://www.ps.uni-saarland.de/~duchier/python/continuations.html
@@ -54,8 +54,8 @@
 // https://en.wikipedia.org/wiki/Distributive_lattice
 
 
-using Subst = System.Collections.Immutable.ImmutableDictionary<string, object>;
-using Solutions = System.Collections.Generic.IEnumerable<System.Collections.Immutable.ImmutableDictionary<string, object>>;
+using Subst = System.Collections.Immutable.ImmutableDictionary<Variable, object>;
+using Solutions = System.Collections.Generic.IEnumerable<System.Collections.Immutable.ImmutableDictionary<Variable, object>>;
 
 
 public delegate Solutions Retry();
@@ -71,10 +71,6 @@ public class Variable {
 
   public Variable(string name) {
     this.name = name;
-  }
-
-  public static implicit operator string(Variable v) {
-    return v.name;
   }
 
   public static implicit operator Variable(string s) {
