@@ -130,7 +130,7 @@ public static class Combinators {
   // Composes two computations sequentially.
   public static Mf then(Mf mf, Mf mg) {
     // sequencing is the default behavior of 'bind':
-    return (subst) => bind(mf(subst), mg);
+    return subst => bind(mf(subst), mg);
   }
 
   // Composes multiple computations sequentially from an enumerable.
@@ -151,7 +151,7 @@ public static class Combinators {
   // mf, and if that fails, falls back to mg.
   public static Mf choice(Mf mf, Mf mg) {
     // make 'mg' the new 'no' continuation to enable backtracking:
-    return (subst) => (yes, no, esc) => mf(subst)(yes, () => mg(subst)(yes, no, esc), esc);
+    return subst => (yes, no, esc) => mf(subst)(yes, () => mg(subst)(yes, no, esc), esc);
   }
 
   // Represents a choice between multiple computations from an enumerable.
@@ -162,7 +162,7 @@ public static class Combinators {
     // 'choice' is a binary operator with 'fail' as its identity element, so
     // we can just fold and inject the current 'no' continuation as escape
     // continuation:
-    return (subst) => (yes, no, esc) => joined(subst)(yes, no, no);
+    return subst => (yes, no, esc) => joined(subst)(yes, no, no);
   }
 
   // Represents a choice between multiple computations.
@@ -183,7 +183,7 @@ public static class Combinators {
   private static Mf _unify(ValueTuple<object, object> pair) {
     // using an 'ImmutableDictionary' makes trailing easy:
     (var o1, var o2) = pair;
-    return (subst) =>
+    return subst =>
       (deref(subst, o1), deref(subst, o2)) switch {
         (var o1, var o2) when o1 == o2 => unit(subst),
         (Variable o1, var o2) => unit(subst.Add(o1, o2)),
