@@ -79,7 +79,6 @@ public class Variable {
 
 }
 
-class s: String { }
 
 public static class Combinators {
 
