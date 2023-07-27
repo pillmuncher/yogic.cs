@@ -168,7 +168,7 @@ public static class Combinators {
     Mf joined = mfs.Aggregate<Mf, Mf>(fail, choice);
     // 'choice' is a binary operator with 'fail' as its identity element, so
     // we can just fold. we also inject the current 'no' continuation as escape
-    // continuation:
+    // continuation, so we can jump out of a computation:
     return subst => (yes, no, esc) => joined(subst)(yes, no, no);
   }
 
