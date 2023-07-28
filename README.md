@@ -54,9 +54,9 @@ there's nothing left to prove. This is called a *resolution*.
 
 Just write a function that takes in Variables and returns a monadic
 function of type ``Mf``, constructed by combining the functions provided
-below, and start the resolution by giving the function to ``resolve()``
-and iterate over the results, because there can be more ways to
-prove. No result means a failed resolution, that is the function
+by this module, and start the resolution by giving the function to
+``resolve()`` and iterate over the results, because there can be more
+ways to prove. No result means a failed resolution, that is the function
 cannot be proven in the universe described by the given set of
 functions/predicates.
 
