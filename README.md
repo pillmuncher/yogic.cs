@@ -35,7 +35,7 @@ performing resolution with backtracking and pruning of search paths.
 We interpret a ``function f(x1,...,xm) { return or(p1,...,pn); }``
 as a set of logical implications:
 
-``'p1  ⟶  f(x1,...,xm)
+```p1  ⟶  f(x1,...,xm)
 ...
 pn  ⟶  f(x1,...,xm)```  
 
