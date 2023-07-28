@@ -37,7 +37,7 @@ as a set of logical implications:
 ``...``  
 ``pn -> f(x1,...,xm)``  
 
-The equivalen Prolog looks like this:
+The equivalent Prolog looks like this:
 
 ``f(x1,...,xn) :- p1.``  
 ``...``  
@@ -45,10 +45,10 @@ The equivalen Prolog looks like this:
 
 We prove these by modus ponens:
 
-A ⟶  B  
-A  
-⎯⎯⎯⎯⎯⎯  
-B
+``A ⟶  B``  
+``A``  
+``⎯⎯⎯⎯⎯⎯``  
+``B``
 
 We call ``f(x1,...,xn)`` the head and each px a body.
 
