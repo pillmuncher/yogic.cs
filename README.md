@@ -48,7 +48,7 @@ We prove these by *modus ponens*:
 ```
 A  ⟶  B
 A
-⎯⎯⎯⎯
+⎯⎯⎯⎯⎯
 B
 ```
 
