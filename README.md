@@ -58,13 +58,13 @@ there's nothing left to prove. This is called a *resolution*.
 
 **How to use it:**
 
-Just write a function that takes in Variables and returns a monadic
-function of type ``Mf``, constructed by combining the functions provided
-by this module, and start the resolution by giving the function to
-``resolve()`` and iterate over the results, because there can be more
-ways to prove. No result means a failed resolution, that is the function
-cannot be proven in the universe described by the given set of
-functions/predicates.
+Just write a functions that take in Variables and return monadic
+functions of type ``Mf``, constructed by combining the functions
+provided by this module, and start the resolution by giving an initial
+function, a so-called *goal* to ``resolve()`` and iterate over the
+results, because there can be more ways to prove. No result means a
+failed resolution, that is the function cannot be proven in the universe
+described by the given set of functions/predicates.
 
 [TODO: Examples]
 
