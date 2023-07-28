@@ -60,6 +60,8 @@ prove. No result means a failed resolution, that is the function
 cannot be proven in the universe described by the given set of
 functions/predicates.
 
+[TODO: Examples]
+
 Links:
 
 Unification:
