@@ -10,14 +10,14 @@ performing resolution with backtracking and pruning of search paths.
 - **Horn Clauses**: Express logical facts and rules as simple functions.
 
 - **Combinators**: Compose expressions of first-order logic by simply
-  composing combinator functions. It is returned for each successful
-  resolution.
+  composing combinator functions.
 
 - **Logical Variables**: Represented by the ``Variable`` class, they can be
   bound to arbitrary values and other variables during resolution.
 
 - **Substitution and Unification**: The substitution environment provides
   variable bindings and is incrementally constructed during resolution.
+  It is returned for each successful resolution.
 
 - **Backtracking**: The monad combines the List and the Triple-Barrelled
   Continuation Monads for resolution, backtracking, and branch pruning.
