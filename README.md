@@ -45,12 +45,9 @@ f(x1,...,xn) :- pn.
 
 We prove these by modus ponens:
 
-A -> B
-
+A ⟶  B
 A
-
-\------
-
+⎯⎯⎯⎯⎯⎯
 B
 
 We call f(x1,...,xn) the head and each px a body.
