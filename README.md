@@ -10,7 +10,8 @@ performing resolution with backtracking and pruning of search paths.
 - **Horn Clauses**: Express logical facts and rules as simple functions.
 
 - **Combinators**: Compose expressions of first-order logic by simply
-  composing combinator functions.
+  composing combinator functions. It is returned for each successful
+  resolution.
 
 - **Logical Variables**: Represented by the ``Variable`` class, they can be
   bound to arbitrary values and other variables during resolution.
