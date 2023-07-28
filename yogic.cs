@@ -23,7 +23,47 @@
 // as the join (supremum) operator, and 'unit' and 'fail' as their
 // respective identity elements. Because of the sequential nature of the
 // employed resolution algorithm, the lattice is non-commutative.
+//
+// How it works:
+//
+// We interpret a function f(x1,...,xm) { return or(p1,...,pn); } 
+// as a set of logical implications:
+// 
+// p1 -> f(x1,...,xm)
+// ...
+// pn -> f(x1,...,xm)
+//
+// The equivalen Prolog looks like this:
+//
+// f(x1,...,xn) :- p1.
+// ...
+// f(x1,...,xn) :- pn.
+//
+// We prove these by modus ponens:
+// 
+// A -> B
+// A
+// ------
+// B
+//
+// We call f(x1,...,xn) the head and each px a body.
+//
+// A The function with head f(x1,...,xm) is proven by proving any of
+// p1,...,pm recursively. When we reach a success goal that has no body,
+// there's nothing left to prove. This is called a resolution.
+//
+// How to use it:
 
+// Just write a function that takes in Variables and returns a monadic
+// function of type Mf, constructed by combining the functions provided
+// below, and start the resolution by giving the function to resolve()
+// and iterate over the results, because there can be more ways to
+// prove. No result means a failed resolution, that is the function
+// cannot be proven in the universe described by the given set of
+// functions/predicates.
+
+// There are some examples at the end.
+//
 // Links:
 //
 // Unification:
