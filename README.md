@@ -10,23 +10,23 @@ Key features:
 - Horn Clauses: Express logical facts and rules as simple functions.
 
 - Combinators: Compose expressions of first-order logic by simply
-composing combinator functions.
+  composing combinator functions.
 
 - Logical Variables: Represented by the Variable class, they can be
-bound to arbitrary values and other variables during resolution.
+  bound to arbitrary values and other variables during resolution.
 
 - Substitution and Unification: The substitution environment provides
-variable bindings and is incrementally constructed during resolution.
+  variable bindings and is incrementally constructed during resolution.
 
 - Backtracking: The monad combines the List and the Triple-Barrelled
-Continuation Monads for resolution, backtracking, and branch pruning.
+  Continuation Monads for resolution, backtracking, and branch pruning.
 
 - Algebraic Structures: 'unit' and 'then' form a monoid over monadic
-combinator functions, as do 'fail' and 'choice'. Together they form a
-Distributive Lattice with 'then' as the meet (infimum) and 'choice'
-as the join (supremum) operator, and 'unit' and 'fail' as their
-respective identity elements. Because of the sequential nature of the
-employed resolution algorithm, the lattice is non-commutative.
+  combinator functions, as do 'fail' and 'choice'. Together they form a
+  Distributive Lattice with 'then' as the meet (infimum) and 'choice' as
+  the join (supremum) operator, and 'unit' and 'fail' as their
+  respective identity elements. Because of the sequential nature of the
+  employed resolution algorithm, the lattice is non-commutative.
 
 How it works:
 
@@ -45,10 +45,10 @@ f(x1,...,xn) :- pn.
 
 We prove these by modus ponens:
 
-A -> B
-A
-------
-B
+  A -> B
+  A
+  ------
+  B
 
 We call f(x1,...,xn) the head and each px a body.
 
