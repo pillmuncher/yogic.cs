@@ -32,7 +32,7 @@ performing resolution with backtracking and pruning of search paths.
 
 **How it works:**
 
-We interpret a ``function f(x1,...,xm) { return or(p1,...,pn); }``
+We interpret a function ``f(x1,...,xm) { return or(p1,...,pn); }``
 as a set of logical implications:
 
 ```
