@@ -45,10 +45,12 @@ We call ``f(x1,...,xn)`` the *head* and each ``px`` a *body*.
 
 We prove these by *modus ponens*:
 
+```
 **A  ⟶   B  
 A  
 ⎯⎯⎯⎯⎯⎯  
 B**
+```
 
 A function with head ``f(x1,...,xm)`` is proven by proving any of
 ``p1,...,pm`` recursively. When we reach a success goal that has no body,
