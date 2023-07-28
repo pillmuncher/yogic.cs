@@ -1,11 +1,11 @@
 # yogic.cs
-Yogic, but in C#.
+**Yogic, but in C#.**
 
 
 An embedded DSL for expressing first-order logical predicates and
 performing resolution with backtracking and pruning of search paths.
 
-Key features:
+**Key features:**
 
 - **Horn Clauses**: Express logical facts and rules as simple functions.
 
@@ -28,7 +28,7 @@ Key features:
   respective identity elements. Because of the sequential nature of the
   employed resolution algorithm, the lattice is non-commutative.
 
-How it works:
+**How it works:**
 
 We interpret a ``function f(x1,...,xm) { return or(p1,...,pn); }``
 as a set of logical implications:
@@ -56,7 +56,7 @@ A The function with head ``f(x1,...,xm)`` is proven by proving any of
 p1,...,pm recursively. When we reach a success goal that has no body,
 there's nothing left to prove. This is called a *resolution*.
 
-How to use it:
+**How to use it:**
 
 Just write a function that takes in Variables and returns a monadic
 function of type ``Mf``, constructed by combining the functions provided
