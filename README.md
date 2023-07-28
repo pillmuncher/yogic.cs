@@ -62,7 +62,7 @@ Just write a functions that take in Variables and return monadic
 functions of type ``Mf``, constructed by combining the functions
 provided by this module, and start the resolution by giving an initial
 function, a so-called *goal* to ``resolve()`` and iterate over the
-results, because there can be more ways to prove. No result means a
+results, one for each way *goal* can be proven. No result means a
 failed resolution, that is the function cannot be proven in the universe
 described by the given set of functions/predicates.
 
