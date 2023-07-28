@@ -37,7 +37,7 @@ as a set of logical implications:
 ``...``  
 ``pn -> f(x1,...,xm)``  
 
-We prove these by modus ponens:
+We prove these by *modus ponens*:
 
 **A ⟶  B  
 A  
