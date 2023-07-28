@@ -30,18 +30,18 @@ Key features:
 
 How it works:
 
-We interpret a function f(x1,...,xm) { return or(p1,...,pn); } 
+We interpret a ``function f(x1,...,xm) { return or(p1,...,pn); }``
 as a set of logical implications:
 
-p1 -> f(x1,...,xm)
+``p1 -> f(x1,...,xm)
 ...
-pn -> f(x1,...,xm)
+pn -> f(x1,...,xm)``
 
 The equivalen Prolog looks like this:
 
-f(x1,...,xn) :- p1.
+``f(x1,...,xn) :- p1.
 ...
-f(x1,...,xn) :- pn.
+f(x1,...,xn) :- pn.``
 
 We prove these by modus ponens:
 
@@ -50,9 +50,9 @@ A
 ⎯⎯⎯⎯⎯⎯  
 B
 
-We call f(x1,...,xn) the head and each px a body.
+We call ``f(x1,...,xn)`` the head and each px a body.
 
-A The function with head f(x1,...,xm) is proven by proving any of
+A The function with head ``f(x1,...,xm)`` is proven by proving any of
 p1,...,pm recursively. When we reach a success goal that has no body,
 there's nothing left to prove. This is called a resolution.
 
