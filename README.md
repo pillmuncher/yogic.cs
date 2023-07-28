@@ -7,21 +7,21 @@ performing resolution with backtracking and pruning of search paths.
 
 Key features:
 
-- Horn Clauses: Express logical facts and rules as simple functions.
+- **Horn Clauses**: Express logical facts and rules as simple functions.
 
-- Combinators: Compose expressions of first-order logic by simply
+- **Combinators**: Compose expressions of first-order logic by simply
   composing combinator functions.
 
-- Logical Variables: Represented by the Variable class, they can be
+- **Logical Variables**: Represented by the ``Variable`` class, they can be
   bound to arbitrary values and other variables during resolution.
 
-- Substitution and Unification: The substitution environment provides
+- **Substitution and Unification**: The substitution environment provides
   variable bindings and is incrementally constructed during resolution.
 
-- Backtracking: The monad combines the List and the Triple-Barrelled
+- **Backtracking**: The monad combines the List and the Triple-Barrelled
   Continuation Monads for resolution, backtracking, and branch pruning.
 
-- Algebraic Structures: ``unit`` and ``then`` form a monoid over monadic
+- **Algebraic Structures**: ``unit`` and ``then`` form a *monoid* over monadic
   combinator functions, as do ``fail`` and ``choice``. Together they form a
   Distributive Lattice with ``then`` as the meet (infimum) and ``choice`` as
   the join (supremum) operator, and ``unit`` and ``fail`` as their
@@ -54,13 +54,13 @@ We call ``f(x1,...,xn)`` the head and each px a body.
 
 A The function with head ``f(x1,...,xm)`` is proven by proving any of
 p1,...,pm recursively. When we reach a success goal that has no body,
-there's nothing left to prove. This is called a resolution.
+there's nothing left to prove. This is called a *resolution*.
 
 How to use it:
 
 Just write a function that takes in Variables and returns a monadic
-function of type Mf, constructed by combining the functions provided
-below, and start the resolution by giving the function to resolve()
+function of type ``Mf``, constructed by combining the functions provided
+below, and start the resolution by giving the function to ``resolve()``
 and iterate over the results, because there can be more ways to
 prove. No result means a failed resolution, that is the function
 cannot be proven in the universe described by the given set of
