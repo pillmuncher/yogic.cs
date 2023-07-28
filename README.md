@@ -20,7 +20,8 @@ performing resolution with backtracking and pruning of search paths.
   It is returned for each successful resolution.
 
 - **Backtracking**: The monad combines the List and the Triple-Barrelled
-  Continuation Monads for resolution, backtracking, and branch pruning.
+  Continuation Monads for resolution, backtracking, and branch pruning
+  via the ``cut`` combinator.
 
 - **Algebraic Structures**: ``unit`` and ``then`` form a *monoid* over monadic
   combinator functions, as do ``fail`` and ``choice``. Together they form a
