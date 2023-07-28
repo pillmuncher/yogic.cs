@@ -37,12 +37,6 @@ as a set of logical implications:
 ``...``  
 ``pn -> f(x1,...,xm)``  
 
-The equivalent Prolog looks like this:
-
-``f(x1,...,xn) :- p1.``  
-``...``  
-``f(x1,...,xn) :- pn.``  
-
 We prove these by modus ponens:
 
 **A ⟶  B  
