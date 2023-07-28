@@ -46,7 +46,7 @@ A
 ⎯⎯⎯⎯⎯⎯  
 B**
 
-A The function with head ``f(x1,...,xm)`` is proven by proving any of
+A function with head ``f(x1,...,xm)`` is proven by proving any of
 p1,...,pm recursively. When we reach a success goal that has no body,
 there's nothing left to prove. This is called a *resolution*.
 
