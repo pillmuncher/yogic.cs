@@ -1,3 +1,5 @@
+// Copyright (c) 2023 Mick Krippendorf <m.krippendorf@freenet.de>
+
 using Subst = System.Collections.Immutable.ImmutableDictionary<Variable, object>;
 using Solutions = System.Collections.Generic.IEnumerable<System.Collections.Immutable.ImmutableDictionary<Variable, object>>;
 
