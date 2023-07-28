@@ -53,12 +53,12 @@ B
 ```
 
 A function with head ``f(x1,...,xm)`` is proven by proving any of
-``p1,...,pm`` recursively. When we reach a success goal that has no body,
+``p1,...,pn`` recursively. When we reach a success goal that has no body,
 there's nothing left to prove. This is called a *resolution*.
 
 **How to use it:**
 
-Just write a functions that take in Variables and return monadic
+Just write functions that take in Variables and return monadic
 functions of type ``Mf``, constructed by combining the functions
 provided by this module, and start the resolution by giving an initial
 function, a so-called *goal* to ``resolve()`` and iterate over the
