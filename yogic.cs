@@ -54,13 +54,11 @@ public static class Combinators {
     // prepend 'mf' before the current 'yes' continuation, making it the new one,
     // and we're also injecting the 'retry' continuation as the subsequent 'no'
     // continuation:
-    return (yes, no, esc) =>
-                          ma(no  : no,
-                             esc : esc,
-                             yes : (subst, retry) =>
-                                                  mf(subst)(yes : yes,
-                                                            esc : esc,
-                                                            no  : retry));
+    return (yes, no, esc) => ma(no  : no,
+                                esc : esc,
+                                yes : (subst, retry) => mf(subst)(yes : yes,
+                                                                  esc : esc,
+                                                                  no  : retry));
   }
 
   // Lifts a substitution environment into a computation.
@@ -107,13 +105,11 @@ public static class Combinators {
   public static Mf choice(Mf mf, Mf mg) {
     // prepend 'mg' before the current 'no' continuation, making it the new one:
     return subst =>
-                 (yes, no, esc) =>
-                                mf(subst)(yes : yes,
-                                          esc : esc,
-                                          no  : () => 
-                                                   mg(subst)(yes : yes,
-                                                             no  : no,
-                                                             esc : esc));
+                (yes, no, esc) => mf(subst)(yes : yes,
+                                            esc : esc,
+                                            no  : () => mg(subst)(yes : yes,
+                                                                  no  : no,
+                                                                  esc : esc));
 }
 
   // Represents a choice between multiple computations from an enumerable.
@@ -125,10 +121,9 @@ public static class Combinators {
     // we also inject the current 'no' continuation as escape
     // continuation, so we can jump out of a computation:
     return subst =>
-                 (yes, no, esc) =>
-                                joined(subst)(yes : yes,
-                                              no  : no, 
-                                              esc : no);
+                (yes, no, esc) => joined(subst)(yes : yes,
+                                                no  : no, 
+                                                esc : no);
   }
 
   // Represents a choice between multiple computations.
@@ -148,13 +143,12 @@ public static class Combinators {
   private static Mf _unify(ValueTuple<object, object> pair) {
     // using an 'ImmutableDictionary' makes trailing easy:
     (var o1, var o2) = pair;
-    return subst =>
-                  (deref(subst, o1), deref(subst, o2)) switch {
-                      (var o1, var o2) when o1 == o2 => unit(subst),
-                      (Variable o1, var o2) => unit(subst.Add(o1, o2)),
-                      (var o1, Variable o2) => unit(subst.Add(o2, o1)),
-                      _ => fail(subst),
-                  };
+    return subst => (deref(subst, o1), deref(subst, o2)) switch {
+                        (var o1, var o2) when o1 == o2 => unit(subst),
+                        (Variable o1, var o2) => unit(subst.Add(o1, o2)),
+                        (var o1, Variable o2) => unit(subst.Add(o2, o1)),
+                        _ => fail(subst),
+                    };
   }
 
   // Tries to unify pairs of objects. Fails if any pair is not unifiable.
