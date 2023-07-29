@@ -147,11 +147,11 @@ public static class Combinators {
     // using an 'ImmutableDictionary' makes trailing easy:
     (var o1, var o2) = pair;
     return subst =>
-      (deref(subst, o1), deref(subst, o2)) switch {
-        (var o1, var o2) when o1 == o2 => unit(subst),
-        (Variable o1, var o2) => unit(subst.Add(o1, o2)),
-        (var o1, Variable o2) => unit(subst.Add(o2, o1)),
-        _ => fail(subst),
+                  (deref(subst, o1), deref(subst, o2)) switch {
+                      (var o1, var o2) when o1 == o2 => unit(subst),
+                      (Variable o1, var o2) => unit(subst.Add(o1, o2)),
+                      (var o1, Variable o2) => unit(subst.Add(o2, o1)),
+                      _ => fail(subst),
       };
   }
 
