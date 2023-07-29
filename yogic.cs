@@ -52,7 +52,7 @@ public static class Combinators {
   // Applies the monadic computation mf to ma.
   public static Ma bind(Ma ma, Mf mf) {
     // prepend 'mf' before the current 'yes' continuation, making it the new one,
-    // and we're also injecting the 'retry' continuation as the new 'no'
+    // and we're also injecting the 'retry' continuation as the subsequent 'no'
     // continuation:
     return (yes, no, esc) =>
                           ma(no  : no,
