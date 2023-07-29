@@ -152,7 +152,7 @@ public static class Combinators {
                       (Variable o1, var o2) => unit(subst.Add(o1, o2)),
                       (var o1, Variable o2) => unit(subst.Add(o2, o1)),
                       _ => fail(subst),
-      };
+                  };
   }
 
   // Tries to unify pairs of objects. Fails if any pair is not unifiable.
