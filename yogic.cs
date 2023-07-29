@@ -54,11 +54,11 @@ public static class Combinators {
     {
         // prepend 'mf' before the current 'yes' continuation, making it the new one,
         // and inject the 'retry' continuation as the subsequent 'no' continuation:
-        return (yes, no, esc) => ma(no: no,
+        return (yes, no, esc) => ma(no : no,
                                     esc: esc,
                                     yes: (subst, retry) => mf(subst)(yes: yes,
-                                                                      esc: esc,
-                                                                      no: retry));
+                                                                     esc: esc,
+                                                                     no : retry));
     }
 
   // Lifts a substitution environment into a computation.
