@@ -66,14 +66,16 @@ public static class Combinators {
   // Lifts a substitution environment into a computation.
   public static Ma unit(Subst subst) {
     // we inject the current 'no' continuation as backtracking continuation:
-    return (yes, no, esc) => yes(subst, retry:no);
+    return (yes, no, esc) => yes(subst,
+                                 retry : no);
   }
 
   // Succeeds once, and on backtracking aborts the current computation,
   // effectively pruning the search space.
   public static Ma cut(Subst subst) {
     // we inject the current escape continuation as backtracking continuation:
-    return (yes, no, esc) => yes(subst, retry:esc);
+    return (yes, no, esc) => yes(subst,
+                                 retry : esc);
   }
 
   // Represents a failed computation. Immediately initiates backtracking.
