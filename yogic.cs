@@ -49,21 +49,21 @@ public static class Combinators {
     yield break;
   }
 
-    // Applies the monadic computation mf to ma.
-    public static Ma bind(Ma ma, Mf mf)
-    {
-        // prepend 'mf' before the current 'yes' continuation, making it the new one,
-        // and inject the 'retry' continuation as the subsequent 'no' continuation:
-        return (yes, no, esc) => ma(no : no,
-                                    esc: esc,
-                                    yes: (subst, retry) => mf(subst)(yes: yes,
-                                                                     esc: esc,
-                                                                     no : retry));
+  // Applies the monadic computation mf to ma.
+  public static Ma bind(Ma ma, Mf mf) {
+    // prepend 'mf' before the current 'yes' continuation, making it the
+    // new one, and inject the 'retry' continuation as the subsequent 'no'
+    // continuation:
+    return (yes, no, esc) => ma(no : no,
+                                esc: esc,
+                                yes: (subst, retry) => mf(subst)(yes: yes,
+                                                                 esc: esc,
+                                                                 no : retry));
     }
 
   // Lifts a substitution environment into a computation.
   public static Ma unit(Subst subst) {
-    // we inject the current 'no' continuation as backtracking continuation:
+    // we inject the current 'no' continuation as retry continuation:
     return (yes, no, esc) => yes(subst,
                                  retry : no);
   }
@@ -71,14 +71,14 @@ public static class Combinators {
   // Succeeds once, and on backtracking aborts the current computation,
   // effectively pruning the search space.
   public static Ma cut(Subst subst) {
-    // we inject the current escape continuation as backtracking continuation:
+    // inject the current escape continuation as retry continuation:
     return (yes, no, esc) => yes(subst,
                                  retry : esc);
   }
 
   // Represents a failed computation. Immediately initiates backtracking.
   public static Ma fail(Subst subst) {
-    // immediately invoke backtracking, omitting the success continuation:
+    // immediately invoke backtracking, omitting the 'yes'continuation:
     return (yes, no, esc) => no();
   }
 
@@ -100,10 +100,11 @@ public static class Combinators {
   }
 
   // Represents a choice between two computations. 
-  // Takes two computations mf and mg and returns a new computation that tries
-  // mf, and if that fails, falls back to mg.
+  // Takes two computations mf and mg and returns a new computation that
+  // tries mf, and if that fails, falls back to mg.
   public static Mf choice(Mf mf, Mf mg) {
-    // prepend 'mg' before the current 'no' continuation, making it the new one:
+    // prepend 'mg' before the current 'no' continuation, making it the
+    // new one:
     return subst =>
                 (yes, no, esc) => mf(subst)(yes : yes,
                                             esc : esc,
@@ -113,8 +114,8 @@ public static class Combinators {
 }
 
   // Represents a choice between multiple computations from an enumerable.
-  // Takes a collection of computations mfs and returns a new computation that
-  // tries all of them in series with backtracking.
+  // Takes a collection of computations mfs and returns a new computation
+  // that tries all of them in series with backtracking.
   public static Mf or_from_enumerable(IEnumerable<Mf> mfs) {
     // 'fail' and 'choice' form a monoid, so we can just fold:
     Mf joined = mfs.Aggregate<Mf, Mf>(fail, choice);
@@ -127,8 +128,8 @@ public static class Combinators {
   }
 
   // Represents a choice between multiple computations.
-  // Takes a variable number of computations and returns a new computation that
-  // tries all of them in series with backtracking.
+  // Takes a variable number of computations and returns a new computation
+  // that tries all of them in series with backtracking.
   public static Mf or(params Mf[] mfs) {
     return or_from_enumerable(mfs);
   }
@@ -166,7 +167,7 @@ public static class Combinators {
     return o;
   }
 
-  // Perform the logical resolution of the computation represented by goal.
+  // Perform logical resolution of the computation represented by goal.
   public static Solutions resolve(Mf goal) {
     return goal(Subst.Empty)(success, failure, failure);
   }
