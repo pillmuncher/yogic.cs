@@ -51,21 +51,27 @@ public static class Combinators {
 
   // Applies the monadic computation mf to ma.
   public static Ma bind(Ma ma, Mf mf) {
-    // prepend 'mf' before the current 'yes' continuation, making it the new one:
-    return (yes, no, esc) => ma((subst, retry) => mf(subst)(yes, retry, esc), no, esc);
+    // prepend 'mf' before the current 'yes' continuation, making it the new one,
+    // and we're also injecting the 'retry' continuation as the new 'no'
+    // continuation:
+    return (yes, no, esc) =>
+            ma(yes: (subst, retry) => mf(subst)(yes:yes, no:retry, esc:esc),
+               no:  no,
+               esc: esc
+            );
   }
 
   // Lifts a substitution environment into a computation.
   public static Ma unit(Subst subst) {
     // we inject the current 'no' continuation as backtracking continuation:
-    return (yes, no, esc) => yes(subst, no);
+    return (yes, no, esc) => yes(subst, retry:no);
   }
 
   // Succeeds once, and on backtracking aborts the current computation,
   // effectively pruning the search space.
   public static Ma cut(Subst subst) {
     // we inject the current escape continuation as backtracking continuation:
-    return (yes, no, esc) => yes(subst, esc);
+    return (yes, no, esc) => yes(subst, retry:esc);
   }
 
   // Represents a failed computation. Immediately initiates backtracking.
@@ -96,7 +102,13 @@ public static class Combinators {
   // mf, and if that fails, falls back to mg.
   public static Mf choice(Mf mf, Mf mg) {
     // prepend 'mg' before the current 'no' continuation, making it the new one:
-    return subst => (yes, no, esc) => mf(subst)(yes, () => mg(subst)(yes, no, esc), esc);
+    return subst =>
+        (yes, no, esc) =>
+            mf(subst)(
+                yes: yes,
+                no:  () => mg(subst)(yes:yes, no:no, esc:esc),
+                esc: esc
+            );
   }
 
   // Represents a choice between multiple computations from an enumerable.
@@ -107,7 +119,9 @@ public static class Combinators {
     Mf joined = mfs.Aggregate<Mf, Mf>(fail, choice);
     // we also inject the current 'no' continuation as escape
     // continuation, so we can jump out of a computation:
-    return subst => (yes, no, esc) => joined(subst)(yes, no, no);
+    return subst =>
+        (yes, no, esc) =>
+            joined(subst)(yes:yes, no:no, esc:no);
   }
 
   // Represents a choice between multiple computations.
