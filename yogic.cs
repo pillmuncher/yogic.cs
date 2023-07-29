@@ -49,17 +49,17 @@ public static class Combinators {
     yield break;
   }
 
-  // Applies the monadic computation mf to ma.
-  public static Ma bind(Ma ma, Mf mf) {
-    // prepend 'mf' before the current 'yes' continuation, making it the new one,
-    // and we're also injecting the 'retry' continuation as the subsequent 'no'
-    // continuation:
-    return (yes, no, esc) => ma(no  : no,
-                                esc : esc,
-                                yes : (subst, retry) => mf(subst)(yes : yes,
-                                                                  esc : esc,
-                                                                  no  : retry));
-  }
+    // Applies the monadic computation mf to ma.
+    public static Ma bind(Ma ma, Mf mf)
+    {
+        // prepend 'mf' before the current 'yes' continuation, making it the new one,
+        // and inject the 'retry' continuation as the subsequent 'no' continuation:
+        return (yes, no, esc) => ma(no: no,
+                                    esc: esc,
+                                    yes: (subst, retry) => mf(subst)(yes: yes,
+                                                                      esc: esc,
+                                                                      no: retry));
+    }
 
   // Lifts a substitution environment into a computation.
   public static Ma unit(Subst subst) {
