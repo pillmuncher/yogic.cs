@@ -19,7 +19,7 @@ public class Variable {
     this.name = name;
   }
 
-  public override string? ToString() {
+  public override string ToString() {
     return $"Variable({this.name})";
   }
 
