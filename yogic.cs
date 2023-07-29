@@ -161,7 +161,8 @@ public static class Combinators {
     return and_from_enumerable(from pair in pairs select _unify(pair));
   }
 
-  // Performs variable dereferencing based on substitutions in an environment.
+  // Performs variable dereferencing by chasing down substitutions in an
+  // environment.
   private static object deref(Subst subst, object o) {
     while (o is Variable && subst.ContainsKey((Variable) o)) {
       o = subst[(Variable)o];
