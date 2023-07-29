@@ -55,12 +55,12 @@ public static class Combinators {
     // and we're also injecting the 'retry' continuation as the new 'no'
     // continuation:
     return (yes, no, esc) =>
-            ma(no  : no,
-               esc : esc,
-               yes : (subst, retry) =>
-                      mf(subst)(yes : yes,
-                                esc : esc,
-                                no  : retry));
+                          ma(no  : no,
+                             esc : esc,
+                             yes : (subst, retry) =>
+                                                  mf(subst)(yes : yes,
+                                                            esc : esc,
+                                                            no  : retry));
   }
 
   // Lifts a substitution environment into a computation.
@@ -105,15 +105,14 @@ public static class Combinators {
   public static Mf choice(Mf mf, Mf mg) {
     // prepend 'mg' before the current 'no' continuation, making it the new one:
     return subst =>
-           (yes, no, esc) =>
-               mf(subst)(
-                   yes : yes,
-                   esc : esc,
-                   no  : () => 
-                          mg(subst)(yes : yes,
-                                    no  : no,
-                                    esc : esc));
-  }
+                 (yes, no, esc) =>
+                                mf(subst)(yes : yes,
+                                          esc : esc,
+                                          no  : () => 
+                                                   mg(subst)(yes : yes,
+                                                             no  : no,
+                                                             esc : esc));
+}
 
   // Represents a choice between multiple computations from an enumerable.
   // Takes a collection of computations mfs and returns a new computation that
@@ -124,10 +123,10 @@ public static class Combinators {
     // we also inject the current 'no' continuation as escape
     // continuation, so we can jump out of a computation:
     return subst =>
-          (yes, no, esc) =>
-              joined(subst)(yes : yes,
-                            no  : no, 
-                            esc : no);
+                 (yes, no, esc) =>
+                                joined(subst)(yes : yes,
+                                              no  : no, 
+                                              esc : no);
   }
 
   // Represents a choice between multiple computations.
