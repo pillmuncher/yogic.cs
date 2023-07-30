@@ -107,19 +107,19 @@ backtracking by delegating to the provided retry continuation.
 ```csharp
 public static Solutions failure()
 ```
-Represents a failed resolution.  
+  Represents a failed resolution.  
   
   
 ```csharp
 public static Ma bind(Ma ma, Mf mf)
 ```
-Applies the monadic computation mf to ma.  
+  Applies the monadic computation mf to ma.  
   
   
 ```csharp
 public static Ma unit(Subst subst)
 ```
-Lifts a substitution environment into a computation.  
+  Lifts a substitution environment into a computation.  
   
   
 ```csharp
