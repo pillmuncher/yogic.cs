@@ -68,6 +68,25 @@ set of functions/predicates.
 
 **API:**
 
+
+`public delegate Solutions Retry()`  
+A function type for retryable functions.  
+
+`public delegate Solutions Success(Subst subst, Retry retry)`  
+A function type for succeeding functions.  
+
+`public delegate Solutions Ma(Success yes, Retry no, Retry esc)`  
+The monadic type: A function that takes a success function and two retry
+functions for backtracking. Runs the continuation and initiates backtracking.  
+
+`public delegate Ma Mf(Subst subst)`  
+The monadic function type. Take a substitution environment and returns a
+monadic object of type Ma.  
+
+
+'public class Variable'  
+Represents named logical variables.  
+
 `public static Variable var(string name)`  
 Creates a new logical variable with the given name.  
 
