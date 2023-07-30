@@ -58,14 +58,15 @@ there's nothing left to prove. This is called a *resolution*.
 
 **How to use it:**
 
-Just write functions that take in Variables and other values and return
+Just write functions that take in Variables and other values, and return
 monadic functions of type ``Mf``, constructed by combining the functions
 provided by this module, and start the resolution by giving an initial
-function, a so-called *goal* to ``resolve()`` and iterate over the results,
+function, a so-called *goal*, to ``resolve()`` and iterate over the results,
 one for each way *goal* can be proven. No result means a failed resolution,
 that is the function cannot be proven in the universe described by the given
 set of functions/predicates.
 
+[TODO: Api Doc]
 [TODO: Examples]
 
 Links:
