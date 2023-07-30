@@ -189,6 +189,21 @@ Perform logical resolution of the computation represented by goal.
     };
   }
 ```
+Result:
+```
+jim is a descendant of bob.
+joe is a descendant of bob.
+ian is a descendant of jim.
+fifi is a descendant of fluffy.
+fluffy is a descendant of daisy.
+ian is a descendant of bob.
+fifi is a descendant of daisy.
+
+socrates is mortal and no dog.
+plato is mortal and no dog.
+archimedes is mortal and no dog.
+
+```
 
 Links:
 
