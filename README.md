@@ -96,7 +96,7 @@ Represents a failed computation. Immediately initiates backtracking.
 `public static Mf then(Mf mf, Mf mg)`  
 Composes two computations sequentially.  
 
-`public static Mf and_from_enumerable(IEnumerable<Mf> mfs)'  
+`public static Mf and_from_enumerable(IEnumerable<Mf> mfs)`  
 Composes multiple computations sequentially from an enumerable.  
 
 `public static Mf and(params Mf[] mfs)`  
@@ -157,5 +157,3 @@ https://en.wikipedia.org/wiki/Monoid
 
 Distributive Lattice:
 https://en.wikipedia.org/wiki/Distributive_lattice
-
-
