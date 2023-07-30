@@ -28,15 +28,10 @@ public class Variable {
 
 public static class Combinators {
 
-  // Creates a new logical variable with the given name.
   public static Variable var(string name) {
     return new Variable(name);
   }
 
-  // Represents a successful resolution.
-  // Takes a substitution environment and a retry continuation.
-  // First yields the substitution environment once and then invokes
-  // backtracking by delegating to the provided retry continuation.
   public static Solutions success(Subst subst, Retry retry) {
     yield return subst;
     foreach(var each in retry()) {
@@ -44,12 +39,10 @@ public static class Combinators {
     };
   }
 
-  // Represents a failed resolution.
   public static Solutions failure() {
     yield break;
   }
 
-  // Applies the monadic computation mf to ma.
   public static Ma bind(Ma ma, Mf mf) {
     // prepend 'mf' before the current 'yes' continuation, making it the
     // new one, and inject the 'retry' continuation as the subsequent 'no'
@@ -61,47 +54,37 @@ public static class Combinators {
                                                                   no  : retry));
     }
 
-  // Lifts a substitution environment into a computation.
   public static Ma unit(Subst subst) {
     // we inject the current 'no' continuation as retry continuation:
     return (yes, no, esc) => yes(subst,
                                  retry : no);
   }
 
-  // Succeeds once, and on backtracking aborts the current computation,
-  // effectively pruning the search space.
   public static Ma cut(Subst subst) {
     // inject the current escape continuation as retry continuation:
     return (yes, no, esc) => yes(subst,
                                  retry : esc);
   }
 
-  // Represents a failed computation. Immediately initiates backtracking.
   public static Ma fail(Subst subst) {
     // immediately invoke backtracking, omitting the 'yes'continuation:
     return (yes, no, esc) => no();
   }
 
-  // Composes two computations sequentially.
   public static Mf then(Mf mf, Mf mg) {
     // sequencing is the default behavior of 'bind':
     return subst => bind(mf(subst), mg);
   }
 
-  // Composes multiple computations sequentially from an enumerable.
   public static Mf and_from_enumerable(IEnumerable<Mf> mfs) {
     // 'unit' and 'then' form a monoid, so we can just fold:
     return mfs.Aggregate<Mf, Mf>(unit, then);
   }
 
-  // Composes multiple computations sequentially.
   public static Mf and(params Mf[] mfs) {
     return and_from_enumerable(mfs);
   }
 
-  // Represents a choice between two computations. 
-  // Takes two computations mf and mg and returns a new computation that
-  // tries mf, and if that fails, falls back to mg.
   public static Mf choice(Mf mf, Mf mg) {
     // prepend 'mg' before the current 'no' continuation, making it the
     // new one:
@@ -113,9 +96,6 @@ public static class Combinators {
                                                                   esc : esc));
   }
 
-  // Represents a choice between multiple computations from an enumerable.
-  // Takes a collection of computations mfs and returns a new computation
-  // that tries all of them in series with backtracking.
   public static Mf or_from_enumerable(IEnumerable<Mf> mfs) {
     // 'fail' and 'choice' form a monoid, so we can just fold:
     var choices = mfs.Aggregate<Mf, Mf>(fail, choice);
@@ -127,15 +107,10 @@ public static class Combinators {
                                                  esc : no);
   }
 
-  // Represents a choice between multiple computations.
-  // Takes a variable number of computations and returns a new computation
-  // that tries all of them in series with backtracking.
   public static Mf or(params Mf[] mfs) {
     return or_from_enumerable(mfs);
   }
 
-  // Negates the result of a computation.
-  // Returns a new computation that succeeds if mf fails and vice versa.
   public static Mf not(Mf mf) {
     // negation as failure:
     return or(and(mf, cut, fail), unit);
@@ -152,14 +127,11 @@ public static class Combinators {
                     };
   }
 
-  // Tries to unify pairs of objects. Fails if any pair is not unifiable.
   public static Mf unify(params ValueTuple<object, object>[] pairs) {
     // we turn multiple unification requests into a continuation:
     return and_from_enumerable(from pair in pairs select _unify(pair));
   }
 
-  // Performs variable dereferencing by chasing down substitutions in an
-  // environment.
   private static object deref(Subst subst, object o) {
     while (o is Variable && subst.ContainsKey((Variable) o)) {
       o = subst[(Variable)o];
@@ -167,7 +139,6 @@ public static class Combinators {
     return o;
   }
 
-  // Perform logical resolution of the computation represented by goal.
   public static Solutions resolve(Mf goal) {
     return goal(Subst.Empty)(success, failure, failure);
   }
