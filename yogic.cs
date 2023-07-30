@@ -31,14 +31,14 @@ public static class Combinators {
     return new Variable(name);
   }
 
-  public static Solutions success(Subst subst, Retry retry) {
+  private static Solutions success(Subst subst, Retry retry) {
     yield return subst;
     foreach(var each in retry()) {
       yield return each;
     };
   }
 
-  public static Solutions failure() {
+  private static Solutions failure() {
     yield break;
   }
 

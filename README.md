@@ -68,52 +68,31 @@ set of functions/predicates.
 
 **API:**
 
-
 ```csharp
 public delegate Solutions Retry()
 ```
 - A function type for retryable functions.  
-
 ```csharp
 public delegate Solutions Success(Subst subst, Retry retry)
 ```
 - A function type for succeeding functions.  
-
 ```csharp
 public delegate Solutions Ma(Success yes, Retry no, Retry esc)
 ```
 - The monadic type: A function that takes a success function and two retry
 functions for backtracking. Runs the continuation and initiates backtracking.  
-
 ```csharp
 public delegate Ma Mf(Subst subst)
 ```
 - The monadic function type. Takes a substitution environment and returns a
 monadic object of type Ma.  
-
 ```csharp
 public static Variable var(string name)
 ```
 - Creates a new logical variable with the given name.  
-
-```csharp
-public static Solutions success(Subst subst, Retry retry)
-```
-- Represents a successful resolution.  
-Takes a substitution environment and a retry continuation.
-First yields the substitution environment once and then invokes
-backtracking by delegating to the provided retry continuation.  
-
-```csharp
-public static Solutions failure()
-```
-- Represents a failed resolution.  
-  
-  
 ```csharp
 public static Ma bind(Ma ma, Mf mf)
 ```
-
 - Applies the monadic computation mf to ma.  
   
   
@@ -184,25 +163,21 @@ public static Mf not(Mf mf)
 - Negates the result of a computation.  
 Returns a new computation that succeeds if mf fails and vice versa.  
   
-
 ```csharp
 public static Mf unify(params ValueTuple<object, object>[] pairs)
 ```
 - Tries to unify pairs of objects. Fails if any pair is not unifiable.  
   
-
 ```csharp
 public static Solutions resolve(Mf goal)
 ```
 - Perform logical resolution of the computation represented by goal.  
   
-
 ```csharp
 public class Variable
 ```
 - Represents named logical variables.  
   
-
 **An Example:**  
 
 ```csharp
