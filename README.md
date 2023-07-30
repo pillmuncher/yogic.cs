@@ -84,7 +84,7 @@ The monadic function type. Take a substitution environment and returns a
 monadic object of type Ma.  
 
 
-'public class Variable'  
+`public class Variable`  
 Represents named logical variables.  
 
 `public static Variable var(string name)`  
