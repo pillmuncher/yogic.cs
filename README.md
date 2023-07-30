@@ -69,85 +69,127 @@ set of functions/predicates.
 **API:**
 
 
-`public delegate Solutions Retry()`  
+```csharp
+public delegate Solutions Retry()
+```
 A function type for retryable functions.  
 
-`public delegate Solutions Success(Subst subst, Retry retry)`  
+```csharp
+public delegate Solutions Success(Subst subst, Retry retry)
+```
 A function type for succeeding functions.  
 
-`public delegate Solutions Ma(Success yes, Retry no, Retry esc)`  
+```csharp
+public delegate Solutions Ma(Success yes, Retry no, Retry esc)
+```
 The monadic type: A function that takes a success function and two retry
 functions for backtracking. Runs the continuation and initiates backtracking.  
 
-`public delegate Ma Mf(Subst subst)`  
+```csharp
+public delegate Ma Mf(Subst subst)
+```
 The monadic function type. Takes a substitution environment and returns a
 monadic object of type Ma.  
 
-`public static Variable var(string name)`  
+```csharp
+public static Variable var(string name)
+```
 Creates a new logical variable with the given name.  
 
-`public static Solutions success(Subst subst, Retry retry)`  
+```csharp
+public static Solutions success(Subst subst, Retry retry)
+```
 Represents a successful resolution.  
 Takes a substitution environment and a retry continuation.
 First yields the substitution environment once and then invokes
 backtracking by delegating to the provided retry continuation.  
 
-`public static Solutions failure()`  
+```csharp
+public static Solutions failure()
+```
 Represents a failed resolution.  
 
-`public static Ma bind(Ma ma, Mf mf)`  
+```csharp
+public static Ma bind(Ma ma, Mf mf)
+```
 Applies the monadic computation mf to ma.  
 
-`public static Ma unit(Subst subst)`  
+```csharp
+public static Ma unit(Subst subst)
+```
 Lifts a substitution environment into a computation.  
 
-`public static Ma cut(Subst subst)`  
+```csharp
+public static Ma cut(Subst subst)
+```
 Succeeds once, and on backtracking aborts the current computation,
 effectively pruning the search space.  
 
-`public static Ma fail(Subst subst)`  
+```csharp
+public static Ma fail(Subst subst)
+```
 Represents a failed computation. Immediately initiates backtracking.  
 
-`public static Mf then(Mf mf, Mf mg)`  
+```csharp
+public static Mf then(Mf mf, Mf mg)
+```
 Composes two computations sequentially.  
 
-`public static Mf and_from_enumerable(IEnumerable<Mf> mfs)`  
+```csharp
+public static Mf and_from_enumerable(IEnumerable<Mf> mfs)
+```
 Composes multiple computations sequentially from an enumerable.  
 
-`public static Mf and(params Mf[] mfs)`  
+```csharp
+public static Mf and(params Mf[] mfs)
+```
 Composes multiple computations sequentially.  
 
-`public static Mf choice(Mf mf, Mf mg)`  
+```csharp
+public static Mf choice(Mf mf, Mf mg)
+```
 Represents a choice between two computations.  
 Takes two computations mf and mg and returns a new computation that
 tries mf, and if that fails, falls back to mg.  
 
-`public static Mf or_from_enumerable(IEnumerable<Mf> mfs)`  
+```csharp
+public static Mf or_from_enumerable(IEnumerable<Mf> mfs)
+```
 Represents a choice between multiple computations from an enumerable.  
 Takes a collection of computations mfs and returns a new computation
 that tries all of them in series with backtracking.  
 
-`public static Mf or(params Mf[] mfs)`  
+```csharp
+public static Mf or(params Mf[] mfs)
+```
 Represents a choice between multiple computations.  
 Takes a variable number of computations and returns a new computation
 that tries all of them in series with backtracking.  
 
-`public static Mf not(Mf mf)`  
+```csharp
+public static Mf not(Mf mf)
+```
 Negates the result of a computation.  
 Returns a new computation that succeeds if mf fails and vice versa.  
 
-`public static Mf unify(params ValueTuple<object, object>[] pairs)`  
+```csharp
+public static Mf unify(params ValueTuple<object, object>[] pairs)
+```
 Tries to unify pairs of objects. Fails if any pair is not unifiable.  
 
-`public static Solutions resolve(Mf goal)`  
+```csharp
+public static Solutions resolve(Mf goal)
+```
 Perform logical resolution of the computation represented by goal.  
 
-`public class Variable`  
+```csharp
+public class Variable
+```
 Represents named logical variables.  
 
 **An Example:**  
 
-```
+```csharp
   public static Mf human(Variable a) {
     return or(
       unify((a, "socrates")),               // socrates is human.
