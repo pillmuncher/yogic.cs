@@ -77,7 +77,7 @@ public delegate Solutions Retry()
 ```csharp
 public delegate Solutions Success(Subst subst, Retry retry)
 ```
-    - A function type for succeeding functions.  
+- A function type for succeeding functions.  
 
 ```csharp
 public delegate Solutions Ma(Success yes, Retry no, Retry esc)
