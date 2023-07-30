@@ -111,7 +111,7 @@ public static class Combinators {
                                             no  : () => mg(subst)(yes : yes,
                                                                   no  : no,
                                                                   esc : esc));
-}
+  }
 
   // Represents a choice between multiple computations from an enumerable.
   // Takes a collection of computations mfs and returns a new computation
@@ -225,6 +225,10 @@ public static class Combinators {
     };
     Console.WriteLine();
     foreach (var subst in resolve(and(mortal(x), not(dog(x))))) {
+      Console.WriteLine($"{subst[x]} is mortal and no dog.");
+    };
+    Console.WriteLine();
+    foreach (var subst in resolve(and(not(dog(x)), mortal(x)))) {
       Console.WriteLine($"{subst[x]} is mortal and no dog.");
     };
   }
