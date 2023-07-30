@@ -80,7 +80,7 @@ The monadic type: A function that takes a success function and two retry
 functions for backtracking. Runs the continuation and initiates backtracking.  
 
 `public delegate Ma Mf(Subst subst)`  
-The monadic function type. Take a substitution environment and returns a
+The monadic function type. Takes a substitution environment and returns a
 monadic object of type Ma.  
 
 
