@@ -72,35 +72,33 @@ set of functions/predicates.
 public delegate Solutions Retry()
 ```
 - A function type for retryable functions.  
+  
 ```csharp
 public delegate Solutions Success(Subst subst, Retry retry)
 ```
 - A function type for succeeding functions.  
+  
 ```csharp
 public delegate Solutions Ma(Success yes, Retry no, Retry esc)
 ```
 - The monadic type: A function that takes a success function and two retry
 functions for backtracking. Runs the continuation and initiates backtracking.  
+  
 ```csharp
 public delegate Ma Mf(Subst subst)
 ```
 - The monadic function type. Takes a substitution environment and returns a
 monadic object of type Ma.  
-```csharp
-public static Variable var(string name)
-```
-- Creates a new logical variable with the given name.  
+  
 ```csharp
 public static Ma bind(Ma ma, Mf mf)
 ```
 - Applies the monadic computation mf to ma.  
   
-  
 ```csharp
 public static Ma unit(Subst subst)
 ```
 - Lifts a substitution environment into a computation.  
-  
   
 ```csharp
 public static Ma cut(Subst subst)
@@ -108,30 +106,25 @@ public static Ma cut(Subst subst)
 - Succeeds once, and on backtracking aborts the current computation,
 effectively pruning the search space.  
   
-  
 ```csharp
 public static Ma fail(Subst subst)
 ```
 - Represents a failed computation. Immediately initiates backtracking.  
-  
   
 ```csharp
 public static Mf then(Mf mf, Mf mg)
 ```
 - Composes two computations sequentially.  
   
-  
 ```csharp
 public static Mf and_from_enumerable(IEnumerable<Mf> mfs)
 ```
 - Composes multiple computations sequentially from an enumerable.  
   
-  
 ```csharp
 public static Mf and(params Mf[] mfs)
 ```
 - Composes multiple computations sequentially.  
-  
   
 ```csharp
 public static Mf choice(Mf mf, Mf mg)
@@ -140,7 +133,6 @@ public static Mf choice(Mf mf, Mf mg)
 Takes two computations mf and mg and returns a new computation that
 tries mf, and if that fails, falls back to mg.  
   
-  
 ```csharp
 public static Mf or_from_enumerable(IEnumerable<Mf> mfs)
 ```
@@ -148,14 +140,12 @@ public static Mf or_from_enumerable(IEnumerable<Mf> mfs)
 Takes a collection of computations mfs and returns a new computation
 that tries all of them in series with backtracking.  
   
-  
 ```csharp
 public static Mf or(params Mf[] mfs)
 ```
 - Represents a choice between multiple computations.  
 Takes a variable number of computations and returns a new computation
 that tries all of them in series with backtracking.  
-  
   
 ```csharp
 public static Mf not(Mf mf)
@@ -177,6 +167,11 @@ public static Solutions resolve(Mf goal)
 public class Variable
 ```
 - Represents named logical variables.  
+  
+```csharp
+public static Variable var(string name)
+```
+- Convenience function. Creates a new logical variable with the given name.  
   
 **An Example:**  
 
