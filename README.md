@@ -66,8 +66,8 @@ one for each way *goal* can be proven. No result means a failed resolution,
 that is the function cannot be proven in the universe described by the given
 set of functions/predicates.
 
-[TODO: Api Doc]
-[TODO: Examples]
+[TODO: Api Doc]  
+[TODO: Examples]  
 
 Links:
 
