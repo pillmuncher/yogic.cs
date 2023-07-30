@@ -113,7 +113,7 @@ public static Solutions failure()
 ```csharp
 public static Ma bind(Ma ma, Mf mf)
 ```
-  Applies the monadic computation mf to ma.  
+  - Applies the monadic computation mf to ma.  
   
   
 ```csharp
