@@ -117,14 +117,14 @@ public static Mf then(Mf mf, Mf mg)
 - Composes two computations sequentially.  
   
 ```csharp
-public static Mf and_from_enumerable(IEnumerable<Mf> mfs)
-```
-- Composes multiple computations sequentially from an enumerable.  
-  
-```csharp
 public static Mf and(params Mf[] mfs)
 ```
 - Composes multiple computations sequentially.  
+  
+```csharp
+public static Mf and_from_enumerable(IEnumerable<Mf> mfs)
+```
+- Composes multiple computations sequentially from an enumerable.  
   
 ```csharp
 public static Mf choice(Mf mf, Mf mg)
@@ -134,17 +134,17 @@ Takes two computations mf and mg and returns a new computation that
 tries mf, and if that fails, falls back to mg.  
   
 ```csharp
-public static Mf or_from_enumerable(IEnumerable<Mf> mfs)
-```
-- Represents a choice between multiple computations from an enumerable.  
-Takes a collection of computations mfs and returns a new computation
-that tries all of them in series with backtracking.  
-  
-```csharp
 public static Mf or(params Mf[] mfs)
 ```
 - Represents a choice between multiple computations.  
 Takes a variable number of computations and returns a new computation
+that tries all of them in series with backtracking.  
+  
+```csharp
+public static Mf or_from_enumerable(IEnumerable<Mf> mfs)
+```
+- Represents a choice between multiple computations from an enumerable.  
+Takes a collection of computations mfs and returns a new computation
 that tries all of them in series with backtracking.  
   
 ```csharp
