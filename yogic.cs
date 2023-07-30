@@ -118,11 +118,11 @@ public static class Combinators {
   // that tries all of them in series with backtracking.
   public static Mf or_from_enumerable(IEnumerable<Mf> mfs) {
     // 'fail' and 'choice' form a monoid, so we can just fold:
-    Mf joined = mfs.Aggregate<Mf, Mf>(fail, choice);
+    var choices = mfs.Aggregate<Mf, Mf>(fail, choice);
     // we also inject the current 'no' continuation as escape
     // continuation, so we can jump out of a computation:
     return subst =>
-                (yes, no, esc) => joined(subst)(yes : yes,
+                (yes, no, esc) => choices(subst)(yes : yes,
                                                 no  : no, 
                                                 esc : no);
   }
@@ -221,7 +221,7 @@ public static class Combinators {
     var x = new Variable("x");
     var y = new Variable("y");
     foreach (var subst in resolve(descendant(x, y))) {
-      Console.WriteLine($"{subst[x]} is the descendant of {subst[y]}.");
+      Console.WriteLine($"{subst[x]} is a descendant of {subst[y]}.");
     };
     Console.WriteLine();
     foreach (var subst in resolve(and(mortal(x), not(dog(x))))) {
