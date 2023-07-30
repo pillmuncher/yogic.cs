@@ -176,7 +176,7 @@ Represents named logical variables.
 
   public static Mf descendant(Variable a, Variable c) {
     var b = new Variable("b");
-    return (subst) => or(                   // a is a descenfant of c if:
+    return (subst) => or(                   // a is a descendant of c if:
       child(a, c),                          // a is a child of c, or:
       and(child(a, b), descendant(b, c))    // a is a child of b and b is b descendant of c.
     )(subst);
