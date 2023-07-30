@@ -83,10 +83,6 @@ functions for backtracking. Runs the continuation and initiates backtracking.
 The monadic function type. Takes a substitution environment and returns a
 monadic object of type Ma.  
 
-
-`public class Variable`  
-Represents named logical variables.  
-
 `public static Variable var(string name)`  
 Creates a new logical variable with the given name.  
 
@@ -145,6 +141,9 @@ Tries to unify pairs of objects. Fails if any pair is not unifiable.
 
 `public static Solutions resolve(Mf goal)`  
 Perform logical resolution of the computation represented by goal.  
+
+`public class Variable`  
+Represents named logical variables.  
 
 **An Example:**  
 
