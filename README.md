@@ -80,10 +80,53 @@ backtracking by delegating to the provided retry continuation.
 `public static Solutions failure()`  
 Represents a failed resolution.  
 
+`public static Ma bind(Ma ma, Mf mf)`  
+Applies the monadic computation mf to ma.  
 
+`public static Ma unit(Subst subst)`  
+Lifts a substitution environment into a computation.  
 
+`public static Ma cut(Subst subst)`  
+Succeeds once, and on backtracking aborts the current computation,
+effectively pruning the search space.  
 
-[TODO: Api Doc]  
+`public static Ma fail(Subst subst)`  
+Represents a failed computation. Immediately initiates backtracking.  
+
+`public static Mf then(Mf mf, Mf mg)`  
+Composes two computations sequentially.  
+
+`public static Mf and_from_enumerable(IEnumerable<Mf> mfs)'  
+Composes multiple computations sequentially from an enumerable.  
+
+`public static Mf and(params Mf[] mfs)`  
+Composes multiple computations sequentially.  
+
+`public static Mf choice(Mf mf, Mf mg)`  
+Represents a choice between two computations.  
+Takes two computations mf and mg and returns a new computation that
+tries mf, and if that fails, falls back to mg.  
+
+`public static Mf or_from_enumerable(IEnumerable<Mf> mfs)`  
+Represents a choice between multiple computations from an enumerable.  
+Takes a collection of computations mfs and returns a new computation
+that tries all of them in series with backtracking.  
+
+`public static Mf or(params Mf[] mfs)`  
+Represents a choice between multiple computations.  
+Takes a variable number of computations and returns a new computation
+that tries all of them in series with backtracking.  
+
+`public static Mf not(Mf mf)`  
+Negates the result of a computation.  
+Returns a new computation that succeeds if mf fails and vice versa.  
+
+`public static Mf unify(params ValueTuple<object, object>[] pairs)`  
+Tries to unify pairs of objects. Fails if any pair is not unifiable.  
+
+`public static Solutions resolve(Mf goal)`  
+Perform logical resolution of the computation represented by goal.  
+
 [TODO: Examples]  
 
 Links:
