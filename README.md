@@ -66,6 +66,23 @@ one for each way *goal* can be proven. No result means a failed resolution,
 that is the function cannot be proven in the universe described by the given
 set of functions/predicates.
 
+**API:**
+
+`public static Variable var(string name)`  
+Creates a new logical variable with the given name.  
+
+`public static Solutions success(Subst subst, Retry retry)`  
+Represents a successful resolution.  
+Takes a substitution environment and a retry continuation.
+First yields the substitution environment once and then invokes
+backtracking by delegating to the provided retry continuation.  
+
+`public static Solutions failure()`  
+Represents a failed resolution.  
+
+
+
+
 [TODO: Api Doc]  
 [TODO: Examples]  
 
