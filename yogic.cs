@@ -4,9 +4,9 @@ using Subst = System.Collections.Immutable.ImmutableDictionary<Variable, object>
 using Solutions = System.Collections.Generic.IEnumerable<System.Collections.Immutable.ImmutableDictionary<Variable, object>>;
 
 
-public delegate Solutions Retry();
-public delegate Solutions Success(Subst subst, Retry retry);
-public delegate Solutions Ma(Success yes, Retry no, Retry esc);
+public delegate Solutions Failure();
+public delegate Solutions Success(Subst subst, Failure backtrack);
+public delegate Solutions Ma(Success yes, Failure no, Failure esc);
 public delegate Ma Mf(Subst subst);
 
 
@@ -31,9 +31,9 @@ public static class Combinators {
     return new Variable(name);
   }
 
-  private static Solutions success(Subst subst, Retry retry) {
+  private static Solutions success(Subst subst, Failure backtrack) {
     yield return subst;
-    foreach(var each in retry()) {
+    foreach(var each in backtrack()) {
       yield return each;
     };
   }
@@ -44,25 +44,25 @@ public static class Combinators {
 
   public static Ma bind(Ma ma, Mf mf) {
     // prepend 'mf' before the current 'yes' continuation, making it the
-    // new one, and inject the 'retry' continuation as the subsequent 'no'
+    // new one, and inject the 'backtrack' continuation as the subsequent 'no'
     // continuation:
     return (yes, no, esc) => ma(no  : no,
                                 esc : esc,
-                                yes : (subst, retry) => mf(subst)(yes : yes,
-                                                                  esc : esc,
-                                                                  no  : retry));
+                                yes : (subst, backtrack) => mf(subst)(yes : yes,
+                                                                      esc : esc,
+                                                                      no  : backtrack));
     }
 
   public static Ma unit(Subst subst) {
-    // we inject the current 'no' continuation as retry continuation:
+    // we inject the current 'no' continuation as backtrack continuation:
     return (yes, no, esc) => yes(subst,
-                                 retry : no);
+                                 backtrack : no);
   }
 
   public static Ma cut(Subst subst) {
-    // inject the current escape continuation as retry continuation:
+    // inject the current escape continuation as backtrack continuation:
     return (yes, no, esc) => yes(subst,
-                                 retry : esc);
+                                 backtrack : esc);
   }
 
   public static Ma fail(Subst subst) {

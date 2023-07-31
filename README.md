@@ -69,50 +69,54 @@ set of functions/predicates.
 **API:**
 
 ```csharp
-public delegate Solutions Retry()
+public delegate Solutions Success(Subst subst, Failure backtrack)
 ```
-- A function type for retryable functions.  
+- A function type that represents a successful resolution.  
+  Success continuations are called with a substitution environment and a
+  Failure continuation. Success functions yield the provided substitution
+  environment once and then yield whatever backtrack() yields.
   
 ```csharp
-public delegate Solutions Success(Subst subst, Retry retry)
+public delegate Solutions Failure()
 ```
-- A function type for succeeding functions.  
+- A function type that represents a failed resolution.  
+  Failure continuations are called ti initiate backtracking.
   
 ```csharp
-public delegate Solutions Ma(Success yes, Retry no, Retry esc)
+public delegate Solutions Ma(Success yes, Failure no, Failure esc)
 ```
-- The monadic type: A function that takes a success function and two retry
-functions for backtracking. Runs the continuation and initiates backtracking.  
+- The monad type. 
+  Takes a Success continuation and two Failure continuations.  
   
 ```csharp
 public delegate Ma Mf(Subst subst)
 ```
-- The monadic function type. Takes a substitution environment and returns a
-monadic object of type Ma.  
+- The monadic function type. 
+  Takes a substitution environment and returns a monadic object.  
   
 ```csharp
 public static Ma bind(Ma ma, Mf mf)
 ```
-- Applies the monadic computation mf to ma.  
+- Applies the monadic computation mf to ma and returns the result.  
   
 ```csharp
 public static Ma unit(Subst subst)
 ```
 - Lifts a substitution environment into a computation.  
-Always succeeds.
+  Always succeeds.  
   
 ```csharp
 public static Ma cut(Subst subst)
 ```
-- Lifts a substitution environment into a computation.  
-Succeeds once, and on backtracking aborts the current computation,
-effectively pruning the search space.  
+- Lifts a substitution environment into a computation.
+  Succeeds once, and on backtracking aborts the current computation,
+  effectively pruning the search space.  
   
 ```csharp
 public static Ma fail(Subst subst)
 ```
 - Lifts a substitution environment into a computation.  
-Never succeeds. Immediately initiates backtracking.  
+  Never succeeds. Immediately initiates backtracking.  
   
 ```csharp
 public static Mf then(Mf mf, Mf mg)
@@ -133,28 +137,28 @@ public static Mf and_from_enumerable(IEnumerable<Mf> mfs)
 public static Mf choice(Mf mf, Mf mg)
 ```
 - Represents a choice between two computations.  
-Takes two computations mf and mg and returns a new computation that
-tries mf, and if that fails, falls back to mg.  
+  Takes two computations mf and mg and returns a new computation that tries
+  mf, and if that fails, falls back to mg.  
   
 ```csharp
 public static Mf or(params Mf[] mfs)
 ```
 - Represents a choice between multiple computations.  
-Takes a variable number of computations and returns a new computation
-that tries all of them in series with backtracking.  
+  Takes a variable number of computations and returns a new computation that
+  tries all of them in series with backtracking.  
   
 ```csharp
 public static Mf or_from_enumerable(IEnumerable<Mf> mfs)
 ```
 - Represents a choice between multiple computations from an enumerable.  
-Takes a collection of computations mfs and returns a new computation
-that tries all of them in series with backtracking.  
+  Takes a collection of computations mfs and returns a new computation that
+  tries all of them in series with backtracking.  
   
 ```csharp
 public static Mf not(Mf mf)
 ```
 - Negates the result of a computation.  
-Returns a new computation that succeeds if mf fails and vice versa.  
+  Returns a new computation that succeeds if mf fails and vice versa.  
   
 ```csharp
 public static Mf unify(params ValueTuple<object, object>[] pairs)
