@@ -6,36 +6,36 @@ An embedded DSL of monadic combinators for first-order logic programming.
 
 ## **Key features:**
 
-- **Horn Clauses**: Express logical facts and rules as simple functions.
+- **Horn Clauses**: Express logical facts and rules as simple functions.  
 
-- **Combinators**: Compose expressions of first-order logic by simply
-  composing combinator functions.
+- **Combinators**: Define expressions of first-order logic by simply
+  composing combinator functions.  
 
 - **Logical Variables**: Represented by the ``Variable`` class, they can be
-  bound to arbitrary values and other variables during resolution.
+  bound to arbitrary values and other variables during resolution.  
 
 - **Substitution and Unification**: The substitution environment provides
-  variable bindings and is incrementally constructed during resolution.
-  It is returned for each successful resolution.
+  variable bindings and is incrementally constructed during resolution. It
+  is returned for each successful resolution.  
 
 - **Backtracking**: The monad combines the List and the Triple-Barrelled
-  Continuation Monads for resolution, backtracking, and branch pruning
-  via the ``cut`` combinator.
+  Continuation Monads for resolution, backtracking, and branch pruning via
+  the ``cut`` combinator.  
 
-- **Algebraic Structures**: ``unit`` and ``then`` form a *monoid* over monadic
-  combinator functions, as do ``fail`` and ``choice``. Together they form a
-  *Distributive Lattice* with ``then`` as the *meet* (infimum) and ``choice`` as
-  the *join* (supremum) operator, and ``unit`` and ``fail`` as their
-  respective identity elements. Because of the sequential nature of the
-  employed resolution algorithm, the lattice is non-commutative.
+- **Algebraic Structures**: ``unit`` and ``then`` form a *monoid* over
+  monadic combinator functions, as do ``fail`` and ``choice``. Together they
+  form a *Distributive Lattice* with ``then`` as the *meet* (infimum) and
+  ``choice`` as the *join* (supremum) operator, and ``unit`` and ``fail`` as
+  their respective identity elements. Because of the sequential nature of
+  the employed resolution algorithm, the lattice is non-commutative.  
 
 ## **A Motivating Example:**  
 
 We define functions that represent logical facts that specify which
-individuals are humans and dogs and define a `child(a, b)` relation such that
-`a` is the child of `b`. Then we define rules that specify what a descendant
-and a mortal being is. Then we can run queries that tell us which individuals
-are descendants of whom and which individuals are mortal:
+individuals are humans and dogs and define a `child(a, b)` relation such
+that `a` is the child of `b`. Then we define rules that specify what a
+descendant and a mortal being is. Then we can run queries that tell us which
+individuals are descendants of whom and which individuals are mortal:  
 ```csharp
   public static Mf human(Variable a) {
     return or(
