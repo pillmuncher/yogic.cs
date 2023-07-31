@@ -99,17 +99,20 @@ public static Ma bind(Ma ma, Mf mf)
 public static Ma unit(Subst subst)
 ```
 - Lifts a substitution environment into a computation.  
+Always succeeds.
   
 ```csharp
 public static Ma cut(Subst subst)
 ```
-- Succeeds once, and on backtracking aborts the current computation,
+- Lifts a substitution environment into a computation.  
+Succeeds once, and on backtracking aborts the current computation,
 effectively pruning the search space.  
   
 ```csharp
 public static Ma fail(Subst subst)
 ```
-- Represents a failed computation. Immediately initiates backtracking.  
+- Lifts a substitution environment into a computation.  
+Never succeeds. Immediately initiates backtracking.  
   
 ```csharp
 public static Mf then(Mf mf, Mf mg)
