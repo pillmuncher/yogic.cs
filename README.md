@@ -181,7 +181,7 @@ public delegate Solutions Ma(Success yes, Failure no, Failure esc)
 public delegate Ma Mf(Subst subst)
 ```
 - The monadic function type.  
-  Combinators of this type take a  substitution environment `subst` and
+  Combinators of this type take a substitution environment `subst` and
   return a monadic object.  
   
 ```csharp
