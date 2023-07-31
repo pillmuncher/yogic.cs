@@ -2,7 +2,7 @@
 **Yogic, but in C#.**
 
 
-An embedded DSL for expressing first-order logical predicates and
+An embedded DSL of monadic combinators for first-order logical predicates and
 performing resolution with backtracking and pruning of search paths.
 
 **Key features:**
