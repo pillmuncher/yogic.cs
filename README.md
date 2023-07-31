@@ -73,8 +73,8 @@ public delegate Solutions Success(Subst subst, Failure backtrack)
 ```
 - A function type that represents a successful resolution.  
   Success continuations are called with a substitution environment and a
-  Failure continuation. Success functions yield the provided substitution
-  environment once and then yield whatever backtrack() yields.
+  Failure continuation and yield the provided substitution environment once
+  and then yield whatever backtrack() yields.
   
 ```csharp
 public delegate Solutions Failure()
