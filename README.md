@@ -6,36 +6,36 @@ An embedded DSL of monadic combinators for first-order logic programming.
 
 ## **Key features:**
 
-- **Horn Clauses**: Express logical facts and rules as simple functions.  
+- **Horn Clauses**: Express logical facts and rules as simple functions.
 
 - **Combinators**: Define expressions of first-order logic by simply
-  composing combinator functions.  
+  composing combinator functions.
 
 - **Logical Variables**: Represented by the ``Variable`` class, they can be
-  bound to arbitrary values and other variables during resolution.  
+  bound to arbitrary values and other variables during resolution.
 
 - **Substitution and Unification**: The substitution environment provides
   variable bindings and is incrementally constructed during resolution. It
-  is returned for each successful resolution.  
+  is returned for each successful resolution.
 
 - **Backtracking**: The monad combines the List and the Triple-Barrelled
   Continuation Monads for resolution, backtracking, and branch pruning via
-  the ``cut`` combinator.  
+  the ``cut`` combinator.
 
 - **Algebraic Structures**: ``unit`` and ``then`` form a *monoid* over
   monadic combinator functions, as do ``fail`` and ``choice``. Together they
   form a *Distributive Lattice* with ``then`` as the *meet* (infimum) and
   ``choice`` as the *join* (supremum) operator, and ``unit`` and ``fail`` as
   their respective identity elements. Because of the sequential nature of
-  the employed resolution algorithm, the lattice is *non-commutative*.  
+  the employed resolution algorithm, the lattice is *non-commutative*.
 
-## **A Motivating Example:**  
+## **A Motivating Example:**
 
 We represent logical facts as functions that that specify which individuals
 are humans and dogs and define a `child(a, b)` relation such that `a` is the
 child of `b`. Then we define rules that specify what a descendant and a
 mortal being is. We then run queries that tell us which individuals are
-descendants of whom and which individuals are both mortal and no dogs:  
+descendants of whom and which individuals are both mortal and no dogs:
 ```csharp
   public static Mf human(Variable a) {
     return or(
@@ -123,7 +123,7 @@ as a set of logical implications:
 g1  ⟶  f(x1,...,xm)
 ...
 gn  ⟶  f(x1,...,xm)
-```  
+```
 
 We call ``f(x1,...,xn)`` the *head* and each ``gi`` a *body*.
 
@@ -156,17 +156,17 @@ functions/predicates.
 ```csharp
 public delegate Solutions Success(Subst subst, Failure backtrack)
 ```
-- A function type that represents a successful resolution.  
+- A function type that represents a successful resolution. 
   `Success` continuations are called with a substitution environment `subst`
   and a `Failure` continuation `backtrack` and yield the provided substitution
-  environment once and then yield whatever `backtrack()` yields.  
-  
+  environment once and then yield whatever `backtrack()` yields.
+
 ```csharp
 public delegate Solutions Failure()
 ```
 - A function type that represents a failed resolution.  
-  `Failure` continuations are called to initiate backtracking.  
-  
+  `Failure` continuations are called to initiate backtracking.
+
 ```csharp
 public delegate Solutions Ma(Success yes, Failure no, Failure esc)
 ```
@@ -175,138 +175,138 @@ public delegate Solutions Ma(Success yes, Failure no, Failure esc)
   continuations. The `yes` continuation represents the current continuation
   and `no` represents the backtracking path. `esc` is the escape continuation
   that is invoked by the `cut` combinator to jump out of the current
-  comptutation back to the previous choice point.   
-  
+  comptutation back to the previous choice point. 
+
 ```csharp
 public delegate Ma Mf(Subst subst)
 ```
 - The monadic function type.  
   Combinators of this type take a substitution environment `subst` and
-  return a monadic object.  
-  
+  return a monadic object.
+
 ```csharp
 public static Ma bind(Ma ma, Mf mf)
 ```
 - Applies the monadic computation `mf` to `ma` and returns the result.  
   In the context of the backtracking monad this means turning `mf` into a
   continuation.
-  
+
 ```csharp
 public static Ma unit(Subst subst)
 ```
 - Lifts a substitution environment `subst` into a computation.  
-  Succeeds once and then initates backtracking.  
-  
+  Succeeds once and then initates backtracking.
+
 ```csharp
 public static Ma cut(Subst subst)
 ```
 - Lifts a substitution environment `subst` into a computation.  
   Succeeds once, and instead of normal backtracking aborts the current
   computation and jumps to the previous choice point, effectively pruning the
-  search space.  
-  
+  search space.
+
 ```csharp
 public static Ma fail(Subst subst)
 ```
 - Lifts a substitution environment `subst` into a computation.  
-  Never succeeds. Immediately initiates backtracking.  
-  
+  Never succeeds. Immediately initiates backtracking.
+
 ```csharp
 public static Mf then(Mf mf, Mf mg)
 ```
-- Composes two computations sequentially.  
-  
+- Composes two computations sequentially.
+
 ```csharp
 public static Mf and(params Mf[] mfs)
 ```
-- Composes multiple computations sequentially.  
-  
+- Composes multiple computations sequentially.
+
 ```csharp
 public static Mf and_from_enumerable(IEnumerable<Mf> mfs)
 ```
-- Composes multiple computations sequentially from an enumerable.  
-  
+- Composes multiple computations sequentially from an enumerable.
+
 ```csharp
 public static Mf choice(Mf mf, Mf mg)
 ```
 - Represents a choice between two computations.  
   Takes two computations `mf` and `mg` and returns a new computation that tries
-  `mf`, and if that fails, falls back to `mg`. This defines a *choice point*.  
-  
+  `mf`, and if that fails, falls back to `mg`. This defines a *choice point*.
+
 ```csharp
 public static Mf or(params Mf[] mfs)
 ```
 - Represents a choice between multiple computations.  
   Takes a variable number of computations and returns a new computation that
-  tries all of them in series with backtracking. This defines a *choice point*.  
-  
+  tries all of them in series with backtracking. This defines a *choice point*.
+
 ```csharp
 public static Mf or_from_enumerable(IEnumerable<Mf> mfs)
 ```
 - Represents a choice between multiple computations from an enumerable.  
   Takes a sequence of computations `mfs` and returns a new computation that
-  tries all of them in series with backtracking. This defines a *choice point*.  
-  
+  tries all of them in series with backtracking. This defines a *choice point*.
+
 ```csharp
 public static Mf not(Mf mf)
 ```
 - Negates the result of a computation.  
-  Returns a new computation that succeeds if `mf` fails and vice versa.  
-  
+  Returns a new computation that succeeds if `mf` fails and vice versa.
+
 ```csharp
 public static Mf unify(params ValueTuple<object, object>[] pairs)
 ```
-- Tries to unify pairs of objects. Fails if any pair is not unifiable.  
-  
+- Tries to unify pairs of objects. Fails if any pair is not unifiable.
+
 ```csharp
 public static Solutions resolve(Mf goal)
 ```
-- Perform logical resolution of the computation represented by `goal`.  
-  
+- Perform logical resolution of the computation represented by `goal`.
+
 ```csharp
 public class Variable
 ```
-- Represents named logical variables.  
-  
+- Represents named logical variables.
+
 ```csharp
 public static Variable var(string name)
 ```
-- Convenience function. Creates a new logical variable with the given name.  
-  
+- Convenience function. Creates a new logical variable with the given name.
+
 ## Links:
 
 Unification:  
 https://eli.thegreenplace.net/2018/unification/
-  
+
 Backtracking:  
 https://en.wikipedia.org/wiki/Backtracking
-  
+
 Logical Resolution:  
 http://web.cse.ohio-state.edu/~stiff.4/cse3521/logical-resolution.html
-  
+
 Horn Clauses:  
 https://en.wikipedia.org/wiki/Horn_clause
-  
+
 Monoid:  
 https://en.wikipedia.org/wiki/Monoid
-  
+
 Distributive Lattice:  
 https://en.wikipedia.org/wiki/Distributive_lattice
-  
+
 Monads:  
 https://en.wikipedia.org/wiki/Monad_(functional_programming)
-  
+
 Monads Explained in C# (again):  
 https://mikhail.io/2018/07/monads-explained-in-csharp-again/
-  
+
 Discovering the Continuation Monad in C#:  
 https://functionalprogramming.medium.com/deriving-continuation-monad-from-callbacks-23d74e8331d0
-  
+
 Continuations:  
 https://en.wikipedia.org/wiki/Continuation
-  
+
 Continuations Made Simple and Illustrated:  
 https://www.ps.uni-saarland.de/~duchier/python/continuations.html
-  
+
 The Discovery of Continuations:  
 https://www.cs.ru.nl/~freek/courses/tt-2011/papers/cps/histcont.pdf
