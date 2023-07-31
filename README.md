@@ -45,7 +45,7 @@ We call ``f(x1,...,xn)`` the *head* and each ``gi`` a *body*.
 We prove these by *modus ponens*:
 
 ```
-A  ⟶  B            gi  ⟶  f(x1,...,xn)
+A  ⟶  B            gi  ⟶  f(x<sub>1</sub>,...,xn)
 A                  gi
 ⎯⎯⎯⎯⎯          ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
 B                  f(x1,...,xn)
