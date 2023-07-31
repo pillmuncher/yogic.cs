@@ -97,25 +97,25 @@ public delegate Ma Mf(Subst subst)
 ```csharp
 public static Ma bind(Ma ma, Mf mf)
 ```
-- Applies the monadic computation mf to ma and returns the result.  
+- Applies the monadic computation `mf` to `ma` and returns the result.  
   
 ```csharp
 public static Ma unit(Subst subst)
 ```
-- Lifts a substitution environment into a computation.  
+- Lifts a substitution environment `subst` into a computation.  
   Always succeeds.  
   
 ```csharp
 public static Ma cut(Subst subst)
 ```
-- Lifts a substitution environment into a computation.
-  Succeeds once, and on backtracking aborts the current computation,
-  effectively pruning the search space.  
+- Lifts a substitution environment `subst` into a computation.  
+  Succeeds once, and on backtracking aborts the current computation and jumps
+  to the previous choice point, effectively pruning the search space.  
   
 ```csharp
 public static Ma fail(Subst subst)
 ```
-- Lifts a substitution environment into a computation.  
+- Lifts a substitution environment `subst` into a computation.  
   Never succeeds. Immediately initiates backtracking.  
   
 ```csharp
@@ -137,8 +137,8 @@ public static Mf and_from_enumerable(IEnumerable<Mf> mfs)
 public static Mf choice(Mf mf, Mf mg)
 ```
 - Represents a choice between two computations.  
-  Takes two computations mf and mg and returns a new computation that tries
-  mf, and if that fails, falls back to mg.  
+  Takes two computations `mf` and `mg` and returns a new computation that tries
+  `m`f, and if that fails, falls back to `mg`. This defines a *choice point*. 
   
 ```csharp
 public static Mf or(params Mf[] mfs)
