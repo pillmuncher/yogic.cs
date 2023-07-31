@@ -102,7 +102,7 @@ public static class Combinators {
     // continuation, so we can jump out of a computation:
     return subst =>
                 (yes, no, esc) => choices(subst)(yes : yes,
-                                                 no  : no, 
+                                                 no  : no,
                                                  esc : no);
   }
 
