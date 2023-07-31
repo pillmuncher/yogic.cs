@@ -48,7 +48,7 @@ We prove these by *modus ponens*:
 ```
 A  ⟶  B     |       px  ⟶  f(x1,...,xn)
 A           |       px
-⎯⎯⎯⎯⎯     |       ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+⎯⎯⎯⎯⎯   |       ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
 B           |       f(x1,...,xn)
 ```
 
