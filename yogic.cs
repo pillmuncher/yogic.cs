@@ -115,6 +115,13 @@ public static class Combinators {
     return or(and(mf, cut, fail), unit);
   }
 
+  private static object deref(Subst subst, object o) {
+    while (o is Variable && subst.ContainsKey((Variable) o)) {
+      o = subst[(Variable)o];
+    };
+    return o;
+  }
+
   private static Mf _unify(ValueTuple<object, object> pair) {
     // using an 'ImmutableDictionary' makes trailing easy:
     (var o1, var o2) = pair;
@@ -129,13 +136,6 @@ public static class Combinators {
   public static Mf unify(params ValueTuple<object, object>[] pairs) {
     // we turn multiple unification requests into a continuation:
     return and_from_enumerable(from pair in pairs select _unify(pair));
-  }
-
-  private static object deref(Subst subst, object o) {
-    while (o is Variable && subst.ContainsKey((Variable) o)) {
-      o = subst[(Variable)o];
-    };
-    return o;
   }
 
   public static Solutions resolve(Mf goal) {
