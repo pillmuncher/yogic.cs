@@ -179,19 +179,22 @@ public delegate Ma Mf(Subst subst)
 public static Ma bind(Ma ma, Mf mf)
 ```
 - Applies the monadic computation `mf` to `ma` and returns the result.  
+  In the context of the backtracking monad this means turning `mf` into a
+  continuation.
   
 ```csharp
 public static Ma unit(Subst subst)
 ```
 - Lifts a substitution environment `subst` into a computation.  
-  Always succeeds.  
+  Succeeds once and then initates backtracking.  
   
 ```csharp
 public static Ma cut(Subst subst)
 ```
 - Lifts a substitution environment `subst` into a computation.  
-  Succeeds once, and on backtracking aborts the current computation and jumps
-  to the previous choice point, effectively pruning the search space.  
+  Succeeds once, and instead of normal backtracking aborts the current
+  computation and jumps to the previous choice point, effectively pruning the
+  search space.  
   
 ```csharp
 public static Ma fail(Subst subst)
