@@ -80,7 +80,7 @@ public delegate Solutions Success(Subst subst, Failure backtrack)
 public delegate Solutions Failure()
 ```
 - A function type that represents a failed resolution.  
-  `Failure` continuations are called to initiate backtracking.
+  `Failure` continuations are called to initiate backtracking.  
   
 ```csharp
 public delegate Solutions Ma(Success yes, Failure no, Failure esc)
@@ -138,7 +138,7 @@ public static Mf choice(Mf mf, Mf mg)
 ```
 - Represents a choice between two computations.  
   Takes two computations `mf` and `mg` and returns a new computation that tries
-  `m`f, and if that fails, falls back to `mg`. This defines a *choice point*. 
+  `m`f, and if that fails, falls back to `mg`. This defines a *choice point*.  
   
 ```csharp
 public static Mf or(params Mf[] mfs)
@@ -151,14 +151,14 @@ public static Mf or(params Mf[] mfs)
 public static Mf or_from_enumerable(IEnumerable<Mf> mfs)
 ```
 - Represents a choice between multiple computations from an enumerable.  
-  Takes a collection of computations mfs and returns a new computation that
+  Takes a collection of computations `mfs` and returns a new computation that
   tries all of them in series with backtracking.  
   
 ```csharp
 public static Mf not(Mf mf)
 ```
 - Negates the result of a computation.  
-  Returns a new computation that succeeds if mf fails and vice versa.  
+  Returns a new computation that succeeds if `mf` fails and vice versa.  
   
 ```csharp
 public static Mf unify(params ValueTuple<object, object>[] pairs)
@@ -168,7 +168,7 @@ public static Mf unify(params ValueTuple<object, object>[] pairs)
 ```csharp
 public static Solutions resolve(Mf goal)
 ```
-- Perform logical resolution of the computation represented by goal.  
+- Perform logical resolution of the computation represented by `goal`.  
   
 ```csharp
 public class Variable
