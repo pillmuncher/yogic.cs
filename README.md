@@ -74,7 +74,7 @@ public delegate Solutions Success(Subst subst, Failure backtrack)
 - A function type that represents a successful resolution.  
   `Success` continuations are called with a substitution environment `subst`
   and a `Failure` continuation `backtrack` and yield the provided substitution
-  environment once and then yield whatever `backtrack()` yields.
+  environment once and then yield whatever `backtrack()` yields.  
   
 ```csharp
 public delegate Solutions Failure()
@@ -85,14 +85,14 @@ public delegate Solutions Failure()
 ```csharp
 public delegate Solutions Ma(Success yes, Failure no, Failure esc)
 ```
-- The monad type. 
-  Takes a Success continuation and two Failure continuations.  
+- The monad type.  
+  Takes a `Success` continuation and two `Failure` continuations.  
   
 ```csharp
 public delegate Ma Mf(Subst subst)
 ```
-- The monadic function type. 
-  Takes a substitution environment and returns a monadic object.  
+- The monadic function type.  
+  Takes a substitution environment `subst` and returns a monadic object.  
   
 ```csharp
 public static Ma bind(Ma ma, Mf mf)
