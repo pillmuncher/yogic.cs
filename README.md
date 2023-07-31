@@ -65,6 +65,83 @@ one for each way *goal* can be proven. No result means a failed resolution,
 that is the function cannot be proven in the universe described by the given
 set of functions/predicates.
 
+## **An Example:**  
+
+```csharp
+  public static Mf human(Variable a) {
+    return or(
+      unify((a, "socrates")),               // socrates is human.
+      unify((a, "plato")),                  // plato is human.
+      unify((a, "archimedes"))              // archimedes is human.
+    );
+  }
+
+  public static Mf dog(Variable a) {
+    return or(
+      unify((a, "fluffy")),                 // fluffy is a dog.
+      unify((a, "daisy")),                  // daisy is a dog.
+      unify((a, "fifi"))                    // fifi is a dog.
+    );
+  }
+
+  public static Mf child(Variable a, Variable b) {
+    return or(
+      unify((a, "jim"), (b, "bob")),        // jim is a child of bob.
+      unify((a, "joe"), (b, "bob")),        // joe is a child of bob.
+      unify((a, "ian"), (b, "jim")),        // ian is a child of jim.
+      unify((a, "fifi"), (b, "fluffy")),    // fifi is a child of fluffy.
+      unify((a, "fluffy"), (b, "daisy"))    // fluffy is a child of daisy.
+    );
+  }
+
+  public static Mf descendant(Variable a, Variable c) {
+    var b = new Variable("b");
+    // by returning a lambda function we
+    // create another level of indirection,
+    // so that the recursion doesn't
+    // immediately trigger an infinite loop:
+    return (subst) => or(                   // a is a descendant of c if:
+      child(a, c),                          // a is a child of c, or:
+      and(child(a, b), descendant(b, c))    // a is a child of b and b is b descendant of c.
+    )(subst);
+  }
+
+  public static Mf mortal(Variable a) {
+    var b = new Variable("b");
+    return (subst) => or(                   // a is mortal if:
+      human(a),                             // a is human, or
+      dog(a),                               // a is a dog, or
+      and(descendant(a, b), mortal(b))      // a descends from a mortal.
+    )(subst);
+  }
+
+  public static void Main() {
+    var x = new Variable("x");
+    var y = new Variable("y");
+    foreach (var subst in resolve(descendant(x, y))) {
+      Console.WriteLine($"{subst[x]} is a descendant of {subst[y]}.");
+    };
+    Console.WriteLine();
+    foreach (var subst in resolve(and(mortal(x), not(dog(x))))) {
+      Console.WriteLine($"{subst[x]} is mortal and no dog.");
+    };
+  }
+```
+**Result:**
+```
+jim is a descendant of bob.
+joe is a descendant of bob.
+ian is a descendant of jim.
+fifi is a descendant of fluffy.
+fluffy is a descendant of daisy.
+ian is a descendant of bob.
+fifi is a descendant of daisy.
+
+socrates is mortal and no dog.
+plato is mortal and no dog.
+archimedes is mortal and no dog.
+```
+
 ## **API:**
 
 ```csharp
@@ -179,83 +256,6 @@ public static Variable var(string name)
 ```
 - Convenience function. Creates a new logical variable with the given name.  
   
-## **An Example:**  
-
-```csharp
-  public static Mf human(Variable a) {
-    return or(
-      unify((a, "socrates")),               // socrates is human.
-      unify((a, "plato")),                  // plato is human.
-      unify((a, "archimedes"))              // archimedes is human.
-    );
-  }
-
-  public static Mf dog(Variable a) {
-    return or(
-      unify((a, "fluffy")),                 // fluffy is a dog.
-      unify((a, "daisy")),                  // daisy is a dog.
-      unify((a, "fifi"))                    // fifi is a dog.
-    );
-  }
-
-  public static Mf child(Variable a, Variable b) {
-    return or(
-      unify((a, "jim"), (b, "bob")),        // jim is a child of bob.
-      unify((a, "joe"), (b, "bob")),        // joe is a child of bob.
-      unify((a, "ian"), (b, "jim")),        // ian is a child of jim.
-      unify((a, "fifi"), (b, "fluffy")),    // fifi is a child of fluffy.
-      unify((a, "fluffy"), (b, "daisy"))    // fluffy is a child of daisy.
-    );
-  }
-
-  public static Mf descendant(Variable a, Variable c) {
-    var b = new Variable("b");
-    // by returning a lambda function we
-    // create another level of indirection,
-    // so that the recursion doesn't
-    // immediately trigger an infinite loop:
-    return (subst) => or(                   // a is a descendant of c if:
-      child(a, c),                          // a is a child of c, or:
-      and(child(a, b), descendant(b, c))    // a is a child of b and b is b descendant of c.
-    )(subst);
-  }
-
-  public static Mf mortal(Variable a) {
-    var b = new Variable("b");
-    return (subst) => or(                   // a is mortal if:
-      human(a),                             // a is human, or
-      dog(a),                               // a is a dog, or
-      and(descendant(a, b), mortal(b))      // a descends from a mortal.
-    )(subst);
-  }
-
-  public static void Main() {
-    var x = new Variable("x");
-    var y = new Variable("y");
-    foreach (var subst in resolve(descendant(x, y))) {
-      Console.WriteLine($"{subst[x]} is a descendant of {subst[y]}.");
-    };
-    Console.WriteLine();
-    foreach (var subst in resolve(and(mortal(x), not(dog(x))))) {
-      Console.WriteLine($"{subst[x]} is mortal and no dog.");
-    };
-  }
-```
-**Result:**
-```
-jim is a descendant of bob.
-joe is a descendant of bob.
-ian is a descendant of jim.
-fifi is a descendant of fluffy.
-fluffy is a descendant of daisy.
-ian is a descendant of bob.
-fifi is a descendant of daisy.
-
-socrates is mortal and no dog.
-plato is mortal and no dog.
-archimedes is mortal and no dog.
-```
-
 ## Links:
 
 Unification:  
