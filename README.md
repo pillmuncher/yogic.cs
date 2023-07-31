@@ -111,8 +111,8 @@ socrates is mortal and no dog.
 plato is mortal and no dog.
 archimedes is mortal and no dog.
 ```
-Note that jim, bob, jow and ian are not part of the result because we didn't
-specify that they are human.
+Note that `jim`, `bob`, `joe` and `ian` are not part of the result of the
+second query because we didn't specify that they are human.
 
 ## **How it works:**
 
