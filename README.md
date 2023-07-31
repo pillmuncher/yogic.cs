@@ -68,7 +68,8 @@ descendants of whom and which individuals are mortal:
     // by returning a lambda function we
     // create another level of indirection,
     // so that the recursion doesn't
-    // immediately overflow the stack:
+    // immediately trigger an infinite loop
+    // and cause a stack overflow:
     return (subst) => or(                   // a is a descendant of c if:
       child(a, c),                          // a is a child of c, or:
       and(child(a, b), descendant(b, c))    // a is a child of b and b is b descendant of c.
