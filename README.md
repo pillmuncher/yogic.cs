@@ -138,7 +138,7 @@ public static Mf choice(Mf mf, Mf mg)
 ```
 - Represents a choice between two computations.  
   Takes two computations `mf` and `mg` and returns a new computation that tries
-  `m`f, and if that fails, falls back to `mg`. This defines a *choice point*.  
+  `mf`, and if that fails, falls back to `mg`. This defines a *choice point*.  
   
 ```csharp
 public static Mf or(params Mf[] mfs)
