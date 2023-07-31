@@ -29,43 +29,7 @@ An embedded DSL of monadic combinators for first-order logic programming.
   respective identity elements. Because of the sequential nature of the
   employed resolution algorithm, the lattice is non-commutative.
 
-## **How it works:**
-
-We interpret a function ``f(x1,...,xm) { return or(g1,...,gn); }``
-as a set of logical implications:
-
-```
-g1  ⟶  f(x1,...,xm)
-...
-gn  ⟶  f(x1,...,xm)
-```  
-
-We call ``f(x1,...,xn)`` the *head* and each ``gi`` a *body*.
-
-We prove these by *modus ponens*:
-
-```
-A  ⟶  B            gi  ⟶  f(x1,...,xn)
-A                  gi
-⎯⎯⎯⎯⎯          ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
-B                  f(x1,...,xn)
-```
-
-A function with head ``f(x1,...,xm)`` is proven by proving any of
-``g1,...gn`` recursively. When we reach a success goal that has no body,
-there's nothing left to prove. This process is called a *resolution*.
-
-**How to use it:**
-
-Just write functions that take in Variables and other values, and return
-monadic functions of type ``Mf``, constructed by composing your functions with
-the combinator functions provided by this module, and start the resolution by
-giving an initial function, a so-called *goal*, to ``resolve()`` and iterate
-over the results, one for each way *goal* can be proven. No result means a
-failed resolution, that is the function cannot be proven in the universe
-described by the given set of functions/predicates.
-
-## **An Example:**  
+## **A Motivating Example:**  
 
 ```csharp
   public static Mf human(Variable a) {
@@ -141,6 +105,42 @@ socrates is mortal and no dog.
 plato is mortal and no dog.
 archimedes is mortal and no dog.
 ```
+
+## **How it works:**
+
+We interpret a function ``f(x1,...,xm) { return or(g1,...,gn); }``
+as a set of logical implications:
+
+```
+g1  ⟶  f(x1,...,xm)
+...
+gn  ⟶  f(x1,...,xm)
+```  
+
+We call ``f(x1,...,xn)`` the *head* and each ``gi`` a *body*.
+
+We prove these by *modus ponens*:
+
+```
+A  ⟶  B            gi  ⟶  f(x1,...,xn)
+A                  gi
+⎯⎯⎯⎯⎯          ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+B                  f(x1,...,xn)
+```
+
+A function with head ``f(x1,...,xm)`` is proven by proving any of
+``g1,...gn`` recursively. When we reach a success goal that has no body,
+there's nothing left to prove. This process is called a *resolution*.
+
+**How to use it:**
+
+Just write functions that take in Variables and other values, and return
+monadic functions of type ``Mf``, constructed by composing your functions with
+the combinator functions provided by this module, and start the resolution by
+giving an initial function, a so-called *goal*, to ``resolve()`` and iterate
+over the results, one for each way *goal* can be proven. No result means a
+failed resolution, that is the function cannot be proven in the universe
+described by the given set of functions/predicates.
 
 ## **API:**
 
