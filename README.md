@@ -80,7 +80,7 @@ public delegate Solutions Success(Subst subst, Failure backtrack)
 public delegate Solutions Failure()
 ```
 - A function type that represents a failed resolution.  
-  Failure continuations are called ti initiate backtracking.
+  `Failure` continuations are called to initiate backtracking.
   
 ```csharp
 public delegate Solutions Ma(Success yes, Failure no, Failure esc)
