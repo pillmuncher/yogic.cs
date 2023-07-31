@@ -145,14 +145,14 @@ public static Mf or(params Mf[] mfs)
 ```
 - Represents a choice between multiple computations.  
   Takes a variable number of computations and returns a new computation that
-  tries all of them in series with backtracking.  
+  tries all of them in series with backtracking. This defines a *choice point*.  
   
 ```csharp
 public static Mf or_from_enumerable(IEnumerable<Mf> mfs)
 ```
 - Represents a choice between multiple computations from an enumerable.  
   Takes a sequence of computations `mfs` and returns a new computation that
-  tries all of them in series with backtracking.  
+  tries all of them in series with backtracking. This defines a *choice point*.  
   
 ```csharp
 public static Mf not(Mf mf)
