@@ -211,8 +211,10 @@ public static Variable var(string name)
 
   public static Mf descendant(Variable a, Variable c) {
     var b = new Variable("b");
-    // we return a lambda function so that the recursion
-    // doesn't immediately trigger an infinite loop.
+    // by returning a lambda function we
+    // create another level of indirection,
+    // so that the recursion doesn't
+    // immediately trigger an infinite loop:
     return (subst) => or(                   // a is a descendant of c if:
       child(a, c),                          // a is a child of c, or:
       and(child(a, b), descendant(b, c))    // a is a child of b and b is b descendant of c.
