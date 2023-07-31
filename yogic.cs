@@ -31,15 +31,15 @@ public static class Combinators {
     return new Variable(name);
   }
 
+  private static Solutions failure() {
+    yield break;
+  }
+
   private static Solutions success(Subst subst, Failure backtrack) {
     yield return subst;
     foreach(var each in backtrack()) {
       yield return each;
     };
-  }
-
-  private static Solutions failure() {
-    yield break;
   }
 
   public static Ma bind(Ma ma, Mf mf) {
