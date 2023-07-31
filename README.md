@@ -4,7 +4,7 @@
 
 An embedded DSL of monadic combinators for first-order logic programming.
 
-##**Key features:**
+## **Key features:**
 
 - **Horn Clauses**: Express logical facts and rules as simple functions.
 
@@ -29,7 +29,7 @@ An embedded DSL of monadic combinators for first-order logic programming.
   respective identity elements. Because of the sequential nature of the
   employed resolution algorithm, the lattice is non-commutative.
 
-##**How it works:**
+## **How it works:**
 
 We interpret a function ``f(x1,...,xm) { return or(g1,...,gn); }``
 as a set of logical implications:
@@ -65,7 +65,7 @@ one for each way *goal* can be proven. No result means a failed resolution,
 that is the function cannot be proven in the universe described by the given
 set of functions/predicates.
 
-##**API:**
+## **API:**
 
 ```csharp
 public delegate Solutions Success(Subst subst, Failure backtrack)
@@ -179,7 +179,7 @@ public static Variable var(string name)
 ```
 - Convenience function. Creates a new logical variable with the given name.  
   
-##**An Example:**  
+## **An Example:**  
 
 ```csharp
   public static Mf human(Variable a) {
@@ -256,7 +256,7 @@ plato is mortal and no dog.
 archimedes is mortal and no dog.
 ```
 
-##Links:
+## Links:
 
 Unification:  
 https://eli.thegreenplace.net/2018/unification/
