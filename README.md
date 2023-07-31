@@ -31,28 +31,28 @@ An embedded DSL of monadic combinators for first-order logic programming.
 
 **How it works:**
 
-We interpret a function ``f(x1,...,xm) { return or(p1,...,pn); }``
+We interpret a function ``f(x1,...,xm) { return or(g1,...,gn); }``
 as a set of logical implications:
 
 ```
-p1  ⟶  f(x1,...,xm)
+g1  ⟶  f(x1,...,xm)
 ...
-pn  ⟶  f(x1,...,xm)
+gn  ⟶  f(x1,...,xm)
 ```  
 
-We call ``f(x1,...,xn)`` the *head* and each ``px`` a *body*.
+We call ``f(x1,...,xn)`` the *head* and each ``gi`` a *body*.
 
 We prove these by *modus ponens*:
 
 ```
-A  ⟶  B            px  ⟶  f(x1,...,xn)
-A                  px
+A  ⟶  B            gi  ⟶  f(x1,...,xn)
+A                  gi
 ⎯⎯⎯⎯⎯          ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
 B                  f(x1,...,xn)
 ```
 
 A function with head ``f(x1,...,xm)`` is proven by proving any of
-``p1,...,pn`` recursively. When we reach a success goal that has no body,
+``g1,...gn`` recursively. When we reach a success goal that has no body,
 there's nothing left to prove. This is called a *resolution*.
 
 **How to use it:**
