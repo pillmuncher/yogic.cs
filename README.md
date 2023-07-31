@@ -175,7 +175,7 @@ public delegate Solutions Ma(Success yes, Failure no, Failure esc)
   continuations. The `yes` continuation represents the current continuation
   and `no` represents the backtracking path. `esc` is the escape continuation
   that is invoked by the `cut` combinator to jump out of the current
-  comptutaion back to the previous choice point.   
+  comptutation back to the previous choice point.   
   
 ```csharp
 public delegate Ma Mf(Subst subst)
