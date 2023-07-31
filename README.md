@@ -27,7 +27,7 @@ An embedded DSL of monadic combinators for first-order logic programming.
   form a *Distributive Lattice* with ``then`` as the *meet* (infimum) and
   ``choice`` as the *join* (supremum) operator, and ``unit`` and ``fail`` as
   their respective identity elements. Because of the sequential nature of
-  the employed resolution algorithm, the lattice is non-commutative.  
+  the employed resolution algorithm, the lattice is *non-commutative*.  
 
 ## **A Motivating Example:**  
 
