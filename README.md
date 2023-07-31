@@ -34,7 +34,7 @@ An embedded DSL of monadic combinators for first-order logic programming.
 We represent logical facts as functions that that specify which individuals
 are humans and dogs and define a `child(a, b)` relation such that `a` is the
 child of `b`. Then we define rules that specify what a descendant and a
-mortal being is. Then we can run queries that tell us which individuals are
+mortal being is. We then run queries that tell us which individuals are
 descendants of whom and which individuals are mortal:  
 ```csharp
   public static Mf human(Variable a) {
