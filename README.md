@@ -258,14 +258,23 @@ Links:
 Unification:
 https://eli.thegreenplace.net/2018/unification/
 
+Backtracking:
+https://en.wikipedia.org/wiki/Backtracking
+
 Logical Resolution:
 http://web.cse.ohio-state.edu/~stiff.4/cse3521/logical-resolution.html
 
 Horn Clauses:
 https://en.wikipedia.org/wiki/Horn_clause
 
-Continuations Made Simple and Illustrated:
-https://www.ps.uni-saarland.de/~duchier/python/continuations.html
+Monoid:
+https://en.wikipedia.org/wiki/Monoid
+
+Distributive Lattice:
+https://en.wikipedia.org/wiki/Distributive_lattice
+
+Monads:
+https://en.wikipedia.org/wiki/Monad_(functional_programming)
 
 Monads Explained in C# (again):
 https://mikhail.io/2018/07/monads-explained-in-csharp-again/
@@ -273,11 +282,11 @@ https://mikhail.io/2018/07/monads-explained-in-csharp-again/
 Discovering the Continuation Monad in C#:
 https://functionalprogramming.medium.com/deriving-continuation-monad-from-callbacks-23d74e8331d0
 
+Continuations:
+https://en.wikipedia.org/wiki/Continuation
+
+Continuations Made Simple and Illustrated:
+https://www.ps.uni-saarland.de/~duchier/python/continuations.html
+
 The Discovery of Continuations:
 https://www.cs.ru.nl/~freek/courses/tt-2011/papers/cps/histcont.pdf
-
-Monoid:
-https://en.wikipedia.org/wiki/Monoid
-
-Distributive Lattice:
-https://en.wikipedia.org/wiki/Distributive_lattice
