@@ -32,8 +32,8 @@ An embedded DSL of monadic combinators for first-order logic programming.
 ## **A Motivating Example:**  
 
 We define functions that represent logical facts that specify which
-individuals are humans and dogs are and define a `child(a, b)` relation sucht
-that a is the child of b. Then we define rules that specify what a descendant
+individuals are humans and dogs are and define a `child(a, b)` relation such
+that `a` is the child of `b`. Then we define rules that specify what a descendant
 and a mortal being is. Then we can run queries that tell us which individuals
 are descendants of whom and which individuals are mortal:
 ```csharp
