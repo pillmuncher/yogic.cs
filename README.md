@@ -46,10 +46,10 @@ We call ``f(x1,...,xn)`` the *head* and each ``px`` a *body*.
 We prove these by *modus ponens*:
 
 ```
-A  ⟶  B     |       px  ⟶  f(x1,...,xn)
-A           |       px
-⎯⎯⎯⎯⎯    |       ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
-B           |       f(x1,...,xn)
+A  ⟶  B     ｜       px  ⟶  f(x1,...,xn)
+A           ｜       px
+⎯⎯⎯⎯⎯    ｜       ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+B           ｜       f(x1,...,xn)
 ```
 
 A function with head ``f(x1,...,xm)`` is proven by proving any of
