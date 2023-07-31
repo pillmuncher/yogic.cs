@@ -151,7 +151,7 @@ public static Mf or(params Mf[] mfs)
 public static Mf or_from_enumerable(IEnumerable<Mf> mfs)
 ```
 - Represents a choice between multiple computations from an enumerable.  
-  Takes a collection of computations `mfs` and returns a new computation that
+  Takes a sequence of computations `mfs` and returns a new computation that
   tries all of them in series with backtracking.  
   
 ```csharp
