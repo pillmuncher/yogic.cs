@@ -162,9 +162,9 @@ public delegate Solutions Failure()
 public delegate Solutions Ma(Success yes, Failure no, Failure esc)
 ```
 - The monad type.  
-  Takes a `Success` continuation `yes` and two `Failure` continuations `no`and
-  `esc`. `yes` is the continuation that represents the current continuation
-  and `no` representsthe backtracking path. `esc`is the escape continuation
+  Combinators of this type take a `Success` continuation and two `Failure`
+  continuations. The `yes` continuation represents the current continuation
+  and `no` represents the backtracking path. `esc` is the escape continuation
   that is invoked by the `cut` combinator to jump out of the current
   comptutaion back to the previous choice point.   
   
