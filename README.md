@@ -31,6 +31,10 @@ An embedded DSL of monadic combinators for first-order logic programming.
 
 ## **A Motivating Example:**  
 
+We define functions that represent locical facts that specify which
+individuals are humans and dogs and we define rules that specify what a child,
+a descendant, and a mortal being is. Then we can run queries that tell us
+which indicidualy are descendants of whom and which individuals are mortal:
 ```csharp
   public static Mf human(Variable a) {
     return or(
