@@ -6,10 +6,11 @@ An embedded DSL of monadic combinators for first-order logic programming.
 
 ## **Key features:**
 
-- **Horn Clauses**: Express logical facts and rules as simple functions.
+- **Horn Clauses as Functions**: Express logical facts and rules as simple
+  functions.
 
-- **Combinators**: Define expressions of first-order logic by simply
-  composing combinator functions.
+- **Composable Combinators**: Define expressions of first-order logic by
+  simply composing combinator functions.
 
 - **Logical Variables**: Represented by the ``Variable`` class, they can be
   bound to arbitrary values and other variables during resolution.
