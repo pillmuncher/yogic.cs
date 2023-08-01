@@ -156,9 +156,6 @@ public static class Combinators {
     return goal(Subst.Empty)(success, failure, failure).Select(s => new SubstProxy(s));
   }
 
-
-
-
   // ----8<--------8<--------8<--------8<--------8<--------8<--------8<----
 
   public static Mf human(Variable a) {
