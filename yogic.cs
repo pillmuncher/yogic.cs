@@ -138,9 +138,26 @@ public static class Combinators {
     return and_from_enumerable(from pair in pairs select _unify(pair));
   }
 
-  public static Solutions resolve(Mf goal) {
-    return goal(Subst.Empty)(success, failure, failure);
+  public class SubstProxy {
+
+    private Subst subst;
+
+    public SubstProxy(Subst subst) {
+      this.subst = subst;
+    }
+
+    public object this[Variable v] {
+      get { return deref(this.subst, v); }
+    }
+
+ }
+
+  public static IEnumerable<SubstProxy> resolve(Mf goal) {
+    return goal(Subst.Empty)(success, failure, failure).Select(s => new SubstProxy(s));
   }
+
+
+
 
   // ----8<--------8<--------8<--------8<--------8<--------8<--------8<----
 
