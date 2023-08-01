@@ -12,20 +12,20 @@ public delegate Ma Mf(Subst subst);
 
 public class Variable {
 
-  private readonly string name;
+  private string Name { get; }
 
   public Variable(string name) {
-    this.name = name;
+    Name = name;
   }
 
   public override string ToString() {
-    return $"Variable({this.name})";
+    return $"Variable({Name})";
   }
 
 }
 
 
-public static class Combinators {
+public static class Yogic {
 
   public static Variable var(string name) {
     return new Variable(name);
