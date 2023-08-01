@@ -140,14 +140,14 @@ public static class Yogic {
 
   public class SubstProxy {
 
-    private Subst subst;
+    private Subst Subst { get; }
 
     public SubstProxy(Subst subst) {
-      this.subst = subst;
+      Subst = subst;
     }
 
     public object this[Variable v] {
-      get { return deref(this.subst, v); }
+      get { return deref(Subst, v); }
     }
 
  }
