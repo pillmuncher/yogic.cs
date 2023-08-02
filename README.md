@@ -33,10 +33,10 @@ An embedded DSL of monadic combinators for first-order logic programming.
 
 ## **A Motivating Example:**
 
-We represent logical facts as functions that specify which individuals are
-humans and dogs and define a `child(a, b)` relation such that `a` is the
-child of `b`. Then we define rules that specify what a descendant and a
-mortal being is. We then run queries that tell us which individuals are
+We represent logical facts and rules as functions that specify which
+individuals are humans and dogs and define a `child(a, b)` relation such that
+`a` is the child of `b`. Then we define rules that specify what a descendant
+and a mortal being is. We then run queries that tell us which individuals are
 descendants of whom and which individuals are both mortal and no dogs:
 ```csharp
   public static Mf human(Variable a) {
