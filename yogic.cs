@@ -138,6 +138,10 @@ public static class Yogic {
     return and_from_enumerable(from pair in pairs select _unify(pair));
   }
 
+  public static Mf unify_any(Variable v, params object[] os) {
+    return or_from_enumerable(from o in os select _unify((v, o)));
+  }
+
   public class SubstProxy {
 
     private Subst Subst { get; }
@@ -150,7 +154,7 @@ public static class Yogic {
       get { return deref(Subst, v); }
     }
 
- }
+  }
 
   public static IEnumerable<SubstProxy> resolve(Mf goal) {
     return goal(Subst.Empty)(success, failure, failure).Select(s => new SubstProxy(s));
@@ -159,19 +163,11 @@ public static class Yogic {
   // ----8<--------8<--------8<--------8<--------8<--------8<--------8<----
 
   public static Mf human(Variable a) {
-    return or(
-      unify((a, "socrates")),
-      unify((a, "plato")),
-      unify((a, "archimedes"))
-    );
+    return unify_any(a, "socrates", "plato", "archimedes");
   }
 
   public static Mf dog(Variable a) {
-    return or(
-      unify((a, "fluffy")),
-      unify((a, "daisy")),
-      unify((a, "fifi"))
-    );
+    return unify_any(a, "fluffy", "daisy", "fifi");
   }
 
   public static Mf child(Variable a, Variable b) {
