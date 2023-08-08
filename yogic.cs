@@ -27,10 +27,6 @@ public class Variable {
 
 public static class Yogic {
 
-  public static Variable var(string name) {
-    return new Variable(name);
-  }
-
   private static Solutions failure() {
     yield break;
   }
@@ -43,9 +39,9 @@ public static class Yogic {
   }
 
   public static Ma bind(Ma ma, Mf mf) {
-    // prepend 'mf' before the current 'yes' continuation, making it the
-    // new one, and inject the 'backtrack' continuation as the subsequent 'no'
-    // continuation:
+    // prepend 'mf' before the current 'yes' continuation,
+    // making it the new one, and inject the 'backtrack'
+    // continuation as the subsequent 'no' continuation:
     return (yes, no, esc) => ma(no  : no,
                                 esc : esc,
                                 yes : (subst, backtrack) => mf(subst)(yes : yes,
@@ -98,8 +94,9 @@ public static class Yogic {
   public static Mf or_from_enumerable(IEnumerable<Mf> mfs) {
     // 'fail' and 'choice' form a monoid, so we can just fold:
     var choices = mfs.Aggregate<Mf, Mf>(fail, choice);
-    // also inject the current 'no' continuation as escape
-    // continuation, so we can jump out of a computation:
+    // inject the current 'no' continuation as escape continuation,
+    // so we can jump out of a computation and curtail backtracking
+    // at the previous choice point:
     return subst =>
                 (yes, no, esc) => choices(subst)(yes : yes,
                                                  no  : no,
@@ -150,9 +147,7 @@ public static class Yogic {
       Subst = subst;
     }
 
-    public object this[Variable v] {
-      get { return deref(Subst, v); }
-    }
+    public object this[Variable v] => deref(Subst, v);
 
   }
 

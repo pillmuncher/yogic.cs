@@ -270,11 +270,6 @@ public class Variable
 ```
 - Represents named logical variables.
 
-```csharp
-public static Variable var(string name)
-```
-- Convenience function. Creates a new logical variable with the given name.
-
 ## Links:
 
 Unification:  
