@@ -23,7 +23,7 @@ An embedded DSL of monadic combinators for first-order logic programming.
   Continuation Monads for resolution, backtracking, and branch pruning via
   the ``cut`` combinator.
 
-- **Algebraic Structures**: ``unit`` and ``then`` form a *monoid* over
+- **Algebraic Structures**: ``unit`` and ``then`` form a *Monoid* over
   monadic combinator functions, as do ``fail`` and ``choice``. Together they
   form a *Distributive Lattice* with ``then`` as the *meet* (infimum) and
   ``choice`` as the *join* (supremum) operator, and ``unit`` and ``fail`` as
