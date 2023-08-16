@@ -70,6 +70,7 @@ public static class Yogic {
  
 
   public static Mf choice(Mf mf, Mf mg) =>
+    // create a choice point.
     // prepend 'mg' before the current 'no'
     // continuation, making it the new one:
     subst =>
@@ -99,6 +100,7 @@ public static class Yogic {
     or(and(mf, cut, fail), unit);
 
   private static object deref(Subst subst, object o) {
+    // chase down Variable bindings:
     while (o is Variable && subst.ContainsKey((Variable) o)) {
       o = subst[(Variable)o];
     };
