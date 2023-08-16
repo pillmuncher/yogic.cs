@@ -34,9 +34,10 @@ public static class Yogic {
   }
 
   public static Ma bind(Ma ma, Mf mf) =>
-    // prepend 'mf' before the current 'yes' continuation,
-    // making it the new one, and inject the 'backtrack'
-    // continuation as the subsequent 'no' continuation:
+    // prepend 'mf' before the current 'yes'
+    // continuation, making it the new one,
+    // and inject the 'backtrack' continuation
+    // as the subsequent 'no' continuation:
     (yes, no, esc) => ma(no  : no,
                          esc : esc,
                          yes : (subst, backtrack) => mf(subst)(yes : yes,
@@ -44,17 +45,20 @@ public static class Yogic {
                                                                no  : backtrack));
 
   public static Ma unit(Subst subst) =>
-    // inject the current 'no' continuation as backtrack continuation:
+    // inject the current 'no' continuation
+    // as backtrack continuation:
     (yes, no, esc) => yes(subst,
                           backtrack : no);
 
   public static Ma cut(Subst subst) =>
-    // inject the current escape continuation as backtrack continuation:
+    // inject the current escape continuation
+    // as backtrack continuation:
     (yes, no, esc) => yes(subst,
                           backtrack : esc);
 
   public static Ma fail(Subst subst) =>
-    // immediately invoke backtracking, omitting the 'yes' continuation:
+    // immediately invoke backtracking,
+    // omitting the 'yes' continuation:
     (yes, no, esc) => no();
 
   public static Mf then(Mf mf, Mf mg) =>
@@ -62,7 +66,8 @@ public static class Yogic {
     subst => bind(mf(subst), mg);
 
   public static Mf and_from_enumerable(IEnumerable<Mf> mfs) =>
-    // 'unit' and 'then' form a monoid, so we can just fold:
+    // 'unit' and 'then' form a monoid,
+    // so we can just fold:
     mfs.Aggregate<Mf, Mf>(unit, then);
 
   public static Mf and(params Mf[] mfs) =>
