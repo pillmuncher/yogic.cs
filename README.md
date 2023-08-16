@@ -65,7 +65,7 @@ and which individuals are both mortal and no dogs:
     // immediately trigger an infinite loop
     // and cause a stack overflow:
     return (subst) => or(                   // a is a descendant of c iff:
-      child(a, c),                          // a is a child of c, or:
+      child(a, c),                          // a is a child of c, or
       and(child(a, b), descendant(b, c))    // a is a child of b and b is b descendant of c.
     )(subst);
   }
