@@ -18,9 +18,7 @@ public class Variable {
     Name = name;
   }
 
-  public override string ToString() {
-    return $"Variable({Name})";
-  }
+  public override string ToString() => $"Variable({Name})";
 
 }
 
@@ -28,10 +26,13 @@ public class Variable {
 public static class Yogic {
 
   private static Solutions failure() {
+    // no solutions:
     yield break;
   }
 
   private static Solutions success(Subst subst, Failure backtrack) {
+    // the current solution plus all the
+    // solutions retrieved from backtracking:
     yield return subst;
     foreach(var each in backtrack()) {
       yield return each;
@@ -81,8 +82,8 @@ public static class Yogic {
   }
 
   public static Mf choice(Mf mf, Mf mg) {
-    // prepend 'mg' before the current 'no' continuation, making it the
-    // new one:
+    // prepend 'mg' before the current 'no'
+    // continuation, making it the new one:
     return subst =>
                 (yes, no, esc) => mf(subst)(yes : yes,
                                             esc : esc,
@@ -94,9 +95,9 @@ public static class Yogic {
   public static Mf or_from_enumerable(IEnumerable<Mf> mfs) {
     // 'fail' and 'choice' form a monoid, so we can just fold:
     var choices = mfs.Aggregate<Mf, Mf>(fail, choice);
-    // inject the current 'no' continuation as escape continuation,
-    // so we can jump out of a computation and curtail backtracking
-    // at the previous choice point:
+    // inject the current 'no' continuation as escape
+    // continuation, so we can jump out of a computation
+    // and curtail backtracking at the previous choice point:
     return subst =>
                 (yes, no, esc) => choices(subst)(yes : yes,
                                                  no  : no,
@@ -136,6 +137,8 @@ public static class Yogic {
   }
 
   public static Mf unify_any(Variable v, params object[] os) {
+    // turn multiple unification requests of a single variable into choice
+    // continuations:
     return or_from_enumerable(from o in os select _unify((v, o)));
   }
 
