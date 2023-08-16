@@ -39,11 +39,11 @@ of `b`. Then we define rules that specify what a descendant and a mortal being
 is. We then run queries that tell us which individuals are descendants of whom
 and which individuals are both mortal and no dogs:
 ```csharp
-  public static Mf human(Variable a) {
+  public static Mf human(Variable a) {      //  socrates, plato, and archimedes are human
     return unify_any(a, "socrates", "plato", "archimedes");
   }
 
-  public static Mf dog(Variable a) {
+  public static Mf dog(Variable a) {        // fluffy, daisy, and fifi are dogs
     return unify_any(a, "fluffy", "daisy", "fifi");
   }
 
