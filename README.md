@@ -13,7 +13,7 @@ An embedded DSL of monadic combinators for first-order logic programming.
   simply composing combinator functions.
 
 - **Logical Variables**: Represented by the ``Variable`` class, they can be
-  bound to arbitrary values and other variables during resolution.
+  bound to arbitrary values including other variables during resolution.
 
 - **Substitution and Unification**: The substitution environment provides
   variable bindings and is incrementally constructed during resolution. It
