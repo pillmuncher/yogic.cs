@@ -40,19 +40,11 @@ is. We then run queries that tell us which individuals are descendants of whom
 and which individuals are both mortal and no dogs:
 ```csharp
   public static Mf human(Variable a) {
-    return or(
-      unify((a, "socrates")),               // socrates is human.
-      unify((a, "plato")),                  // plato is human.
-      unify((a, "archimedes"))              // archimedes is human.
-    );
+    return unify_any(a, "socrates", "plato", "archimedes");
   }
 
   public static Mf dog(Variable a) {
-    return or(
-      unify((a, "fluffy")),                 // fluffy is a dog.
-      unify((a, "daisy")),                  // daisy is a dog.
-      unify((a, "fifi"))                    // fifi is a dog.
-    );
+    return unify_any(a, "fluffy", "daisy", "fifi");
   }
 
   public static Mf child(Variable a, Variable b) {
@@ -259,6 +251,11 @@ public static Mf not(Mf mf)
 public static Mf unify(params ValueTuple<object, object>[] pairs)
 ```
 - Tries to unify pairs of objects. Fails if any pair is not unifiable.
+
+```csharp
+  public static Mf unify_any(Variable v, params object[] os) =>
+```
+- Tries to unify a variable with any one of objects. Fails if no object is unifiable.
 
 ```csharp
 public static Solutions resolve(Mf goal)
