@@ -64,7 +64,7 @@ and which individuals are both mortal and no dogs:
     // so that the recursion doesn't
     // immediately trigger an infinite loop
     // and cause a stack overflow:
-    return (subst) => or(                   // a is a descendant of c if:
+    return (subst) => or(                   // a is a descendant of c iff:
       child(a, c),                          // a is a child of c, or:
       and(child(a, b), descendant(b, c))    // a is a child of b and b is b descendant of c.
     )(subst);
@@ -72,7 +72,7 @@ and which individuals are both mortal and no dogs:
 
   public static Mf mortal(Variable a) {
     var b = new Variable("b");
-    return (subst) => or(                   // a is mortal if:
+    return (subst) => or(                   // a is mortal iff:
       human(a),                             // a is human, or
       dog(a),                               // a is a dog, or
       and(descendant(a, b), mortal(b))      // a descends from a mortal.
