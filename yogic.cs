@@ -47,14 +47,12 @@ public static class Yogic {
   public static Ma unit(Subst subst) =>
     // inject the current 'no' continuation
     // as backtrack continuation:
-    (yes, no, esc) => yes(subst,
-                          backtrack : no);
+    (yes, no, esc) => yes(subst, backtrack : no);
 
   public static Ma cut(Subst subst) =>
     // inject the current escape continuation
     // as backtrack continuation:
-    (yes, no, esc) => yes(subst,
-                          backtrack : esc);
+    (yes, no, esc) => yes(subst, backtrack : esc);
 
   public static Ma fail(Subst subst) =>
     // immediately invoke backtracking,
