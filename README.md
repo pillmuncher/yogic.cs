@@ -232,7 +232,7 @@ public static Mf and_from_enumerable(IEnumerable<Mf> mfs)
 public static Mf choice(Mf mf, Mf mg)
 ```
 - Represents a choice between two monadic continuations.  
-  Takes two continuations `mf` and `mg` and returns a new continuations that
+  Takes two continuations `mf` and `mg` and returns a new continuation that
   tries `mf`, and if that fails, falls back to `mg`. This defines a *choice
   point*.
 
