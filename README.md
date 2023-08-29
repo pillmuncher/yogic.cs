@@ -240,7 +240,7 @@ public static Mf choice(Mf mf, Mf mg)
 public static Mf or(params Mf[] mfs)
 ```
 - Represents a choice between multiple monadic continuations.  
-  Takes a variable number of computations and returns a new computation
+  Takes a variable number of continuations and returns a new computation
   that tries all of them in series with backtracking. This defines a
   *choice point*.
 
@@ -248,7 +248,7 @@ public static Mf or(params Mf[] mfs)
 public static Mf or_from_enumerable(IEnumerable<Mf> mfs)
 ```
 - Represents a choice between multiple monadic continuations from an enumerable.  
-  Takes a sequence of computations `mfs` and returns a new computation that
+  Takes a sequence of continuations `mfs` and returns a new computation that
   tries all of them in series with backtracking. This defines a *choice point*.
 
 ```csharp
