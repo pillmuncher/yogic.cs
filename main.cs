@@ -3,26 +3,31 @@ using static yogic.Yogic;
 
 public static class Example {
 
-  public static Mf human(Variable a) {
+  public static Mf human(Variable a) {      //  socrates, plato, and archimedes are human
     return unify_any(a, "socrates", "plato", "archimedes");
   }
 
-  public static Mf dog(Variable a) {
+  public static Mf dog(Variable a) {        // fluffy, daisy, and fifi are dogs
     return unify_any(a, "fluffy", "daisy", "fifi");
   }
 
   public static Mf child(Variable a, Variable b) {
     return or(
-      unify((a, "jim"), (b, "bob")),
-      unify((a, "joe"), (b, "bob")),
-      unify((a, "ian"), (b, "jim")),
-      unify((a, "fifi"), (b, "fluffy")),
-      unify((a, "fluffy"), (b, "daisy"))
+      unify((a, "jim"), (b, "bob")),        // jim is a child of bob.
+      unify((a, "joe"), (b, "bob")),        // joe is a child of bob.
+      unify((a, "ian"), (b, "jim")),        // ian is a child of jim.
+      unify((a, "fifi"), (b, "fluffy")),    // fifi is a child of fluffy.
+      unify((a, "fluffy"), (b, "daisy"))    // fluffy is a child of daisy.
     );
   }
 
   public static Mf descendant(Variable a, Variable c) {
     var b = new Variable("b");
+    // by returning a lambda function we
+    // create another level of indirection,
+    // so that the recursion doesn't
+    // immediately trigger an infinite loop
+    // and cause a stack overflow:
     return (subst) => or(
       child(a, c),
       and(child(a, b), descendant(b, c))
