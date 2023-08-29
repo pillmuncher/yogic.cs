@@ -295,10 +295,10 @@ http://web.cse.ohio-state.edu/~stiff.4/cse3521/logical-resolution.html
 Horn Clauses:  
 https://en.wikipedia.org/wiki/Horn_clause
 
-Monoid:  
+Monoids:  
 https://en.wikipedia.org/wiki/Monoid
 
-Distributive Lattice:  
+Distributive Lattices:  
 https://en.wikipedia.org/wiki/Distributive_lattice
 
 Monads:  
