@@ -1,5 +1,6 @@
 # yogic.cs
 **An embedded DSL of monadic combinators for first-order logic programming in C#.**
+
 It's called Yogic because logic programming is another step on the path to
 enlightenment.
 
