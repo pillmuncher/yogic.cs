@@ -213,7 +213,7 @@ public static Ma cut(Subst subst)
 ```csharp
 public static Ma fail(Subst subst)
 ```
-- Takes a substitution environment `subst` into a monadic computation.
+- Takes a substitution environment `subst` into a monadic computation.  
   Never succeeds. Immediately initiates backtracking.
 
 ```csharp
