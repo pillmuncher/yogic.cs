@@ -194,7 +194,7 @@ public static Ma bind(Ma ma, Mf mf)
 ```
 - Applies the monadic continuation `mf` to `ma` and returns the result.  
   In the context of the backtracking monad this means turning `mf` into the
-  continuation of the continuation `ma`.
+  continuation of `ma`.
 
 ```csharp
 public static Ma unit(Subst subst)
@@ -243,7 +243,7 @@ public static Mf choice(Mf mf, Mf mg)
 public static Mf or(params Mf[] mfs)
 ```
 - Represents a choice between multiple monadic continuations.  
-  Takes a variable number of continuations and returns a new computation
+  Takes a variable number of continuations and returns a new continuation
   that tries all of them in series with backtracking. This defines a
   *choice point*.
 
@@ -251,7 +251,7 @@ public static Mf or(params Mf[] mfs)
 public static Mf or_from_enumerable(IEnumerable<Mf> mfs)
 ```
 - Represents a choice between multiple monadic continuations from an enumerable.  
-  Takes a sequence of continuations `mfs` and returns a new computation that
+  Takes a sequence of continuations `mfs` and returns a new continuation that
   tries all of them in series with backtracking. This defines a *choice point*.
 
 ```csharp
