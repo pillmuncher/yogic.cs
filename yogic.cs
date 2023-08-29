@@ -1,194 +1,145 @@
 // Copyright (c) 2023 Mick Krippendorf <m.krippendorf@freenet.de>
 
-using Subst = System.Collections.Immutable.ImmutableDictionary<Variable, object>;
-using Solutions = System.Collections.Generic.IEnumerable<System.Collections.Immutable.ImmutableDictionary<Variable, object>>;
+namespace yogic {
+
+  using Subst = System.Collections.Immutable.ImmutableDictionary<Variable, object>;
+  using Solutions = System.Collections.Generic.IEnumerable<System.Collections.Immutable.ImmutableDictionary<Variable, object>>;
 
 
-public delegate Solutions Failure();
-public delegate Solutions Success(Subst subst, Failure backtrack);
-public delegate Solutions Ma(Success yes, Failure no, Failure esc);
-public delegate Ma Mf(Subst subst);
+  public delegate Solutions Failure();
+  public delegate Solutions Success(Subst subst, Failure backtrack);
+  public delegate Solutions Ma(Success yes, Failure no, Failure esc);
+  public delegate Ma Mf(Subst subst);
 
 
-public class Variable {
-  private string Name { get; }
-  public Variable(string name) { Name = name; }
-  public override string ToString() => $"Variable({Name})";
-}
-
-
-public static class Yogic {
-
-  private static Solutions failure() {
-    // no solutions:
-    yield break;
+  public class Variable {
+    private string Name { get; }
+    public Variable(string name) { Name = name; }
+    public override string ToString() => $"Variable({Name})";
   }
 
-  private static Solutions success(Subst subst, Failure backtrack) {
-    // the current solution plus all the
-    // solutions retrieved from backtracking:
-    yield return subst;
-    foreach(var each in backtrack()) {
-      yield return each;
-    };
-  }
 
-  public static Ma bind(Ma ma, Mf mf) =>
-    // prepend 'mf' before the current 'yes'
-    // continuation, making it the new one,
-    // and inject the 'backtrack' continuation
-    // as the subsequent 'no' continuation:
-    (yes, no, esc) => ma(no  : no,
-                         esc : esc,
-                         yes : (subst, backtrack) => mf(subst)(yes : yes,
-                                                               esc : esc,
-                                                               no  : backtrack));
+  public static class Yogic {
 
-  public static Ma unit(Subst subst) =>
-    // inject the current 'no' continuation
-    // as backtrack continuation:
-    (yes, no, esc) => yes(subst, backtrack : no);
+    private static Solutions failure() {
+      // no solutions:
+      yield break;
+    }
 
-  public static Ma cut(Subst subst) =>
-    // inject the current escape continuation
-    // as backtrack continuation:
-    (yes, no, esc) => yes(subst, backtrack : esc);
+    private static Solutions success(Subst subst, Failure backtrack) {
+      // the current solution plus all the
+      // solutions retrieved from backtracking:
+      yield return subst;
+      foreach(var each in backtrack()) {
+        yield return each;
+      };
+    }
 
-  public static Ma fail(Subst subst) =>
-    // immediately invoke backtracking,
-    // omitting the 'yes' continuation:
-    (yes, no, esc) => no();
+    public static Ma bind(Ma ma, Mf mf) =>
+      // prepend 'mf' before the current 'yes'
+      // continuation, making it the new one,
+      // and inject the 'backtrack' continuation
+      // as the subsequent 'no' continuation:
+      (yes, no, esc) => ma(no  : no,
+                           esc : esc,
+                           yes : (subst, backtrack) => mf(subst)(yes : yes,
+                                                                 esc : esc,
+                                                                 no  : backtrack));
 
-  public static Mf then(Mf mf, Mf mg) =>
-    // sequencing is the default behavior of 'bind':
-    subst => bind(mf(subst), mg);
+    public static Ma unit(Subst subst) =>
+      // inject the current 'no' continuation
+      // as backtrack continuation:
+      (yes, no, esc) => yes(subst, backtrack : no);
 
-  public static Mf and_from_enumerable(IEnumerable<Mf> mfs) =>
-    // 'unit' and 'then' form a monoid,
-    // so we can just fold:
-    mfs.Aggregate<Mf, Mf>(unit, then);
+    public static Ma cut(Subst subst) =>
+      // inject the current escape continuation
+      // as backtrack continuation:
+      (yes, no, esc) => yes(subst, backtrack : esc);
 
-  public static Mf and(params Mf[] mfs) =>
-    and_from_enumerable(mfs);
- 
+    public static Ma fail(Subst subst) =>
+      // immediately invoke backtracking,
+      // omitting the 'yes' continuation:
+      (yes, no, esc) => no();
 
-  public static Mf choice(Mf mf, Mf mg) =>
-    // create a choice point.
-    // prepend 'mg' before the current 'no'
-    // continuation, making it the new one:
-    subst =>
-      (yes, no, esc) => mf(subst)(yes : yes,
-                                  esc : esc,
-                                  no  : () => mg(subst)(yes : yes,
-                                                        no  : no,
-                                                        esc : esc));
+    public static Mf then(Mf mf, Mf mg) =>
+      // sequencing is the default behavior of 'bind':
+      subst => bind(mf(subst), mg);
 
-  public static Mf or_from_enumerable(IEnumerable<Mf> mfs) {
-    // 'fail' and 'choice' form a monoid, so we can just fold:
-    var choices = mfs.Aggregate<Mf, Mf>(fail, choice);
-    // inject the current 'no' continuation as escape
-    // continuation, so we can jump out of a computation
-    // and curtail backtracking at the previous choice point:
-    return subst =>
-            (yes, no, esc) => choices(subst)(yes : yes,
-                                             no  : no,
-                                             esc : no);
-  }
+    public static Mf and_from_enumerable(IEnumerable<Mf> mfs) =>
+      // 'unit' and 'then' form a monoid,
+      // so we can just fold:
+      mfs.Aggregate<Mf, Mf>(unit, then);
 
-  public static Mf or(params Mf[] mfs) =>
-    or_from_enumerable(mfs);
+    public static Mf and(params Mf[] mfs) =>
+      and_from_enumerable(mfs);
+   
 
-  public static Mf not(Mf mf) =>
-    // negation as failure:
-    or(and(mf, cut, fail), unit);
+    public static Mf choice(Mf mf, Mf mg) =>
+      // create a choice point.
+      // prepend 'mg' before the current 'no'
+      // continuation, making it the new one:
+      subst =>
+        (yes, no, esc) => mf(subst)(yes : yes,
+                                    esc : esc,
+                                    no  : () => mg(subst)(yes : yes,
+                                                          no  : no,
+                                                          esc : esc));
 
-  private static object deref(Subst subst, object o) {
-    // chase down Variable bindings:
-    while (o is Variable && subst.ContainsKey((Variable) o)) {
-      o = subst[(Variable)o];
-    };
-    return o;
-  }
+    public static Mf or_from_enumerable(IEnumerable<Mf> mfs) {
+      // 'fail' and 'choice' form a monoid, so we can just fold:
+      var choices = mfs.Aggregate<Mf, Mf>(fail, choice);
+      // inject the current 'no' continuation as escape
+      // continuation, so we can jump out of a computation
+      // and curtail backtracking at the previous choice point:
+      return subst =>
+              (yes, no, esc) => choices(subst)(yes : yes,
+                                               no  : no,
+                                               esc : no);
+    }
 
-  private static Mf _unify(ValueTuple<object, object> pair) {
-    // using an 'ImmutableDictionary' makes trailing easy:
-    (var o1, var o2) = pair;
-    return subst => (deref(subst, o1), deref(subst, o2)) switch {
-                      (var o1, var o2) when o1 == o2 => unit(subst),
-                      (Variable o1, var o2) => unit(subst.Add(o1, o2)),
-                      (var o1, Variable o2) => unit(subst.Add(o2, o1)),
-                      _ => fail(subst)};
-  }
+    public static Mf or(params Mf[] mfs) =>
+      or_from_enumerable(mfs);
 
-  public static Mf unify(params ValueTuple<object, object>[] pairs) => 
-    // turn multiple unification requests into a continuation:
-    and_from_enumerable(from pair in pairs select _unify(pair));
+    public static Mf not(Mf mf) =>
+      // negation as failure:
+      or(and(mf, cut, fail), unit);
 
-  public static Mf unify_any(Variable v, params object[] os) =>
-    // turn multiple unification requests of a
-    // single variable into choice continuations:
-    or_from_enumerable(from o in os select _unify((v, o)));
+    private static object deref(Subst subst, object o) {
+      // chase down Variable bindings:
+      while (o is Variable && subst.ContainsKey((Variable) o)) {
+        o = subst[(Variable)o];
+      };
+      return o;
+    }
 
-  public class SubstProxy {
-    private Subst Subst { get; }
-    public SubstProxy(Subst subst) { Subst = subst; }
-    public object this[Variable v] => deref(Subst, v);
-  }
+    private static Mf _unify(ValueTuple<object, object> pair) {
+      // using an 'ImmutableDictionary' makes trailing easy:
+      (var o1, var o2) = pair;
+      return subst => (deref(subst, o1), deref(subst, o2)) switch {
+                        (var o1, var o2) when o1 == o2 => unit(subst),
+                        (Variable o1, var o2) => unit(subst.Add(o1, o2)),
+                        (var o1, Variable o2) => unit(subst.Add(o2, o1)),
+                        _ => fail(subst)};
+    }
 
-  public static IEnumerable<SubstProxy> resolve(Mf goal) =>
-    goal(Subst.Empty)(success, failure, failure).Select(s => new SubstProxy(s));
+    public static Mf unify(params ValueTuple<object, object>[] pairs) => 
+      // turn multiple unification requests into a continuation:
+      and_from_enumerable(from pair in pairs select _unify(pair));
 
-  // ----8<--------8<--------8<--------8<--------8<--------8<--------8<----
+    public static Mf unify_any(Variable v, params object[] os) =>
+      // turn multiple unification requests of a
+      // single variable into choice continuations:
+      or_from_enumerable(from o in os select _unify((v, o)));
 
-  public static Mf human(Variable a) {
-    return unify_any(a, "socrates", "plato", "archimedes");
-  }
+    public class SubstProxy {
+      private Subst Subst { get; }
+      public SubstProxy(Subst subst) { Subst = subst; }
+      public object this[Variable v] => deref(Subst, v);
+    }
 
-  public static Mf dog(Variable a) {
-    return unify_any(a, "fluffy", "daisy", "fifi");
-  }
+    public static IEnumerable<SubstProxy> resolve(Mf goal) =>
+      goal(Subst.Empty)(success, failure, failure).Select(s => new SubstProxy(s));
 
-  public static Mf child(Variable a, Variable b) {
-    return or(
-      unify((a, "jim"), (b, "bob")),
-      unify((a, "joe"), (b, "bob")),
-      unify((a, "ian"), (b, "jim")),
-      unify((a, "fifi"), (b, "fluffy")),
-      unify((a, "fluffy"), (b, "daisy"))
-    );
-  }
-
-  public static Mf descendant(Variable a, Variable c) {
-    var b = new Variable("b");
-    return (subst) => or(
-      child(a, c),
-      and(child(a, b), descendant(b, c))
-    )(subst);
-  }
-
-  public static Mf mortal(Variable a) {
-    var b = new Variable("b");
-    return (subst) => or(
-      human(a),
-      dog(a),
-      and(descendant(a, b), mortal(b))
-    )(subst);
-  }
-
-  public static void Main() {
-    var x = new Variable("x");
-    var y = new Variable("y");
-    foreach (var subst in resolve(descendant(x, y))) {
-      Console.WriteLine($"{subst[x]} is a descendant of {subst[y]}.");
-    };
-    Console.WriteLine();
-    foreach (var subst in resolve(and(mortal(x), not(dog(x))))) {
-      Console.WriteLine($"{subst[x]} is mortal and no dog.");
-    };
-    Console.WriteLine();
-    foreach (var subst in resolve(and(not(dog(x)), mortal(x)))) {
-      Console.WriteLine($"{subst[x]} is mortal and no dog.");
-    };
   }
 
 }

@@ -2,7 +2,9 @@
 **Yogic, but in C#.**
 
 
-An embedded DSL of monadic combinators for first-order logic programming.
+An embedded DSL of monadic combinators for first-order logic programming in C#.
+It's called Yogic because logic programming is another step on the path to
+enlightenment.
 
 ## **Key features:**
 
@@ -39,43 +41,43 @@ of `b`. Then we define rules that specify what a descendant and a mortal being
 is. We then run queries that tell us which individuals are descendants of whom
 and which individuals are both mortal and no dogs:
 ```csharp
-  public static Mf human(Variable a) {      //  socrates, plato, and archimedes are human
+using yogic;
+using static yogic.Yogic;
+
+public static class Example {
+
+  public static Mf human(Variable a) {
     return unify_any(a, "socrates", "plato", "archimedes");
   }
 
-  public static Mf dog(Variable a) {        // fluffy, daisy, and fifi are dogs
+  public static Mf dog(Variable a) {
     return unify_any(a, "fluffy", "daisy", "fifi");
   }
 
   public static Mf child(Variable a, Variable b) {
     return or(
-      unify((a, "jim"), (b, "bob")),        // jim is a child of bob.
-      unify((a, "joe"), (b, "bob")),        // joe is a child of bob.
-      unify((a, "ian"), (b, "jim")),        // ian is a child of jim.
-      unify((a, "fifi"), (b, "fluffy")),    // fifi is a child of fluffy.
-      unify((a, "fluffy"), (b, "daisy"))    // fluffy is a child of daisy.
+      unify((a, "jim"), (b, "bob")),
+      unify((a, "joe"), (b, "bob")),
+      unify((a, "ian"), (b, "jim")),
+      unify((a, "fifi"), (b, "fluffy")),
+      unify((a, "fluffy"), (b, "daisy"))
     );
   }
 
   public static Mf descendant(Variable a, Variable c) {
     var b = new Variable("b");
-    // by returning a lambda function we
-    // create another level of indirection,
-    // so that the recursion doesn't
-    // immediately trigger an infinite loop
-    // and cause a stack overflow:
-    return (subst) => or(                   // a is a descendant of c iff:
-      child(a, c),                          // a is a child of c, or
-      and(child(a, b), descendant(b, c))    // a is a child of b and b is b descendant of c.
+    return (subst) => or(
+      child(a, c),
+      and(child(a, b), descendant(b, c))
     )(subst);
   }
 
   public static Mf mortal(Variable a) {
     var b = new Variable("b");
-    return (subst) => or(                   // a is mortal iff:
-      human(a),                             // a is human, or
-      dog(a),                               // a is a dog, or
-      and(descendant(a, b), mortal(b))      // a descends from a mortal.
+    return (subst) => or(
+      human(a),
+      dog(a),
+      and(descendant(a, b), mortal(b))
     )(subst);
   }
 
@@ -89,7 +91,13 @@ and which individuals are both mortal and no dogs:
     foreach (var subst in resolve(and(mortal(x), not(dog(x))))) {
       Console.WriteLine($"{subst[x]} is mortal and no dog.");
     };
+    Console.WriteLine();
+    foreach (var subst in resolve(and(not(dog(x)), mortal(x)))) {
+      Console.WriteLine($"{subst[x]} is mortal and no dog.");
+    };
   }
+
+}
 ```
 **Result:**
 ```
@@ -188,13 +196,13 @@ public static Ma bind(Ma ma, Mf mf)
 ```csharp
 public static Ma unit(Subst subst)
 ```
-- Lifts a substitution environment `subst` into a computation.  
+- Takes a substitution environment `subst` into a computation.  
   Succeeds once and then initates backtracking.
 
 ```csharp
 public static Ma cut(Subst subst)
 ```
-- Lifts a substitution environment `subst` into a computation.  
+- Takes a substitution environment `subst` into a computation.  
   Succeeds once, and instead of normal backtracking aborts the current
   computation and jumps to the previous choice point, effectively pruning the
   search space.
@@ -202,7 +210,7 @@ public static Ma cut(Subst subst)
 ```csharp
 public static Ma fail(Subst subst)
 ```
-- Lifts a substitution environment `subst` into a computation.  
+- Takes a substitution environment `subst` into a computation.  
   Never succeeds. Immediately initiates backtracking.
 
 ```csharp
