@@ -172,7 +172,7 @@ public delegate Solutions Failure()
 ```csharp
 public delegate Solutions Ma(Success yes, Failure no, Failure esc)
 ```
-- The monad type.  
+- The monadic computation type.  
   Combinators of this type take a `Success` continuation and two `Failure`
   continuations. The `yes` continuation represents the current continuation
   and `no` represents the backtracking path. `esc` is the escape continuation
@@ -189,20 +189,20 @@ public delegate Ma Mf(Subst subst)
 ```csharp
 public static Ma bind(Ma ma, Mf mf)
 ```
-- Applies the monadic computation `mf` to `ma` and returns the result.  
-  In the context of the backtracking monad this means turning `mf` into a
-  continuation.
+- Applies the monadic continuation `mf` to `ma` and returns the result.  
+  In the context of the backtracking monad this means turning `mf` into the
+  continuation of the continuation `ma`.
 
 ```csharp
 public static Ma unit(Subst subst)
 ```
-- Takes a substitution environment `subst` into a computation.  
+- Takes a substitution environment `subst` into a monadic computation.  
   Succeeds once and then initates backtracking.
 
 ```csharp
 public static Ma cut(Subst subst)
 ```
-- Takes a substitution environment `subst` into a computation.  
+- Takes a substitution environment `subst` into a monadic computation.  
   Succeeds once, and instead of normal backtracking aborts the current
   computation and jumps to the previous choice point, effectively pruning the
   search space.
@@ -210,50 +210,52 @@ public static Ma cut(Subst subst)
 ```csharp
 public static Ma fail(Subst subst)
 ```
-- Takes a substitution environment `subst` into a computation.  
+- Takes a substitution environment `subst` into a monadic computation.
   Never succeeds. Immediately initiates backtracking.
 
 ```csharp
 public static Mf then(Mf mf, Mf mg)
 ```
-- Composes two computations sequentially.
+- Composes two continuations sequentially.
 
 ```csharp
 public static Mf and(params Mf[] mfs)
 ```
-- Composes multiple computations sequentially.
+- Composes multiple continuations sequentially.
 
 ```csharp
 public static Mf and_from_enumerable(IEnumerable<Mf> mfs)
 ```
-- Composes multiple computations sequentially from an enumerable.
+- Composes multiple continuations sequentially from an enumerable.
 
 ```csharp
 public static Mf choice(Mf mf, Mf mg)
 ```
-- Represents a choice between two computations.  
-  Takes two computations `mf` and `mg` and returns a new computation that tries
-  `mf`, and if that fails, falls back to `mg`. This defines a *choice point*.
+- Represents a choice between two monadic continuations.  
+  Takes two continuations `mf` and `mg` and returns a new continuations that
+  tries `mf`, and if that fails, falls back to `mg`. This defines a *choice
+  point*.
 
 ```csharp
 public static Mf or(params Mf[] mfs)
 ```
-- Represents a choice between multiple computations.  
-  Takes a variable number of computations and returns a new computation that
-  tries all of them in series with backtracking. This defines a *choice point*.
+- Represents a choice between multiple monadic continuations.  
+  Takes a variable number of computations and returns a new computation
+  that tries all of them in series with backtracking. This defines a
+  *choice point*.
 
 ```csharp
 public static Mf or_from_enumerable(IEnumerable<Mf> mfs)
 ```
-- Represents a choice between multiple computations from an enumerable.  
+- Represents a choice between multiple monadic continuations from an enumerable.  
   Takes a sequence of computations `mfs` and returns a new computation that
   tries all of them in series with backtracking. This defines a *choice point*.
 
 ```csharp
 public static Mf not(Mf mf)
 ```
-- Negates the result of a computation.  
-  Returns a new computation that succeeds if `mf` fails and vice versa.
+- Negates the result of a continuation.  
+  Returns a new continuation that succeeds if `mf` fails and vice versa.
 
 ```csharp
 public static Mf unify(params ValueTuple<object, object>[] pairs)
@@ -263,12 +265,13 @@ public static Mf unify(params ValueTuple<object, object>[] pairs)
 ```csharp
   public static Mf unify_any(Variable v, params object[] os) =>
 ```
-- Tries to unify a variable with any one of objects. Fails if no object is unifiable.
+- Tries to unify a variable with any one of objects.
+  Fails if no object is unifiable.
 
 ```csharp
 public static Solutions resolve(Mf goal)
 ```
-- Perform logical resolution of the computation represented by `goal`.
+- Perform logical resolution of the monadic continuation represented by `goal`.
 
 ```csharp
 public class Variable
