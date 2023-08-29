@@ -159,6 +159,11 @@ functions/predicates.
 ## **API:**
 
 ```csharp
+public class Variable
+```
+- Represents named logical variables.
+
+```csharp
 public delegate Solutions Success(Subst subst, Failure backtrack)
 ```
 - A function type that represents a successful resolution.  
@@ -275,11 +280,6 @@ public static Mf unify(params ValueTuple<object, object>[] pairs)
 public static Solutions resolve(Mf goal)
 ```
 - Perform logical resolution of the monadic continuation represented by `goal`.
-
-```csharp
-public class Variable
-```
-- Represents named logical variables.
 
 ## Links:
 
