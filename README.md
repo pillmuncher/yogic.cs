@@ -266,7 +266,7 @@ public static Mf unify(params ValueTuple<object, object>[] pairs)
 - Tries to unify pairs of objects. Fails if any pair is not unifiable.
 
 ```csharp
-  public static Mf unify_any(Variable v, params object[] os) =>
+  public static Mf unify_any(Variable v, params object[] objects) =>
 ```
 - Tries to unify a variable with any one of objects.
   Fails if no object is unifiable.

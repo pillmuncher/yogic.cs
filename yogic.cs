@@ -126,10 +126,10 @@ namespace yogic {
       // turn multiple unification requests into a continuation:
       and_from_enumerable(from pair in pairs select _unify(pair));
 
-    public static Mf unify_any(Variable v, params object[] os) =>
+    public static Mf unify_any(Variable v, params object[] objects) =>
       // turn multiple unification requests of a
       // single variable into choice continuations:
-      or_from_enumerable(from o in os select _unify((v, o)));
+      or_from_enumerable(from o in objects select _unify((v, o)));
 
     public class SubstProxy {
       private Subst Subst { get; }
