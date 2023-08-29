@@ -72,7 +72,7 @@ namespace yogic {
 
     public static Mf and(params Mf[] mfs) =>
       and_from_enumerable(mfs);
-   
+
 
     public static Mf choice(Mf mf, Mf mg) =>
       // create a choice point.
@@ -122,7 +122,7 @@ namespace yogic {
                         _ => fail(subst)};
     }
 
-    public static Mf unify(params ValueTuple<object, object>[] pairs) => 
+    public static Mf unify(params ValueTuple<object, object>[] pairs) =>
       // turn multiple unification requests into a continuation:
       and_from_enumerable(from pair in pairs select _unify(pair));
 
