@@ -30,7 +30,7 @@ public static class Example {
     // and cause a stack overflow:
     return (subst) => or(                   // a is a descendant of c iff:
       child(a, c),                          // a is a child of c, or
-      and(child(a, b), descendant(b, c))    // a is a child of b and b is b descendant of c.
+      and(child(a, b), descendant(b, c))    // a is a child of b and b is a descendant of c.
     )(subst);
   }
 
