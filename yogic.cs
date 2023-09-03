@@ -22,7 +22,7 @@ namespace yogic {
       // C# doesn't have Tail Call Elimination,
       // so we have to implement it ourself:
       Tuple<Subst, Thunk>? result = thunk();
-      while(result != null) {
+      while (result != null) {
         (var subst, thunk) = result;
         yield return subst;
         result = thunk();
