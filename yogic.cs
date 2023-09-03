@@ -6,9 +6,10 @@ namespace yogic {
   using Solutions = System.Collections.Generic.IEnumerable<System.Collections.Immutable.ImmutableDictionary<Variable, object>>;
 
 
-  public delegate Solutions Failure();
-  public delegate Solutions Success(Subst subst, Failure backtrack);
-  public delegate Solutions Ma(Success yes, Failure no, Failure esc);
+  
+  public delegate Tuple<Subst, Thunk>? Thunk();
+  public delegate Tuple<Subst, Thunk>? Result(Subst subst, Thunk backtrack);
+  public delegate Tuple<Subst, Thunk>? Ma(Result yes, Thunk no, Thunk esc);
   public delegate Ma Mf(Subst subst);
 
 
@@ -21,18 +22,26 @@ namespace yogic {
 
   public static class Yogic {
 
-    private static Solutions failure() {
-      // no solutions:
-      yield break;
+    private static Solutions trampoline(Thunk thunk) { 
+      // C# doesn't have Tail Call Elimination,
+      // so we have to implement it ourself:
+      Tuple<Subst, Thunk>? result = thunk();
+      while(result != null) {
+        (var subst, thunk) = result;
+        yield return subst;
+        result = thunk();
+      }
     }
 
-    private static Solutions success(Subst subst, Failure backtrack) {
+    private static Tuple<Subst, Thunk>? quit() {
+      // no solutions:
+      return null;
+    }
+
+    private static Tuple<Subst, Thunk> emit(Subst subst, Thunk backtrack) {
       // the current solution plus all the
       // solutions retrieved from backtracking:
-      yield return subst;
-      foreach(var each in backtrack()) {
-        yield return each;
-      };
+      return new (subst, backtrack);
     }
 
     public static Ma bind(Ma ma, Mf mf) =>
@@ -108,7 +117,7 @@ namespace yogic {
       // chase down Variable bindings:
       while (o is Variable && subst.ContainsKey((Variable) o)) {
         o = subst[(Variable)o];
-      };
+      }
       return o;
     }
 
@@ -138,7 +147,7 @@ namespace yogic {
     }
 
     public static IEnumerable<SubstProxy> resolve(Mf goal) =>
-      goal(Subst.Empty)(success, failure, failure).Select(s => new SubstProxy(s));
+      trampoline(() => goal(Subst.Empty)(emit, quit, quit)).Select(s => new SubstProxy(s));
 
   }
 

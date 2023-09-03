@@ -163,29 +163,23 @@ functions/predicates.
 ## **API:**
 
 ```csharp
-public class Variable
+public delegate Tuple<Subst, Thunk> Result(Subst subst, Thunk backtrack)
 ```
-- Represents named logical variables.
-
-```csharp
-public delegate Solutions Success(Subst subst, Failure backtrack)
-```
-- A function type that represents a successful resolution.  
-  `Success` continuations are called with a substitution environment `subst`
-  and a `Failure` continuation `backtrack` and yield the provided substitution
+- A function type that represents a successful resolution.  `Result`
+  continuations are called with a substitution environment `subst` and a
+  `Thunk` continuation `backtrack` and yield the provided substitution
   environment once and then yield whatever `backtrack()` yields.
 
 ```csharp
-public delegate Solutions Failure()
+public delegate Tuple<Subst, Thunk>? Thunk()
 ```
-- A function type that represents a failed resolution.  
-  `Failure` continuations are called to initiate backtracking.
+- A function type that represents a backtracking operation.  
 
 ```csharp
-public delegate Solutions Ma(Success yes, Failure no, Failure esc)
+public delegate Tuple<Subst, Thunk>? Ma(Result yes, Thunk no, Thunk esc)
 ```
 - The monadic computation type.  
-  Combinators of this type take a `Success` continuation and two `Failure`
+  Combinators of this type take a `Result` continuation and two `Thunk`
   continuations. The `yes` continuation represents the current continuation
   and `no` represents the backtracking path. `esc` is the escape continuation
   that is invoked by the `cut` combinator to jump out of the current
@@ -281,7 +275,17 @@ public static Mf unify(params ValueTuple<object, object>[] pairs)
   Fails if no object is unifiable.
 
 ```csharp
-public static Solutions resolve(Mf goal)
+public class Variable
+```
+- Represents named logical variables.
+
+```csharp
+public class SubstProxy
+```
+- A mapping represnting the Variable bindings of a solution.
+
+```csharp
+public static IEnumerable<SubstProxy> resolve(Mf goal)
 ```
 - Perform logical resolution of the monadic continuation represented by `goal`.
 
