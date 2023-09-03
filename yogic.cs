@@ -10,13 +10,11 @@ namespace yogic {
   public delegate Tuple<Subst, Thunk>? Ma(Result yes, Thunk no, Thunk esc);
   public delegate Ma Mf(Subst subst);
 
-
   public class Variable {
     private string Name { get; }
     public Variable(string name) { Name = name; }
     public override string ToString() => $"Variable({Name})";
   }
-
 
   public static class Yogic {
 
