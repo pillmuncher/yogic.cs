@@ -4,8 +4,6 @@ namespace yogic {
 
   using Subst = System.Collections.Immutable.ImmutableDictionary<Variable, object>;
   using Solutions = System.Collections.Generic.IEnumerable<System.Collections.Immutable.ImmutableDictionary<Variable, object>>;
-
-
   
   public delegate Tuple<Subst, Thunk>? Thunk();
   public delegate Tuple<Subst, Thunk>? Result(Subst subst, Thunk backtrack);
