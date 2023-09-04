@@ -163,12 +163,12 @@ functions/predicates.
 ## **API:**
 
 ```csharp
-public delegate Result Emit(Subst subst, Thunk backtrack)
+public delegate Result Emit(Subst subst, Thunk retry)
 ```
 - A function type that represents a successful resolution.  `Emit`
   continuations are called with a substitution environment `subst` and a
-  `Thunk` continuation `backtrack` and yield the provided substitution
-  environment once and then yield whatever `backtrack()` yields.
+  `Thunk` continuation `retry` and yield the provided substitution
+  environment once and then yield whatever `retry()` yields.
 
 ```csharp
 public delegate Result? Thunk()
