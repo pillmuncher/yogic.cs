@@ -44,34 +44,34 @@ namespace yogic {
       // inject the 'retry' continuation as the 
       // subsequent 'no' continuation:
       => (yes, no, esc) 
-      => ma(no  : no,
-            esc : esc,
-            yes : (subst, retry) => mf(subst)(yes : yes,
-                                              esc : esc,
-                                              no  : retry));
+          => ma(no  : no,
+                esc : esc,
+                yes : (subst, retry) => mf(subst)(yes : yes,
+                                                  esc : esc,
+                                                  no  : retry));
 
     public static Ma unit(Subst subst)
       // we inject the current 'no' continuation
       // as retry continuation:
       => (yes, no, esc)
-      => yes(subst, retry : no);
+          => yes(subst, retry : no);
 
     public static Ma cut(Subst subst)
       // we inject the current escape continuation
       // as retry continuation:
       => (yes, no, esc)
-      => yes(subst, retry : esc);
+          => yes(subst, retry : esc);
 
     public static Ma fail(Subst subst) 
       // we immediately invoke backtracking,
       // omitting the 'yes' continuation:
       => (yes, no, esc)
-      => no();
+          => no();
 
     public static Mf then(Mf mf, Mf mg) 
       // sequencing is the default behavior of 'bind':
       => subst
-      => bind(mf(subst), mg);
+          => bind(mf(subst), mg);
 
     public static Mf and_from_enumerable(IEnumerable<Mf> mfs) 
       // 'unit' and 'then' form a monoid, so we can just fold:
@@ -84,12 +84,12 @@ namespace yogic {
       // we prepend 'mg' before the current 'no'
       // continuation, making it the new one:
       => subst 
-      => (yes, no, esc)
-      => mf(subst)(yes : yes,
-                   esc : esc,
-                   no  : () => mg(subst)(yes : yes,
-                                         no  : no,
-                                         esc : esc));
+          => (yes, no, esc)
+              => mf(subst)(yes : yes,
+                           esc : esc,
+                           no  : () => mg(subst)(yes : yes,
+                                                 no  : no,
+                                                 esc : esc));
 
     public static Mf or_from_enumerable(IEnumerable<Mf> mfs) {
       // 'fail' and 'choice' form a monoid, so we can
@@ -100,10 +100,10 @@ namespace yogic {
       // computation and curtail backtracking at the
       // previous choice point:
       return subst 
-        => (yes, no, esc)
-        => choices(subst)(yes : yes,
-                          no  : no,
-                          esc : no);
+          => (yes, no, esc)
+            => choices(subst)(yes : yes,
+                              no  : no,
+                              esc : no);
     }
 
     public static Mf or(params Mf[] mfs) 
