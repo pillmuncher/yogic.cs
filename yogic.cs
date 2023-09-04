@@ -29,67 +29,77 @@ namespace yogic {
       }
     }
 
-    private static Tuple<Subst, Thunk>? quit()
+    private static Tuple<Subst, Thunk>? quit() {
       // no solutions:
-      => null;
+      return null;
+    }
 
-    private static Tuple<Subst, Thunk> emit(Subst subst, Thunk retry)
+    private static Tuple<Subst, Thunk> emit(Subst subst, Thunk retry) {
       // we return the current solution plus all
       // the solutions retrieved from backtracking:
-      => new (subst, retry);
+      return new (subst, retry);
+    }
 
-    public static Ma bind(Ma ma, Mf mf)
+    public static Ma bind(Ma ma, Mf mf) {
       // we prepend 'mf' before the current 'yes'
       // continuation, making it the new one, and
       // inject the 'retry' continuation as the
       // subsequent 'no' continuation:
-      => (yes, no, esc)
+      return (yes, no, esc)
           => ma(no  : no,
                 esc : esc,
                 yes : (subst, retry) => mf(subst)(yes : yes,
                                                   esc : esc,
                                                   no  : retry));
+    }
 
-    public static Ma unit(Subst subst)
+    public static Ma unit(Subst subst) {
       // we inject the current 'no' continuation
       // as retry continuation:
-      => (yes, no, esc)
+      return (yes, no, esc)
           => yes(subst, retry : no);
+    }
 
-    public static Ma cut(Subst subst)
+    public static Ma cut(Subst subst) {
       // we inject the current escape continuation
       // as retry continuation:
-      => (yes, no, esc)
+      return (yes, no, esc)
           => yes(subst, retry : esc);
+    }
 
-    public static Ma fail(Subst subst)
+    public static Ma fail(Subst subst) {
       // we immediately invoke backtracking,
       // omitting the 'yes' continuation:
-      => (yes, no, esc)
+      return (yes, no, esc)
           => no();
+    }
 
-    public static Mf then(Mf mf, Mf mg)
+    public static Mf then(Mf mf, Mf mg) {
       // sequencing is the default behavior of 'bind':
-      => subst
+      return subst
           => bind(mf(subst), mg);
+    }
 
-    public static Mf and_from_enumerable(IEnumerable<Mf> mfs)
+    public static Mf and_from_enumerable(IEnumerable<Mf> mfs) {
       // 'unit' and 'then' form a monoid, so we can just fold:
-      => mfs.Aggregate<Mf, Mf>(unit, then);
+      return mfs.Aggregate<Mf, Mf>(unit, then);
+    }
 
-    public static Mf and(params Mf[] mfs)
-      => and_from_enumerable(mfs);
+    public static Mf and(params Mf[] mfs) {
+      return and_from_enumerable(mfs);
+    }
 
-    public static Mf choice(Mf mf, Mf mg)
+    public static Mf choice(Mf mf, Mf mg) {
       // we prepend 'mg' before the current 'no'
       // continuation, making it the new one:
-      => subst
+      return subst
           => (yes, no, esc)
               => mf(subst)(yes : yes,
                            esc : esc,
                            no  : () => mg(subst)(yes : yes,
                                                  no  : no,
                                                  esc : esc));
+    }
 
     public static Mf or_from_enumerable(IEnumerable<Mf> mfs) {
       // 'fail' and 'choice' form a monoid, so we can just fold:
@@ -105,12 +115,14 @@ namespace yogic {
                                 esc : no);
     }
 
-    public static Mf or(params Mf[] mfs)
-      => or_from_enumerable(mfs);
+    public static Mf or(params Mf[] mfs) {
+      return or_from_enumerable(mfs);
+    }
 
-    public static Mf not(Mf mf)
+    public static Mf not(Mf mf) {
       // negation as failure:
-      => or(and(mf, cut, fail), unit);
+      return or(and(mf, cut, fail), unit);
+    }
 
     private static object deref(Subst subst, object o) {
       // chase down Variable bindings:
@@ -120,9 +132,9 @@ namespace yogic {
       return o;
     }
 
-    private static Mf _unify(ValueTuple<object, object> pair) 
+    private static Mf _unify(ValueTuple<object, object> pair)  {
       // using an 'ImmutableDictionary' makes trailing easy:
-      => subst
+      return subst
           => (deref(subst, pair.Item1), deref(subst, pair.Item2))
                 switch {
                   (var o1, var o2) when o1 == o2 => unit(subst),
@@ -130,15 +142,18 @@ namespace yogic {
                   (var o, Variable v) => unit(subst.Add(v, o)),
                   _ => fail(subst)
                 };
+    }
 
-    public static Mf unify(params ValueTuple<object, object>[] pairs)
+    public static Mf unify(params ValueTuple<object, object>[] pairs) {
       // turn multiple unification requests into a continuation:
-      => and_from_enumerable(from pair in pairs select _unify(pair));
+      return and_from_enumerable(from pair in pairs select _unify(pair));
+    }
 
-    public static Mf unify_any(Variable v, params object[] objects)
+    public static Mf unify_any(Variable v, params object[] objects) {
       // turn multiple unification requests on a single variable into
       // retry continuations:
-      => or_from_enumerable(from o in objects select _unify((v, o)));
+      return or_from_enumerable(from o in objects select _unify((v, o)));
+    }
 
     public class SubstProxy {
       private Subst Subst { get; }
@@ -146,9 +161,10 @@ namespace yogic {
       public object this[Variable v] => deref(Subst, v);
     }
 
-    public static IEnumerable<SubstProxy> resolve(Mf goal)
-      => trampoline(() => goal(Subst.Empty)(emit, quit, quit))
+    public static IEnumerable<SubstProxy> resolve(Mf goal) {
+      return trampoline(() => goal(Subst.Empty)(emit, quit, quit))
           .Select(s => new SubstProxy(s));
+    }
 
   }
 
