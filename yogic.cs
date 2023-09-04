@@ -4,10 +4,11 @@ namespace yogic {
 
   using Subst = System.Collections.Immutable.ImmutableDictionary<Variable, object>;
   using Solutions = System.Collections.Generic.IEnumerable<System.Collections.Immutable.ImmutableDictionary<Variable, object>>;
+  using Result = Tuple<System.Collections.Immutable.ImmutableDictionary<Variable, object>, Thunk>;
 
-  public delegate Tuple<Subst, Thunk>? Thunk();
-  public delegate Tuple<Subst, Thunk>? Result(Subst subst, Thunk retry);
-  public delegate Tuple<Subst, Thunk>? Ma(Result yes, Thunk no, Thunk esc);
+  public delegate Result? Thunk();
+  public delegate Result? Emit(Subst subst, Thunk retry);
+  public delegate Result? Ma(Emit yes, Thunk no, Thunk esc);
   public delegate Ma Mf(Subst subst);
 
   public class Variable {
@@ -21,7 +22,7 @@ namespace yogic {
     private static Solutions trampoline(Thunk thunk) {
       // C# doesn't have Tail Call Elimination,
       // so we have to implement it ourself:
-      Tuple<Subst, Thunk>? result = thunk();
+      Result? result = thunk();
       while (result != null) {
         (var subst, thunk) = result;
         yield return subst;
@@ -29,12 +30,12 @@ namespace yogic {
       }
     }
 
-    private static Tuple<Subst, Thunk>? quit() {
+    private static Result? quit() {
       // no solutions:
       return null;
     }
 
-    private static Tuple<Subst, Thunk> emit(Subst subst, Thunk retry) {
+    private static Result emit(Subst subst, Thunk retry) {
       // we return the current solution plus all
       // the solutions retrieved from backtracking:
       return new (subst, retry);

@@ -163,23 +163,23 @@ functions/predicates.
 ## **API:**
 
 ```csharp
-public delegate Tuple<Subst, Thunk> Result(Subst subst, Thunk backtrack)
+public delegate Result Emit(Subst subst, Thunk backtrack)
 ```
-- A function type that represents a successful resolution.  `Result`
+- A function type that represents a successful resolution.  `Emit`
   continuations are called with a substitution environment `subst` and a
   `Thunk` continuation `backtrack` and yield the provided substitution
   environment once and then yield whatever `backtrack()` yields.
 
 ```csharp
-public delegate Tuple<Subst, Thunk>? Thunk()
+public delegate Result? Thunk()
 ```
 - A function type that represents a backtracking operation.  
 
 ```csharp
-public delegate Tuple<Subst, Thunk>? Ma(Result yes, Thunk no, Thunk esc)
+public delegate Result? Ma(Emityes, Thunk no, Thunk esc)
 ```
 - The monadic computation type.  
-  Combinators of this type take a `Result` continuation and two `Thunk`
+  Combinators of this type take a `Emit` continuation and two `Thunk`
   continuations. The `yes` continuation represents the current continuation
   and `no` represents the backtracking path. `esc` is the escape continuation
   that is invoked by the `cut` combinator to jump out of the current
