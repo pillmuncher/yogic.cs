@@ -1,5 +1,4 @@
 // Copyright (c) 2023 Mick Krippendorf <m.krippendorf@freenet.de>
-using System.Linq;
 
 namespace yogic {
 
