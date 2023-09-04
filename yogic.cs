@@ -45,12 +45,11 @@ namespace yogic {
       // continuation, making it the new one, and
       // inject the 'retry' continuation as the
       // subsequent 'no' continuation:
-      return (yes, no, esc)
-          => ma(no  : no,
-                esc : esc,
-                yes : (subst, retry) => mf(subst)(yes : yes,
-                                                  esc : esc,
-                                                  no  : retry));
+      return (yes, no, esc) => ma(no  : no,
+                                  esc : esc,
+                                  yes : (subst, retry) => mf(subst)(yes : yes,
+                                                                    esc : esc,
+                                                                    no  : retry));
     }
 
     public static Ma unit(Subst subst) {
@@ -89,12 +88,11 @@ namespace yogic {
       // we prepend 'mg' before the current 'no'
       // continuation, making it the new one:
       return subst
-          => (yes, no, esc)
-              => mf(subst)(yes : yes,
-                           esc : esc,
-                           no  : () => mg(subst)(yes : yes,
-                                                 no  : no,
-                                                 esc : esc));
+          => (yes, no, esc) => mf(subst)(yes : yes,
+                                         esc : esc,
+                                         no  : () => mg(subst)(yes : yes,
+                                                               no  : no,
+                                                               esc : esc));
     }
 
     public static Mf or_from_enumerable(IEnumerable<Mf> mfs) {
@@ -105,10 +103,9 @@ namespace yogic {
       // a computation and curtail backtracking at
       // the previous choice point:
       return subst
-          => (yes, no, esc)
-              => choices(subst)(yes : yes,
-                                no  : no,
-                                esc : no);
+          => (yes, no, esc) => choices(subst)(yes : yes,
+                                              no  : no,
+                                              esc : no);
     }
 
     public static Mf or(params Mf[] mfs) {
