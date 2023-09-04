@@ -112,7 +112,7 @@ namespace yogic {
     private static object deref(Subst subst, object o) {
       // chase down Variable bindings:
       while (o is Variable && subst.ContainsKey((Variable) o)) {
-        o = subst[(Variable)o];
+        o = subst[(Variable) o];
       }
       return o;
     }
