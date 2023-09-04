@@ -163,27 +163,27 @@ functions/predicates.
 ## **API:**
 
 ```csharp
-public delegate Result Emit(Subst subst, Thunk retry)
+public delegate Result Emit(Subst subst, Retry retry)
 ```
 - A function type that represents a successful resolution.  `Emit`
   continuations are called with a substitution environment `subst` and a
-  `Thunk` continuation `retry` and yield the provided substitution
+  `Retry` continuation `retry` and yield the provided substitution
   environment once and then yield whatever `retry()` yields.
 
 ```csharp
-public delegate Result? Thunk()
+public delegate Result? Retry()
 ```
 - A function type that represents a backtracking operation.  
 
 ```csharp
-public delegate Result? Ma(Emityes, Thunk no, Thunk esc)
+public delegate Result? Ma(Emit yes, Retry no, Retry esc)
 ```
 - The monadic computation type.  
-  Combinators of this type take a `Emit` continuation and two `Thunk`
-  continuations. The `yes` continuation represents the current continuation
-  and `no` represents the backtracking path. `esc` is the escape continuation
-  that is invoked by the `cut` combinator to jump out of the current
-  comptutation back to the previous choice point. 
+  Combinators of this type take a `Emit` continuation and two `Retry`
+  continuations. `yes` represents the current continuation and `no` represents
+  the backtracking path. `esc` is the escape continuation that is invoked by
+  the `cut` combinator to jump out of the current comptutation back to the
+  previous choice point. 
 
 ```csharp
 public delegate Ma Mf(Subst subst)
@@ -282,7 +282,7 @@ public class Variable
 ```csharp
 public class SubstProxy
 ```
-- A mapping represnting the Variable bindings of a solution.
+- A mapping representing the Variable bindings of a solution.
 
 ```csharp
 public static IEnumerable<SubstProxy> resolve(Mf goal)

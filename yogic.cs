@@ -3,12 +3,11 @@
 namespace yogic {
 
   using Subst = System.Collections.Immutable.ImmutableDictionary<Variable, object>;
-  using Solutions = System.Collections.Generic.IEnumerable<System.Collections.Immutable.ImmutableDictionary<Variable, object>>;
-  using Result = Tuple<System.Collections.Immutable.ImmutableDictionary<Variable, object>, Thunk>;
+  using Result = Tuple<System.Collections.Immutable.ImmutableDictionary<Variable, object>, Retry>;
 
-  public delegate Result? Thunk();
-  public delegate Result? Emit(Subst subst, Thunk retry);
-  public delegate Result? Ma(Emit yes, Thunk no, Thunk esc);
+  public delegate Result? Retry();
+  public delegate Result? Emit(Subst subst, Retry retry);
+  public delegate Result? Ma(Emit yes, Retry no, Retry esc);
   public delegate Ma Mf(Subst subst);
 
   public class Variable {
@@ -19,27 +18,14 @@ namespace yogic {
 
   public static class Yogic {
 
-    private static Solutions trampoline(Thunk thunk) {
-      // C# doesn't have Tail Call Elimination,
-      // so we have to implement it ourself:
-      Result? result = thunk();
-      while (result != null) {
-        (var subst, thunk) = result;
-        yield return subst;
-        result = thunk();
-      }
+    public class SubstProxy {
+      private Subst Subst { get; }
+      public SubstProxy(Subst subst) { Subst = subst; }
+      public object this[Variable v] => deref(Subst, v);
     }
 
-    private static Result? quit() {
-      // no solutions:
-      return null;
-    }
-
-    private static Result emit(Subst subst, Thunk retry) {
-      // we return the current solution plus all
-      // the solutions retrieved from backtracking:
-      return new (subst, retry);
-    }
+    private static Result? quit() => null;
+    private static Result? emit(Subst subst, Retry retry) => new (subst, retry);
 
     public static Ma bind(Ma ma, Mf mf) {
       // we prepend 'mf' before the current 'yes'
@@ -81,9 +67,7 @@ namespace yogic {
       return mfs.Aggregate<Mf, Mf>(unit, then);
     }
 
-    public static Mf and(params Mf[] mfs) {
-      return and_from_enumerable(mfs);
-    }
+    public static Mf and(params Mf[] mfs) => and_from_enumerable(mfs);
 
     public static Mf choice(Mf mf, Mf mg) {
       // we prepend 'mg' before the current 'no'
@@ -108,14 +92,10 @@ namespace yogic {
                                               esc : no);
     }
 
-    public static Mf or(params Mf[] mfs) {
-      return or_from_enumerable(mfs);
-    }
+    public static Mf or(params Mf[] mfs) => or_from_enumerable(mfs);
 
-    public static Mf not(Mf mf) {
-      // negation as failure:
-      return or(and(mf, cut, fail), unit);
-    }
+    // negation as failure:
+    public static Mf not(Mf mf) => or(and(mf, cut, fail), unit);
 
     private static object deref(Subst subst, object o) {
       // chase down Variable bindings:
@@ -148,15 +128,14 @@ namespace yogic {
       return or_from_enumerable(from o in objects select _unify((v, o)));
     }
 
-    public class SubstProxy {
-      private Subst Subst { get; }
-      public SubstProxy(Subst subst) { Subst = subst; }
-      public object this[Variable v] => deref(Subst, v);
-    }
-
     public static IEnumerable<SubstProxy> resolve(Mf goal) {
-      return trampoline(() => goal(Subst.Empty)(emit, quit, quit))
-          .Select(s => new SubstProxy(s));
+      // C# doesn't have Tail Call Elimination,
+      // so we have to implement it ourself:
+      var result = goal(Subst.Empty)(emit, quit, quit);
+      while (null != result) {
+        yield return new SubstProxy(result.Item1);
+        result = result.Item2();
+      }
     }
 
   }
