@@ -130,7 +130,6 @@ namespace yogic {
                   (var o, Variable v) => unit(subst.Add(v, o)),
                   _ => fail(subst)
                 };
-    }
 
     public static Mf unify(params ValueTuple<object, object>[] pairs)
       // turn multiple unification requests into a continuation:
