@@ -117,11 +117,11 @@ plato is mortal and no dog.
 archimedes is mortal and no dog.
 ```
 Note that `jim`, `bob`, `joe` and `ian` are not part of the result of the
-second query because we didn't specify that they are human. Also note that
-the third query doesn't produce any solutions, because in the clause 
-`not(dog(x))` the variable `x` isn't bound yet, and unbound variables are
-implicitely ∀-quantified and we're saying that nothing is a dog, which in the
-universe we defined is not true.
+second query because we didn't specify that they are human. Also note that the
+third query doesn't produce any solutions, because in the clause `not(dog(x))`
+the variable `x` isn't bound yet. Unbound variables are implicitely
+∀-quantified and by saying `not(dog(x))` we're saying that nothing is a dog,
+which in the universe we defined is not true.
 
 ## **How it works:**
 
