@@ -124,7 +124,7 @@ namespace yogic {
     private static Mf _unify(ValueTuple<object, object> pair) {
       // using an 'ImmutableDictionary' makes trailing easy:
       return subst
-                => (deref(subst, pair.Item1), deref(subst, pair.Item2)) 
+                => (deref(subst, pair.Item1), deref(subst, pair.Item2))
                     switch {
                       (var o1, var o2) when o1 == o2 => unit(subst),
                       (Variable v, var o) => unit(subst.Add(v, o)),
