@@ -99,10 +99,9 @@ namespace yogic {
     public static Mf or_from_enumerable(IEnumerable<Mf> mfs) {
       // 'fail' and 'choice' form a monoid, so we can just fold:
       var choices = mfs.Aggregate<Mf, Mf>(fail, choice);
-      // we inject the current 'no' continuation as
-      // escape continuation, so we can jump out of
-      // a computation and curtail backtracking at
-      // the previous choice point:
+      // we inject the current 'no' continuation as escape
+      // continuation, so we can jump out of a computation
+      // and curtail backtracking at the previous choice point:
       return subst
           => (yes, no, esc) => choices(subst)(yes : yes,
                                               no  : no,
