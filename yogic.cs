@@ -56,28 +56,24 @@ namespace yogic {
     public static Ma unit(Subst subst) {
       // we inject the current 'no' continuation
       // as retry continuation:
-      return (yes, no, esc)
-          => yes(subst, retry : no);
+      return (yes, no, esc) => yes(subst, retry : no);
     }
 
     public static Ma cut(Subst subst) {
       // we inject the current escape continuation
       // as retry continuation:
-      return (yes, no, esc)
-          => yes(subst, retry : esc);
+      return (yes, no, esc) => yes(subst, retry : esc);
     }
 
     public static Ma fail(Subst subst) {
       // we immediately invoke backtracking,
       // omitting the 'yes' continuation:
-      return (yes, no, esc)
-          => no();
+      return (yes, no, esc) => no();
     }
 
     public static Mf then(Mf mf, Mf mg) {
       // sequencing is the default behavior of 'bind':
-      return subst
-          => bind(mf(subst), mg);
+      return subst => bind(mf(subst), mg);
     }
 
     public static Mf and_from_enumerable(IEnumerable<Mf> mfs) {
