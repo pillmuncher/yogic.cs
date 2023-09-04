@@ -146,7 +146,7 @@ B                  f(x1,...,xm)
 ```
 
 A function with head ``f(x1,...,xm)`` is proven by proving any of
-``g1,...gn`` recursively. When we reach a success goal that has no body,
+``g1,...,gn`` recursively. When we reach a success goal that has no body,
 there's nothing left to prove. This process is called a *resolution*.
 
 ## **How to use it:**
