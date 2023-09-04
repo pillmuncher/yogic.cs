@@ -134,15 +134,15 @@ g1  ⟶  f(x1,...,xm)
 gn  ⟶  f(x1,...,xm)
 ```
 
-We call ``f(x1,...,xn)`` the *head* and each ``gi`` a *body*.
+We call ``f(x1,...,xm)`` the *head* and each ``gi`` a *body*.
 
 We prove these by *modus ponens*:
 
 ```
-A  ⟶  B            gi  ⟶  f(x1,...,xn)
+A  ⟶  B            gi  ⟶  f(x1,...,xm)
 A                  gi
 ⎯⎯⎯⎯⎯          ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
-B                  f(x1,...,xn)
+B                  f(x1,...,xm)
 ```
 
 A function with head ``f(x1,...,xm)`` is proven by proving any of
