@@ -1,4 +1,5 @@
 // Copyright (c) 2023 Mick Krippendorf <m.krippendorf@freenet.de>
+using System.Linq;
 
 namespace yogic {
 
@@ -100,9 +101,9 @@ namespace yogic {
       // the previous choice point:
       return subst
           => (yes, no, esc)
-            => choices(subst)(yes : yes,
-                              no  : no,
-                              esc : no);
+              => choices(subst)(yes : yes,
+                                no  : no,
+                                esc : no);
     }
 
     public static Mf or(params Mf[] mfs)
@@ -123,11 +124,13 @@ namespace yogic {
     private static Mf _unify(ValueTuple<object, object> pair) {
       // using an 'ImmutableDictionary' makes trailing easy:
       return subst
-        => (deref(subst, pair.Item1), deref(subst, pair.Item2)) switch {
-            (var o1, var o2) when o1 == o2 => unit(subst),
-            (Variable v, var o) => unit(subst.Add(v, o)),
-            (var o, Variable v) => unit(subst.Add(v, o)),
-            _ => fail(subst)};
+        => (deref(subst, pair.Item1), deref(subst, pair.Item2)) 
+            switch {
+              (var o1, var o2) when o1 == o2 => unit(subst),
+              (Variable v, var o) => unit(subst.Add(v, o)),
+              (var o, Variable v) => unit(subst.Add(v, o)),
+              _ => fail(subst)
+            };
     }
 
     public static Mf unify(params ValueTuple<object, object>[] pairs)
