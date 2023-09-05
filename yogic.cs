@@ -20,7 +20,7 @@ namespace yogic {
 
     public class SubstProxy {
       private Subst Subst { get; }
-      public SubstProxy(Subst subst) { Subst = subst; }
+      internal SubstProxy(Subst subst) { Subst = subst; }
       public object this[Variable v] => deref(Subst, v);
     }
 

@@ -1,5 +1,5 @@
 // Copyright (c) 2023 Mick Krippendorf <m.krippendorf@freenet.de>
-//
+
 using yogic;
 using static yogic.Yogic;
 
