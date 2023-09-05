@@ -44,15 +44,15 @@ using static yogic.Yogic;
 
 public static class Example {
 
-  public static Mf human(Variable a) {      //  socrates, plato, and archimedes are human
+  public static Cont human(Variable a) {      //  socrates, plato, and archimedes are human
     return unify_any(a, "socrates", "plato", "archimedes");
   }
 
-  public static Mf dog(Variable a) {        // fluffy, daisy, and fifi are dogs
+  public static Cont dog(Variable a) {        // fluffy, daisy, and fifi are dogs
     return unify_any(a, "fluffy", "daisy", "fifi");
   }
 
-  public static Mf child(Variable a, Variable b) {
+  public static Cont child(Variable a, Variable b) {
     return or(
       unify((a, "jim"), (b, "bob")),        // jim is a child of bob.
       unify((a, "joe"), (b, "bob")),        // joe is a child of bob.
@@ -62,7 +62,7 @@ public static class Example {
     );
   }
 
-  public static Mf descendant(Variable a, Variable c) {
+  public static Cont descendant(Variable a, Variable c) {
     var b = new Variable("b");
     // by returning a lambda function we
     // create another level of indirection,
@@ -75,7 +75,7 @@ public static class Example {
     )(subst);
   }
 
-  public static Mf mortal(Variable a) {
+  public static Cont mortal(Variable a) {
     var b = new Variable("b");
     return (subst) => or(                   // a is mortal iff:
       human(a),                             // a is human, or
@@ -152,7 +152,7 @@ there's nothing left to prove. This process is called a *resolution*.
 ## **How to use it:**
 
 Just write functions that take in Variables and other values like in the
-example above, and return monadic functions of type ``Mf``, constructed by
+example above, and return monadic functions of type ``Cont``, constructed by
 composing your functions with the combinator functions provided by this
 module, and start the resolution by giving an initial function, a so-called
 *goal*, to ``resolve()`` and iterate over the results, one for each way *goal*
@@ -170,40 +170,40 @@ public delegate Result? Retry()
 ```csharp
 public delegate Result? Emit(Subst subst, Retry retry)
 ```
-- A function type that represents a successful resolution..
+- A function type that represents a successful resolution.
 
 ```csharp
-public delegate Result? Ma(Emit yes, Retry no, Retry esc)
+public delegate Result? Comp(Emit yes, Retry no, Retry esc)
 ```
 - The monadic computation type.  
-  Combinators of this type take a `Emit` continuation and two `Retry`
-  continuations. `yes` represents the current continuation and `no` represents
-  the backtracking path. `esc` is the escape continuation that is invoked by
-  the `cut` combinator to jump out of the current comptutation back to the
-  previous choice point. 
+  Combinators of this type take an `Emit` continuation `yes` and two `Retry`
+  continuations `no` and `esc`. `yes` represents the current continuation and
+  `no` represents the backtracking path. `esc` is the escape continuation that
+  is invoked by the `cut` combinator to jump out of the current comptutation
+  back to the previous choice point.
 
 ```csharp
-public delegate Ma Mf(Subst subst)
+public delegate Comp Cont(Subst subst)
 ```
 - The monadic function type.  
   Combinators of this type take a substitution environment `subst` and
-  return a monadic object.
+  return a monadic computation.
 
 ```csharp
-public static Ma bind(Ma ma, Mf mf)
+public static Comp bind(Comp ma, Cont cont)
 ```
-- Applies the monadic continuation `mf` to `ma` and returns the result.  
-  In the context of the backtracking monad this means turning `mf` into the
-  continuation of `ma`.
+- Applies the monadic continuation `cont` to `ma` and returns the result.  
+  In the context of the backtracking monad this means turning `cont` into the
+  continuation of the computation `ma`.
 
 ```csharp
-public static Ma unit(Subst subst)
+public static Comp unit(Subst subst)
 ```
 - Takes a substitution environment `subst` into a monadic computation.  
   Succeeds once and then initates backtracking.
 
 ```csharp
-public static Ma cut(Subst subst)
+public static Comp cut(Subst subst)
 ```
 - Takes a substitution environment `subst` into a monadic computation.  
   Succeeds once, and instead of normal backtracking aborts the current
@@ -211,36 +211,36 @@ public static Ma cut(Subst subst)
   search space.
 
 ```csharp
-public static Ma fail(Subst subst)
+public static Comp fail(Subst subst)
 ```
 - Takes a substitution environment `subst` into a monadic computation.  
   Never succeeds. Immediately initiates backtracking.
 
 ```csharp
-public static Mf then(Mf mf, Mf mg)
+public static Cont then(Cont cont1, Cont cont2)
 ```
 - Composes two continuations sequentially.
 
 ```csharp
-public static Mf and(params Mf[] mfs)
+public static Cont and(params Cont[] conts)
 ```
 - Composes multiple continuations sequentially.
 
 ```csharp
-public static Mf and_from_enumerable(IEnumerable<Mf> mfs)
+public static Cont and_from_enumerable(IEnumerable<Cont> conts)
 ```
 - Composes multiple continuations sequentially from an enumerable.
 
 ```csharp
-public static Mf choice(Mf mf, Mf mg)
+public static Cont choice(Cont cont1, Cont cont2)
 ```
 - Represents a choice between two monadic continuations.  
-  Takes two continuations `mf` and `mg` and returns a new continuation that
-  tries `mf`, and if that fails, falls back to `mg`. This defines a *choice
+  Takes two continuations `cont1` and `cont2` and returns a new continuation that
+  tries `cont`, and if that fails, falls back to `cont2`. This defines a *choice
   point*.
 
 ```csharp
-public static Mf or(params Mf[] mfs)
+public static Cont or(params Cont[] conts)
 ```
 - Represents a choice between multiple monadic continuations.  
   Takes a variable number of continuations and returns a new continuation
@@ -248,25 +248,25 @@ public static Mf or(params Mf[] mfs)
   *choice point*.
 
 ```csharp
-public static Mf or_from_enumerable(IEnumerable<Mf> mfs)
+public static Cont or_from_enumerable(IEnumerable<Cont> conts)
 ```
 - Represents a choice between multiple monadic continuations from an enumerable.  
-  Takes a sequence of continuations `mfs` and returns a new continuation that
+  Takes a sequence of continuations `conts` and returns a new continuation that
   tries all of them in series with backtracking. This defines a *choice point*.
 
 ```csharp
-public static Mf not(Mf mf)
+public static Cont not(Cont cont)
 ```
 - Negates the result of a continuation.  
-  Returns a new continuation that succeeds if `mf` fails and vice versa.
+  Returns a new continuation that succeeds if `cont` fails and vice versa.
 
 ```csharp
-public static Mf unify(params ValueTuple<object, object>[] pairs)
+public static Cont unify(params ValueTuple<object, object>[] pairs)
 ```
 - Tries to unify pairs of objects. Fails if any pair is not unifiable.
 
 ```csharp
-  public static Mf unify_any(Variable v, params object[] objects) =>
+  public static Cont unify_any(Variable v, params object[] objects) =>
 ```
 - Tries to unify a variable with any one of objects.
   Fails if no object is unifiable.
@@ -282,7 +282,7 @@ public class SubstProxy
 - A mapping representing the Variable bindings of a solution.
 
 ```csharp
-public static IEnumerable<SubstProxy> resolve(Mf goal)
+public static IEnumerable<SubstProxy> resolve(Cont goal)
 ```
 - Perform logical resolution of the monadic continuation represented by `goal`.
 

@@ -5,15 +5,15 @@ using static yogic.Yogic;
 
 public static class Example {
 
-  public static Mf human(Variable a) {      //  socrates, plato, and archimedes are human
+  public static Cont human(Variable a) {      //  socrates, plato, and archimedes are human
     return unify_any(a, "socrates", "plato", "archimedes");
   }
 
-  public static Mf dog(Variable a) {        // fluffy, daisy, and fifi are dogs
+  public static Cont dog(Variable a) {        // fluffy, daisy, and fifi are dogs
     return unify_any(a, "fluffy", "daisy", "fifi");
   }
 
-  public static Mf child(Variable a, Variable b) {
+  public static Cont child(Variable a, Variable b) {
     return or(
       unify((a, "jim"), (b, "bob")),        // jim is a child of bob.
       unify((a, "joe"), (b, "bob")),        // joe is a child of bob.
@@ -23,7 +23,7 @@ public static class Example {
     );
   }
 
-  public static Mf descendant(Variable a, Variable c) {
+  public static Cont descendant(Variable a, Variable c) {
     var b = new Variable("b");
     // by returning a lambda function we
     // create another level of indirection,
@@ -36,7 +36,7 @@ public static class Example {
     )(subst);
   }
 
-  public static Mf mortal(Variable a) {
+  public static Cont mortal(Variable a) {
     var b = new Variable("b");
     return (subst) => or(                   // a is mortal iff:
       human(a),                             // a is human, or
