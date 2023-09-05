@@ -176,9 +176,9 @@ public delegate Result? Emit(Subst subst, Retry retry)
 public delegate Result? Comp(Emit yes, Retry no, Retry esc)
 ```
 - The monadic computation type.  
-  Combinators of this type take an `Emit` continuation `yes` and two `Retry`
-  continuations `no` and `esc`. `yes` represents the current continuation and
-  `no` represents the backtracking path. `esc` is the escape continuation that
+  Combinators of this type take an `Emit` operation `yes` and two `Retry`
+  operation `no` and `esc`. `yes` represents the current continuation and
+  `no` represents the backtracking path. `esc` is the escape ooperation that
   is invoked by the `cut` combinator to jump out of the current comptutation
   back to the previous choice point.
 
