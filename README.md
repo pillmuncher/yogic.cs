@@ -217,11 +217,6 @@ public static Comp fail(Subst subst)
   Never succeeds. Immediately initiates backtracking.
 
 ```csharp
-public static Cont then(Cont cont1, Cont cont2)
-```
-- Composes two continuations sequentially.
-
-```csharp
 public static Cont and(params Cont[] conts)
 ```
 - Composes multiple continuations sequentially.
@@ -230,14 +225,6 @@ public static Cont and(params Cont[] conts)
 public static Cont and_from_enumerable(IEnumerable<Cont> conts)
 ```
 - Composes multiple continuations sequentially from an enumerable.
-
-```csharp
-public static Cont choice(Cont cont1, Cont cont2)
-```
-- Represents a choice between two continuations.  
-  Takes two continuations `cont1` and `cont2` and returns a new continuation that
-  tries `cont`, and if that fails, falls back to `cont2`. This defines a *choice
-  point*.
 
 ```csharp
 public static Cont or(params Cont[] conts)

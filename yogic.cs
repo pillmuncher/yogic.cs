@@ -57,7 +57,7 @@ namespace yogic {
       return (yes, no, esc) => no();
     }
 
-    public static Cont then(Cont cont1, Cont cont2) {
+    private static Cont then(Cont cont1, Cont cont2) {
       // sequencing is the default behavior of 'bind':
       return subst => bind(cont1(subst), cont2);
     }
@@ -69,7 +69,7 @@ namespace yogic {
 
     public static Cont and(params Cont[] conts) => and_from_enumerable(conts);
 
-    public static Cont choice(Cont cont1, Cont cont2) {
+    private static Cont choice(Cont cont1, Cont cont2) {
       // we prepend 'cont2' before the current 'no'
       // continuation, making it the new one:
       return subst
