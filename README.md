@@ -187,25 +187,25 @@ public delegate Comp Cont(Subst subst)
 ```
 - The monadic continuation type.  
   Combinators of this type take a substitution environment `subst` and
-  return a monadic computation.
+  return a computation.
 
 ```csharp
-public static Comp bind(Comp ma, Cont cont)
+public static Comp bind(Comp comp, Cont cont)
 ```
-- Applies the monadic continuation `cont` to `ma` and returns the result.  
+- Applies the continuation `cont` to `comp` and returns the result.  
   In the context of the backtracking monad this means turning `cont` into the
-  continuation of the computation `ma`.
+  continuation of the computation `comp`, creating a new computation.
 
 ```csharp
 public static Comp unit(Subst subst)
 ```
-- Takes a substitution environment `subst` into a monadic computation.  
+- Takes a substitution environment `subst` into a computation.  
   Succeeds once and then initates backtracking.
 
 ```csharp
 public static Comp cut(Subst subst)
 ```
-- Takes a substitution environment `subst` into a monadic computation.  
+- Takes a substitution environment `subst` into a computation.  
   Succeeds once, and instead of normal backtracking aborts the current
   computation and jumps to the previous choice point, effectively pruning the
   search space.
@@ -213,7 +213,7 @@ public static Comp cut(Subst subst)
 ```csharp
 public static Comp fail(Subst subst)
 ```
-- Takes a substitution environment `subst` into a monadic computation.  
+- Takes a substitution environment `subst` into a computation.  
   Never succeeds. Immediately initiates backtracking.
 
 ```csharp
@@ -234,7 +234,7 @@ public static Cont and_from_enumerable(IEnumerable<Cont> conts)
 ```csharp
 public static Cont choice(Cont cont1, Cont cont2)
 ```
-- Represents a choice between two monadic continuations.  
+- Represents a choice between two continuations.  
   Takes two continuations `cont1` and `cont2` and returns a new continuation that
   tries `cont`, and if that fails, falls back to `cont2`. This defines a *choice
   point*.
@@ -242,7 +242,7 @@ public static Cont choice(Cont cont1, Cont cont2)
 ```csharp
 public static Cont or(params Cont[] conts)
 ```
-- Represents a choice between multiple monadic continuations.  
+- Represents a choice between multiple continuations.  
   Takes a variable number of continuations and returns a new continuation
   that tries all of them in series with backtracking. This defines a
   *choice point*.
@@ -250,7 +250,7 @@ public static Cont or(params Cont[] conts)
 ```csharp
 public static Cont or_from_enumerable(IEnumerable<Cont> conts)
 ```
-- Represents a choice between multiple monadic continuations from an enumerable.  
+- Represents a choice between multiple continuations from an enumerable.  
   Takes a sequence of continuations `conts` and returns a new continuation that
   tries all of them in series with backtracking. This defines a *choice point*.
 
@@ -284,7 +284,7 @@ public class SubstProxy
 ```csharp
 public static IEnumerable<SubstProxy> resolve(Cont goal)
 ```
-- Perform logical resolution of the monadic continuation represented by `goal`.
+- Perform logical resolution of the continuation represented by `goal`.
 
 ## Links:
 
