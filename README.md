@@ -185,7 +185,7 @@ public delegate Result? Comp(Emit yes, Retry no, Retry esc)
 ```csharp
 public delegate Comp Cont(Subst subst)
 ```
-- The monadic function type.  
+- The monadic continuation type.  
   Combinators of this type take a substitution environment `subst` and
   return a monadic computation.
 
