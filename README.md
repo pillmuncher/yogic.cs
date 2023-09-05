@@ -44,11 +44,11 @@ using static yogic.Yogic;
 
 public static class Example {
 
-  public static Cont human(Variable a) {      //  socrates, plato, and archimedes are human
+  public static Cont human(Variable a) {    //  socrates, plato, and archimedes are human
     return unify_any(a, "socrates", "plato", "archimedes");
   }
 
-  public static Cont dog(Variable a) {        // fluffy, daisy, and fifi are dogs
+  public static Cont dog(Variable a) {      // fluffy, daisy, and fifi are dogs
     return unify_any(a, "fluffy", "daisy", "fifi");
   }
 
