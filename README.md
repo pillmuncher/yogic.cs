@@ -163,17 +163,14 @@ functions/predicates.
 ## **API:**
 
 ```csharp
-public delegate Result Emit(Subst subst, Retry retry)
-```
-- A function type that represents a successful resolution.  `Emit`
-  continuations are called with a substitution environment `subst` and a
-  `Retry` continuation `retry` and yield the provided substitution
-  environment once and then yield whatever `retry()` yields.
-
-```csharp
 public delegate Result? Retry()
 ```
 - A function type that represents a backtracking operation.  
+
+```csharp
+public delegate Result? Emit(Subst subst, Retry retry)
+```
+- A function type that represents a successful resolution..
 
 ```csharp
 public delegate Result? Ma(Emit yes, Retry no, Retry esc)
