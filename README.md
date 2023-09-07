@@ -170,17 +170,17 @@ public delegate Result? Next()
 ```csharp
 public delegate Result? Emit(Subst subst, Next next)
 ```
-- A function type that represents a successful resolution.
+- A function type that represents a successful resolution.  
 
 ```csharp
 public delegate Result? Step(Emit succeed, Next backtrack, Next escape)
 ```
-- A function type that defines the behavior of logical computations.
+- A function type that defines the behavior of logical computations.  
 
 ```csharp
 public delegate Step Goal(Subst subst)
 ```
-- A function type that represents resolvable logical statements.
+- A function type that represents resolvable logical statements.  
 
 ```csharp
 public static Step unit(Subst subst)
@@ -205,26 +205,16 @@ public static Step fail(Subst subst)
 ```csharp
 public static Goal and(params Goal[] goals)
 ```
-- Conjunction of multiple goals.
-
-```csharp
-public static Goal and_from_enumerable(IEnumerable<Goal> goals)
-```
-- Conjunction of multiple goals from an enumerable.
+- Conjunction of multiple goals.  
+  Takes a variable number of goals and returns a new goal that tries all of
+  them in series. Fails if any goal fails.
 
 ```csharp
 public static Goal or(params Goal[] goals)
 ```
-- Represents a choice between multiple goals.  
-  Takes a variable number of goal and returns a new goal that tries all of
-  them in series with backtracking. This defines a *choice point*.
-
-```csharp
-public static Goal or_from_enumerable(IEnumerable<Goal> goals)
-```
-- Represents a choice between multiple goals from an enumerable.  
-  Takes a sequence of goals and returns a new goal that tries all of them in
-  series with backtracking. This defines a *choice point*.
+- A choice between multiple goals.  
+  Takes a variable number of goals and returns a new goal that tries all of
+  them in series. Fails only if all goals fail. This defines a *choice point*.
 
 ```csharp
 public static Goal not(Goal goal)
@@ -234,29 +224,29 @@ public static Goal not(Goal goal)
 ```csharp
 public static Goal unify(params ValueTuple<object, object>[] pairs)
 ```
-- Tries to unify pairs of objects.
+- Tries to unify pairs of objects.  
   Fails if any pair is not unifiable.
 
 ```csharp
-  public static Goal unify_any(Variable v, params object[] objects) =>
+public static Goal unify_any(Variable v, params object[] objects)
 ```
-- Tries to unify a variable with any one of objects.
+- Tries to unify a variable with any one of objects.  
   Fails if no object is unifiable.
 
 ```csharp
 public class Variable
 ```
-- Represents named logical variables.
+- Represents named logical variables.  
 
 ```csharp
 public class SubstProxy
 ```
-- A mapping representing the Variable bindings of a solution.
+- A mapping representing the Variable bindings of a solution.  
 
 ```csharp
 public static IEnumerable<SubstProxy> resolve(Goal goal)
 ```
-- Perform logical resolution of `goal`.
+- Perform logical resolution of `goal`.  
 
 ## Links:
 

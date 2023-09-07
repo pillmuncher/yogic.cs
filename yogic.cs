@@ -92,7 +92,7 @@ namespace yogic {
     }
 
     // Conjunction:
-    public static Goal and_from_enumerable(IEnumerable<Goal> goals) {
+    private static Goal and_from_enumerable(IEnumerable<Goal> goals) {
       // 'unit' and 'then' form a monoid, so we can just fold:
       return goals.Aggregate<Goal, Goal>(unit, then);
     }
@@ -113,7 +113,7 @@ namespace yogic {
     }
 
     // Adjunction:
-    public static Goal or_from_enumerable(IEnumerable<Goal> goals) {
+    private static Goal or_from_enumerable(IEnumerable<Goal> goals) {
       // 'fail' and 'choice' form a monoid, so we can just fold:
       var choices = goals.Aggregate<Goal, Goal>(fail, choice);
       // we make 'backtrack' the new escape path, so we can curtail backtracking:
