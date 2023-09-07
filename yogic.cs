@@ -19,7 +19,7 @@
 // consist of substitution environments (proxy mappings) of variables to their
 // bindings.
 //
-// In the absence of tail call elimination, trampolining with thunking is used
+// In the absence of Tail Call Elimination, Trampolining with Thunking is used
 // to prevent stack overflows.
 
 namespace yogic {
