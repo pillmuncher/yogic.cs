@@ -66,7 +66,6 @@ namespace yogic {
 
     // Make 'goal' the continuation of 'step':
     private static Step bind(Step step, Goal goal) {
-      // Sequencing is the default behavior of 'bind':
       return (succeed, backtrack, escape)
           => step(backtrack: backtrack,
                   escape: escape,
@@ -89,6 +88,7 @@ namespace yogic {
 
     // Conjunction:
     private static Goal then(Goal goal1, Goal goal2) {
+      // Sequencing is the default behavior of 'bind':
       return subst => bind(goal1(subst), goal2);
     }
 
