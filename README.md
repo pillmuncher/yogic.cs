@@ -22,14 +22,6 @@ enlightenment.
 - **Backtracking**: The monad uses the Triple-Barrelled Continuation Monad for
   resolution, backtracking, and branch pruning via the ``cut`` combinator.
 
-- **Algebraic Structures**: ``unit`` and ``then`` form a *Monoid* over
-  monadic combinator functions, as do ``fail`` and ``choice``. Together they
-  form a *Distributive Lattice* with ``then`` as the *meet* (infimum) and
-  ``choice`` as the *join* (supremum) operator, and ``unit`` and ``fail`` as
-  their respective identity elements. Because of the sequential nature of
-  the employed resolution algorithm combined with the `cut`, the lattice is
-  *non-commutative*.
-
 ## **A Motivating Example:**
 
 We represent logical facts as functions that specify which individuals are
@@ -260,33 +252,3 @@ http://web.cse.ohio-state.edu/~stiff.4/cse3521/logical-resolution.html
 
 Horn Clauses:  
 https://en.wikipedia.org/wiki/Horn_clause
-
-Monoids:  
-https://en.wikipedia.org/wiki/Monoid
-
-Distributive Lattices:  
-https://en.wikipedia.org/wiki/Distributive_lattice
-
-Monads:  
-https://en.wikipedia.org/wiki/Monad_(functional_programming)
-
-Monads Explained in C# (again):  
-https://mikhail.io/2018/07/monads-explained-in-csharp-again/
-
-Discovering the Continuation Monad in C#:  
-https://functionalprogramming.medium.com/deriving-continuation-monad-from-callbacks-23d74e8331d0
-
-Continuations:  
-https://en.wikipedia.org/wiki/Continuation
-
-Continuations Made Simple and Illustrated:  
-https://www.ps.uni-saarland.de/~duchier/python/continuations.html
-
-The Discovery of Continuations:  
-https://www.cs.ru.nl/~freek/courses/tt-2011/papers/cps/histcont.pdf
-
-Tail Calls:  
-https://en.wikipedia.org/wiki/Tail_call
-
-On Recursion, Continuations and Trampolines:  
-https://eli.thegreenplace.net/2017/on-recursion-continuations-and-trampolines/
