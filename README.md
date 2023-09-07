@@ -6,20 +6,15 @@ enlightenment.
 
 ## **Key features:**
 
-- **Horn Clauses as Functions**: Express logical facts and rules as simple
-  functions.
+- **Horn Clauses as Composable Combinators**: Define facts and rules of
+  first-order logic by simply composing combinator functions.
 
-- **Composable Combinators**: Define expressions of first-order logic by
-  simply composing combinator functions.
+- **Unification, Substitution, and Logical Variables**: The substitution
+  environment provides variable bindings and is incrementally constructed
+  during resolution through Unification. It is returned for each successful
+  resolution.
 
-- **Logical Variables**: Represented by the ``Variable`` class, they can be
-  bound to arbitrary values including other variables during resolution.
-
-- **Substitution and Unification**: The substitution environment provides
-  variable bindings and is incrementally constructed during resolution. It
-  is returned for each successful resolution.
-
-- **Backtracking**: Internally, the code uses the Triple-Barrelled
+- **Backtracking and the Cut**: Internally, the code uses the Triple-Barrelled
   Continuation Monad for resolution, backtracking, and branch pruning via the
   ``cut`` combinator.
 
