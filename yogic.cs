@@ -16,8 +16,8 @@
 // conjunction of goals, 'or' for adjunction, 'not' for negation, and 'unify'
 // and 'unify_any' for unification. the resolution process is started by
 // calling 'resolve' on a goal and then iterating over the solutions, which
-// consist of a substitution environment (a proxy mapping) of variables to
-// their bindings.
+// consist of substitution environments (proxy mappings) of variables to their
+// bindings.
 //
 // In the absence of tail call elimination, trampolining with thunking is used
 // to prevent stack overflows.
