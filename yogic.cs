@@ -30,7 +30,7 @@
 // Due to the absence of Tail Call Elimination in C#, Trampolining with
 // Thunking is used to prevent stack overflows.
 //
-// Useful links for a deeper understanding of the code:
+// Useful links:
 //
 // Monoids:  
 // https://en.wikipedia.org/wiki/Monoid
