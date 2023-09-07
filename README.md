@@ -166,7 +166,7 @@ functions/predicates.
 public delegate Result? Next()
 ```
 - A function type that represents a backtracking operation.  
-  
+
 ```csharp
 public delegate Result? Emit(Subst subst, Next next)
 ```
@@ -175,7 +175,7 @@ public delegate Result? Emit(Subst subst, Next next)
 ```csharp
 public delegate Result? Step(Emit succeed, Next backtrack, Next escape)
 ```
-- A function type that represents a logical computation step.  
+- A function type that represents a resolution step.  
 
 ```csharp
 public delegate Step Goal(Subst subst)
