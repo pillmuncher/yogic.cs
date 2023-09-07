@@ -14,12 +14,12 @@
 // like 'unit' (succeeds once), 'fail' (never succeeds), and 'cut' (succeeds
 // once, then curtails backtracking at the previous choice point), 'and' for
 // conjunction of goals, 'or' for adjunction, 'not' for negation, and 'unify'
-// and 'unify_any' for unification. the resolution process is started by
+// and 'unify_any' for unification. The resolution process is started by
 // calling 'resolve' on a goal and then iterating over the solutions, which
 // consist of substitution environments (proxy mappings) of variables to their
 // bindings.
 //
-// The code uses the algebraic structure of the monadic combinators:
+// The code makes use of the algebraic structure of the monadic combinators:
 // 'unit' and 'then' form a Monoid over monadic combinator functions, as do
 // 'fail' and 'choice'. Together they form a Distributive Lattice with 'then'
 // as the meet (infimum) and 'choice' as the join (supremum) operator, and
@@ -81,8 +81,8 @@ namespace yogic {
   public delegate Result? Step(Emit succeed, Next backtrack, Next escape);
   // 'succeed' represents the current continuation and 'backtrack' represents
   // the normal backtracking path. The 'escape' is continuation is only
-  // invoked by the 'cut' combinator to curtail the backtracking at the
-  // previous choice point.
+  // invoked by the 'cut' combinator to curtail backtracking at the previous
+  // choice point.
   
   // The monadic continuation type:
   public delegate Step Goal(Subst subst);
