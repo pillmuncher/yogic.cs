@@ -5,11 +5,11 @@ using static yogic.Yogic;
 
 public static class Example {
 
-  public static Goal human(Variable a) {      //  socrates, plato, and archimedes are human
+  public static Goal human(Variable a) {    //  socrates, plato, and archimedes are human
     return unify_any(a, "socrates", "plato", "archimedes");
   }
 
-  public static Goal dog(Variable a) {        // fluffy, daisy, and fifi are dogs
+  public static Goal dog(Variable a) {      // fluffy, daisy, and fifi are dogs
     return unify_any(a, "fluffy", "daisy", "fifi");
   }
 

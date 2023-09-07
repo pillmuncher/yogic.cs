@@ -5,21 +5,22 @@
 // It combines the List Monad (for indeterminism) and the Triple-Barreled
 // Continuation Monad (for resolution, backtracking, and branch pruning).
 //
-// To keep more closely with the terminology of Logic Programming and to not
-// bother users too much with the terminology of monads, the monadic
-// computation type is called 'Step' and the monadic continuation type is
-// called 'Goal'.
+// To keep more closely to the terminology of logic programming and to not
+// bother users too much with the terminology of monads and continuations, the
+// monadic computation type is called 'step' and the monadic continuation type
+// is called 'goal'.
 //
 // A set of basic combinators you would expect in such a library is provided,
 // like 'unit' (succeeds once), 'fail' (never succeeds), and 'cut' (succeeds
 // once, then curtails backtracking at the previous choice point), 'and' for
 // conjunction of goals, 'or' for adjunction, 'not' for negation, and 'unify'
-// and 'unify_any' for unification. The resolution process is started by
+// and 'unify_any' for unification. the resolution process is started by
 // calling 'resolve' on a goal and then iterating over the solutions, which
-// consist of a substitution environment (a mapping) of variables to their
-// bindings.
+// consist of a substitution environment (a proxy mapping) of variables to
+// their bindings.
 //
-// Trampolining with Thunking is used to prevent stack overflows.
+// In the absence of tail call elimination, trampolining with thunking is used
+// to prevent stack overflows.
 
 namespace yogic {
 
