@@ -19,8 +19,9 @@ enlightenment.
   variable bindings and is incrementally constructed during resolution. It
   is returned for each successful resolution.
 
-- **Backtracking**: The monad uses the Triple-Barrelled Continuation Monad for
-  resolution, backtracking, and branch pruning via the ``cut`` combinator.
+- **Backtracking**: Internally, the code uses the Triple-Barrelled
+  Continuation Monad for resolution, backtracking, and branch pruning via the
+  ``cut`` combinator.
 
 ## **A Motivating Example:**
 
@@ -143,8 +144,8 @@ there's nothing left to prove. This process is called a *resolution*.
 ## **How to use it:**
 
 Just write functions that take in Variables and other values like in the
-example above, and return monadic functions of type ``Goal``, constructed by
-composing your functions with the combinator functions provided by this
+example above, and return combinator functions of type ``Goal``, constructed
+by composing your functions with the combinator functions provided by this
 module, and start the resolution by giving an initial function, a so-called
 *goal*, to ``resolve()`` and iterate over the results, one for each way *goal*
 can be proven. No result means a failed resolution, that is the function
