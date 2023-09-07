@@ -242,17 +242,17 @@ public static IEnumerable<SubstProxy> resolve(Goal goal)
 
 ## Links:
 
+Horn Clauses:  
+https://en.wikipedia.org/wiki/Horn_clause
+
+Logical Resolution:  
+http://web.cse.ohio-state.edu/~stiff.4/cse3521/logical-resolution.html
+
 Unification:  
 https://eli.thegreenplace.net/2018/unification/
 
 Backtracking:  
 https://en.wikipedia.org/wiki/Backtracking
-
-Logical Resolution:  
-http://web.cse.ohio-state.edu/~stiff.4/cse3521/logical-resolution.html
-
-Horn Clauses:  
-https://en.wikipedia.org/wiki/Horn_clause
 
 ## More Links:
 
