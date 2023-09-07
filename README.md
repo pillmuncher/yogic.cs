@@ -19,9 +19,8 @@ enlightenment.
   variable bindings and is incrementally constructed during resolution. It
   is returned for each successful resolution.
 
-- **Backtracking**: The monad combines the List and the Triple-Barrelled
-  Continuation Monads for resolution, backtracking, and branch pruning via
-  the ``cut`` combinator.
+- **Backtracking**: The monad uses the Triple-Barrelled Continuation Monad for
+  resolution, backtracking, and branch pruning via the ``cut`` combinator.
 
 - **Algebraic Structures**: ``unit`` and ``then`` form a *Monoid* over
   monadic combinator functions, as do ``fail`` and ``choice``. Together they

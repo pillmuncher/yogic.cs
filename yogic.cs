@@ -2,8 +2,8 @@
 
 // A library of Monadic Combinators for Logic Programming.
 //
-// It combines the List Monad (for indeterminism) and the Triple-Barreled
-// Continuation Monad (for resolution, backtracking, and branch pruning).
+// It uses the Triple-Barreled Continuation Monad for resolution,
+// backtracking, and branch pruning.
 //
 // To keep more closely to the terminology of logic programming and to not
 // bother users too much with the terminology of monads and continuations, the
