@@ -44,43 +44,43 @@ using static yogic.Yogic;
 
 public static class Example {
 
-  public static Cont human(Variable a) {    //  socrates, plato, and archimedes are human
+  public static Goal human(Variable a) {  //  socrates, plato, and archimedes are human
     return unify_any(a, "socrates", "plato", "archimedes");
   }
 
-  public static Cont dog(Variable a) {      // fluffy, daisy, and fifi are dogs
+  public static Goal dog(Variable a) {    // fluffy, daisy, and fifi are dogs
     return unify_any(a, "fluffy", "daisy", "fifi");
   }
 
-  public static Cont child(Variable a, Variable b) {
+  public static Goal child(Variable a, Variable b) {
     return or(
-      unify((a, "jim"), (b, "bob")),        // jim is a child of bob.
-      unify((a, "joe"), (b, "bob")),        // joe is a child of bob.
-      unify((a, "ian"), (b, "jim")),        // ian is a child of jim.
-      unify((a, "fifi"), (b, "fluffy")),    // fifi is a child of fluffy.
-      unify((a, "fluffy"), (b, "daisy"))    // fluffy is a child of daisy.
+      unify((a, "jim"), (b, "bob")),      // jim is a child of bob.
+      unify((a, "joe"), (b, "bob")),      // joe is a child of bob.
+      unify((a, "ian"), (b, "jim")),      // ian is a child of jim.
+      unify((a, "fifi"), (b, "fluffy")),  // fifi is a child of fluffy.
+      unify((a, "fluffy"), (b, "daisy"))  // fluffy is a child of daisy.
     );
   }
 
-  public static Cont descendant(Variable a, Variable c) {
+  public static Goal descendant(Variable a, Variable c) {
     var b = new Variable("b");
     // by returning a lambda function we
     // create another level of indirection,
     // so that the recursion doesn't
     // immediately trigger an infinite loop
     // and cause a stack overflow:
-    return (subst) => or(                   // a is a descendant of c iff:
-      child(a, c),                          // a is a child of c, or
-      and(child(a, b), descendant(b, c))    // a is a child of b and b is a descendant of c.
+    return (subst) => or(                 // a is a descendant of c iff:
+      child(a, c),                        // a is a child of c, or
+      and(child(a, b), descendant(b, c))  // a is a child of b and b is a descendant of c.
     )(subst);
   }
 
-  public static Cont mortal(Variable a) {
+  public static Goal mortal(Variable a) {
     var b = new Variable("b");
-    return (subst) => or(                   // a is mortal iff:
-      human(a),                             // a is human, or
-      dog(a),                               // a is a dog, or
-      and(descendant(a, b), mortal(b))      // a descends from a mortal.
+    return (subst) => or(                 // a is mortal iff:
+      human(a),                           // a is human, or
+      dog(a),                             // a is a dog, or
+      and(descendant(a, b), mortal(b))    // a descends from a mortal.
     )(subst);
   }
 
@@ -152,7 +152,7 @@ there's nothing left to prove. This process is called a *resolution*.
 ## **How to use it:**
 
 Just write functions that take in Variables and other values like in the
-example above, and return monadic functions of type ``Cont``, constructed by
+example above, and return monadic functions of type ``Goal``, constructed by
 composing your functions with the combinator functions provided by this
 module, and start the resolution by giving an initial function, a so-called
 *goal*, to ``resolve()`` and iterate over the results, one for each way *goal*
@@ -163,97 +163,82 @@ functions/predicates.
 ## **API:**
 
 ```csharp
-public delegate Result? Retry()
+public delegate Result? Next()
 ```
 - A function type that represents a backtracking operation.  
 
 ```csharp
-public delegate Result? Emit(Subst subst, Retry retry)
+public delegate Result? Emit(Subst subst, Next next)
 ```
 - A function type that represents a successful resolution.
 
 ```csharp
-public delegate Result? Comp(Emit yes, Retry no, Retry esc)
+public delegate Result? Step(Emit succeed, Next backtrack, Next escape)
 ```
-- The monadic computation type.  
-  Combinators of this type take an `Emit` operation `yes` and two `Retry`
-  operation `no` and `esc`. `yes` represents the current continuation and
-  `no` represents the backtracking path. `esc` is the escape ooperation that
-  is invoked by the `cut` combinator to jump out of the current comptutation
-  back to the previous choice point.
+- A function type that defines the behavior of logical computations.
 
 ```csharp
-public delegate Comp Cont(Subst subst)
+public delegate Step Goal(Subst subst)
 ```
-- The monadic continuation type.  
-  Combinators of this type take a substitution environment `subst` and
-  return a computation.
+- A function type that represents resolvable logical statements.
 
 ```csharp
-public static Comp bind(Comp comp, Cont cont)
-```
-- Applies the continuation `cont` to `comp` and returns the result.  
-  In the context of the backtracking monad this means turning `cont` into the
-  continuation of the computation `comp`, creating a new computation.
-
-```csharp
-public static Comp unit(Subst subst)
+public static Step unit(Subst subst)
 ```
 - Takes a substitution environment `subst` into a computation.  
   Succeeds once and then initates backtracking.
 
 ```csharp
-public static Comp cut(Subst subst)
+public static Step cut(Subst subst)
 ```
 - Takes a substitution environment `subst` into a computation.  
-  Succeeds once, and instead of normal backtracking aborts the current
+  Succeeds once, but instead of normal backtracking aborts the current
   computation and jumps to the previous choice point, effectively pruning the
   search space.
 
 ```csharp
-public static Comp fail(Subst subst)
+public static Step fail(Subst subst)
 ```
 - Takes a substitution environment `subst` into a computation.  
   Never succeeds. Immediately initiates backtracking.
 
 ```csharp
-public static Cont and(params Cont[] conts)
+public static Goal and(params Goal[] goals)
 ```
-- Composes multiple continuations sequentially.
+- Conjunction of multiple goals.
 
 ```csharp
-public static Cont and_from_enumerable(IEnumerable<Cont> conts)
+public static Goal and_from_enumerable(IEnumerable<Goal> goals)
 ```
-- Composes multiple continuations sequentially from an enumerable.
+- Conjunction of multiple goals from an enumerable.
 
 ```csharp
-public static Cont or(params Cont[] conts)
+public static Goal or(params Goal[] goals)
 ```
-- Represents a choice between multiple continuations.  
-  Takes a variable number of continuations and returns a new continuation
-  that tries all of them in series with backtracking. This defines a
-  *choice point*.
+- Represents a choice between multiple goals.  
+  Takes a variable number of goal and returns a new goal that tries all of
+  them in series with backtracking. This defines a *choice point*.
 
 ```csharp
-public static Cont or_from_enumerable(IEnumerable<Cont> conts)
+public static Goal or_from_enumerable(IEnumerable<Goal> goals)
 ```
-- Represents a choice between multiple continuations from an enumerable.  
-  Takes a sequence of continuations `conts` and returns a new continuation that
-  tries all of them in series with backtracking. This defines a *choice point*.
+- Represents a choice between multiple goals from an enumerable.  
+  Takes a sequence of goals and returns a new goal that tries all of them in
+  series with backtracking. This defines a *choice point*.
 
 ```csharp
-public static Cont not(Cont cont)
+public static Goal not(Goal goal)
 ```
-- Negates the result of a continuation.  
-  Returns a new continuation that succeeds if `cont` fails and vice versa.
+- Negates a goal.  
 
 ```csharp
-public static Cont unify(params ValueTuple<object, object>[] pairs)
+public static Goal unify(params ValueTuple<object, object>[] pairs)
 ```
-- Tries to unify pairs of objects. Fails if any pair is not unifiable.
+- Tries to unify pairs of objects.
+  Fails if any pair is not unifiable.
 
 ```csharp
-  public static Cont unify_any(Variable v, params object[] objects) =>
+  public static Goal unify_any(Variable v, params object[] objects) =>
 ```
 - Tries to unify a variable with any one of objects.
   Fails if no object is unifiable.
@@ -269,9 +254,9 @@ public class SubstProxy
 - A mapping representing the Variable bindings of a solution.
 
 ```csharp
-public static IEnumerable<SubstProxy> resolve(Cont goal)
+public static IEnumerable<SubstProxy> resolve(Goal goal)
 ```
-- Perform logical resolution of the continuation represented by `goal`.
+- Perform logical resolution of `goal`.
 
 ## Links:
 
