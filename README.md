@@ -10,15 +10,15 @@ enlightenment.
   first-order logic by simply composing combinator functions.
 
 - **Unification, Substitution, and Logical Variables**: The substitution
-  environment provides variable bindings and is incrementally constructed
-  during resolution through Unification. It is returned for each successful
-  resolution.
+  environment provides Variable bindings and is incrementally constructed
+  during resolution through the Unification operation. It is returned for each
+  successful resolution.
 
 - **Backtracking and the Cut**: Internally, the code uses the Triple-Barrelled
   Continuation Monad for resolution, backtracking, and branch pruning via the
   ``cut`` combinator.
 
-## **A Motivating Example:**
+## **An Example:**
 
 We represent logical facts as functions that specify which individuals are
 humans and dogs and define a `child(a, b)` relation such that `a` is the child
