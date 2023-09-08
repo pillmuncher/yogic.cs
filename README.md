@@ -206,7 +206,8 @@ public static Goal or(params Goal[] goals)
 ```csharp
 public static Goal not(Goal goal)
 ```
-- Negates a goal.  
+- Negates `goal`.  
+  Fails if `goal` succeeds and vive versa.
 
 ```csharp
 public static Goal unify(params ValueTuple<object, object>[] pairs)
