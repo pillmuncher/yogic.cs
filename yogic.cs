@@ -22,162 +22,162 @@
 // The code makes use of the algebraic structure of the monadic combinators:
 // 'unit' and 'then' form a Monoid over monadic combinator functions, as do
 // 'fail' and 'choice'. Together they form a Distributive Lattice with 'then'
-// as the meet (infimum) and 'choice' as the join (supremum) operator, and
-// 'unit' and 'fail' as their respective identity elements. Because of the
-// sequential nature of the employed resolution algorithm combined with the
-// 'cut', the lattice is non-commutative.
+// as the meet (infimum) and 'choice' as the join (supremum) operator, a fact
+// that is not utilized in the code. Because of the sequential nature of the
+// employed resolution algorithm combined with the 'cut', neither the lattice
+// nor the monoids are commutative.
 //
 // Due to the absence of Tail Call Elimination in C#, Trampolining with
 // Thunking is used to prevent stack overflows.
 
-namespace yogic {
+namespace yogic
+{
+    // The type of the Substitution Environment:
+    using Subst = System.Collections.Immutable.ImmutableDictionary<Variable, object>;
 
-  // The type of the Substitution Envirnonment:
-  using Subst = System.Collections.Immutable.ImmutableDictionary<Variable, object>;
+    // A Tuple of this type is returned for each successful resolution step.
+    // This enables Tail Call ELimination through Thunking and Trampolining.
+    using Result = Tuple<System.Collections.Immutable.ImmutableDictionary<Variable, object>, Next>;
 
-  // A Tuple of this type is returned for each successful resolution step: 
-  using Result = Tuple<System.Collections.Immutable.ImmutableDictionary<Variable, object>, Next>;
-  // This enables Tail Call ELimination through Thunking and Trampolining.
+    // A function type that represents a backtracking operation:
+    public delegate Result? Next();
 
-  // A function type that represents a backtracking operation:
-  public delegate Result? Next();
+    // A function type that represents a successful resolution:
+    public delegate Result? Emit(Subst subst, Next next);
 
-  // A function type that represents a successful resolution:
-  public delegate Result? Emit(Subst subst, Next next);
+    // The monadic computation type. 'succeed' represents the current
+    // continuation and 'backtrack' represents the normal backtracking path.
+    // The 'escape' is continuation is only invoked by the 'cut' combinator to
+    // curtail backtracking at the previous choice point.
+    public delegate Result? Step(Emit succeed, Next backtrack, Next escape);
 
-  // The monadic computation type:
-  public delegate Result? Step(Emit succeed, Next backtrack, Next escape);
-  // 'succeed' represents the current continuation and 'backtrack' represents
-  // the normal backtracking path. The 'escape' is continuation is only
-  // invoked by the 'cut' combinator to curtail backtracking at the previous
-  // choice point.
-  
-  // The monadic continuation type:
-  public delegate Step Goal(Subst subst);
+    // The monadic continuation type:
+    public delegate Step Goal(Subst subst);
 
-  public class Variable {
-    private string Name { get; }
-    public Variable(string name) { Name = name; }
-    public override string ToString() => $"Variable({Name})";
-  }
+    public class Variable
+    {
+        private string Name { get; }
 
-  public static class Yogic {
+        public Variable(string name)
+        {
+            Name = name;
+        }
 
-    public class SubstProxy {
-      private Subst Subst { get; }
-      internal SubstProxy(Subst subst) { Subst = subst; }
-      public object this[Variable v] => deref(Subst, v);
+        public override string ToString() => $"Variable({Name})";
     }
 
-    private static Result? quit() => null;
-    private static Result? emit(Subst subst, Next next) => new (subst, next);
+    public static class Yogic
+    {
+        public class SubstProxy
+        {
+            private Subst Subst { get; }
 
-    // Make 'goal' the continuation of 'step':
-    private static Step bind(Step step, Goal goal) {
-      return (succeed, backtrack, escape)
-          => step(backtrack: backtrack,
-                  escape: escape,
-                  succeed: (subst, next) => goal(subst)(succeed: succeed,
-                                                        backtrack: next,
-                                                        escape: escape));
-    }
+            internal SubstProxy(Subst subst)
+            {
+                Subst = subst;
+            }
 
-    public static Step unit(Subst subst) {
-      return (succeed, backtrack, escape) => succeed(subst, next: backtrack);
-    }
+            public object this[Variable v] => deref(Subst, v);
+        }
 
-    public static Step cut(Subst subst) {
-      return (succeed, backtrack, escape) => succeed(subst, next: escape);
-    }
+        private static object deref(Subst subst, object o)
+        {
+            // chase down Variable bindings:
+            while (o is Variable && subst.ContainsKey((Variable)o))
+            {
+                o = subst[(Variable)o];
+            }
+            return o;
+        }
 
-    public static Step fail(Subst subst) {
-      return (succeed, backtrack, escape) => backtrack();
-    }
+        private static Step bind(Step step, Goal goal)
+        {
+            // Make 'goal' the continuation of 'step':
+            return (succeed, backtrack, escape) =>
+                step((subst, next) => goal(subst)(succeed, next, escape), backtrack, escape);
+        }
 
-    // Conjunction:
-    private static Goal then(Goal goal1, Goal goal2) {
-      // Sequencing is the default behavior of 'bind':
-      return subst => bind(goal1(subst), goal2);
-    }
+        public static Step unit(Subst subst)
+        {
+            return (succeed, backtrack, escape) => succeed(subst, backtrack);
+        }
 
-    // Conjunction:
-    private static Goal and_from_enumerable(IEnumerable<Goal> goals) {
-      // 'unit' and 'then' form a monoid, so we can just fold:
-      return goals.Aggregate<Goal, Goal>(unit, then);
-    }
+        public static Step cut(Subst subst)
+        {
+            return (succeed, backtrack, escape) => succeed(subst, escape);
+        }
 
-    // Conjunction:
-    public static Goal and(params Goal[] goals) => and_from_enumerable(goals);
+        public static Step fail(Subst subst)
+        {
+            return (succeed, backtrack, escape) => backtrack();
+        }
 
-    // Adjunction:
-    private static Goal choice(Goal goal1, Goal goal2) {
-      // we make 'goal2' the new backtracking path:
-      return subst
-          => (succeed, backtrack, escape)
-              => goal1(subst)(succeed: succeed,
-                              escape: escape,
-                              backtrack: () => goal2(subst)(succeed: succeed,
-                                                            backtrack: backtrack,
-                                                            escape: escape));
-    }
+        private static Goal then(Goal goal1, Goal goal2)
+        {
+            // Sequencing is the default behavior of 'bind':
+            return subst => bind(goal1(subst), goal2);
+        }
 
-    // Adjunction:
-    private static Goal or_from_enumerable(IEnumerable<Goal> goals) {
-      // 'fail' and 'choice' form a monoid, so we can just fold:
-      var choices = goals.Aggregate<Goal, Goal>(fail, choice);
-      // we make 'backtrack' the new escape path, so we can curtail backtracking:
-      return subst
-          => (succeed, backtrack, escape)
-              => choices(subst)(succeed: succeed,
-                                backtrack: backtrack,
-                                escape: backtrack);
-    }
+        private static Goal and_from_enumerable(IEnumerable<Goal> goals) =>
+            // 'unit' and 'then' form a monoid, so we can just fold:
+            goals.Aggregate<Goal, Goal>(unit, then);
 
-    // Adjunction:
-    public static Goal or(params Goal[] goals) => or_from_enumerable(goals);
+        public static Goal and(params Goal[] goals) => and_from_enumerable(goals);
 
-    // Negation as failure:
-    public static Goal not(Goal goal) => or(and(goal, cut, fail), unit);
+        private static Goal choice(Goal goal1, Goal goal2)
+        {
+            // we make 'goal2' the new backtracking path of 'goal1':
+            return subst =>
+                (succeed, backtrack, escape) =>
+                    goal1(subst)(succeed, () => goal2(subst)(succeed, backtrack, escape), escape);
+        }
 
-    private static object deref(Subst subst, object o) {
-      // chase down Variable bindings:
-      while (o is Variable && subst.ContainsKey((Variable) o)) {
-        o = subst[(Variable) o];
-      }
-      return o;
-    }
+        private static Goal or_from_enumerable(IEnumerable<Goal> goals)
+        {
+            // 'fail' and 'choice' form a monoid, so we can just fold:
+            var choices = goals.Aggregate<Goal, Goal>(fail, choice);
+            // we make 'backtrack' the new escape path, so we can curtail backtracking:
+            return subst =>
+                (succeed, backtrack, escape) => choices(subst)(succeed, backtrack, backtrack);
+        }
 
-    private static Goal _unify(ValueTuple<object, object> pair)  {
-      // using an 'ImmutableDictionary' makes trailing easy:
-      return subst
-          => (deref(subst, pair.Item1), deref(subst, pair.Item2))
-                switch {
-                  (var o1, var o2) when o1 == o2 => unit(subst),
-                  (Variable v, var o) => unit(subst.Add(v, o)),
-                  (var o, Variable v) => unit(subst.Add(v, o)),
-                  _ => fail(subst)
+        public static Goal or(params Goal[] goals) => or_from_enumerable(goals);
+
+        // Negation as failure:
+        public static Goal not(Goal goal) => or(and(goal, cut, fail), unit);
+
+        private static Goal _unify(ValueTuple<object, object> pair)
+        {
+            // using an 'ImmutableDictionary' makes trailing easy:
+            return subst =>
+                (deref(subst, pair.Item1), deref(subst, pair.Item2)) switch
+                {
+                    (var o1, var o2) when o1 == o2 => unit(subst),
+                    (Variable v, var o) => unit(subst.Add(v, o)),
+                    (var o, Variable v) => unit(subst.Add(v, o)),
+                    _ => fail(subst)
                 };
+        }
+
+        public static Goal unify(params ValueTuple<object, object>[] pairs) =>
+            and_from_enumerable(from pair in pairs select _unify(pair));
+
+        public static Goal unify_any(Variable v, params object[] objects) =>
+            or_from_enumerable(from o in objects select _unify((v, o)));
+
+        private static Result? quit() => null;
+
+        private static Result? emit(Subst subst, Next next) => new(subst, next);
+
+        public static IEnumerable<SubstProxy> resolve(Goal goal)
+        {
+            var result = goal(Subst.Empty)(emit, quit, quit);
+            // We have to implement Tail Call Elimination ourself:
+            while (null != result)
+            {
+                yield return new SubstProxy(result.Item1);
+                result = result.Item2();
+            }
+        }
     }
-
-    public static Goal unify(params ValueTuple<object, object>[] pairs) {
-      // turn multiple unification requests into a conjunction:
-      return and_from_enumerable(from pair in pairs select _unify(pair));
-    }
-
-    public static Goal unify_any(Variable v, params object[] objects) {
-      // turn unification requests on a single variable into an adjunction:
-      return or_from_enumerable(from o in objects select _unify((v, o)));
-    }
-
-    public static IEnumerable<SubstProxy> resolve(Goal goal) {
-      var result = goal(Subst.Empty)(succeed: emit, backtrack: quit, escape: quit);
-      // We have to implement Tail Call Elimination ourself:
-      while (null != result) {
-        yield return new SubstProxy(result.Item1);
-        result = result.Item2();
-      }
-    }
-
-  }
-
 }
