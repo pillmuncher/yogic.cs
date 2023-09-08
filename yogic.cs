@@ -80,14 +80,14 @@ namespace yogic
             public object this[Variable v] => deref(Subst, v);
         }
 
-        private static object deref(Subst subst, object o)
+        private static object deref(Subst subst, object obj)
         {
             // chase down Variable bindings:
-            while (o is Variable && subst.ContainsKey((Variable)o))
+            while (obj is Variable && subst.ContainsKey((Variable)obj))
             {
-                o = subst[(Variable)o];
+                obj = subst[(Variable)obj];
             }
-            return o;
+            return obj;
         }
 
         private static Step bind(Step step, Goal goal)
