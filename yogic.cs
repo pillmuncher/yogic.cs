@@ -19,13 +19,14 @@
 // consist of substitution environments (proxy mappings) of variables to their
 // bindings.
 //
-// The code makes use of the algebraic structure of the monadic combinators:
+// The code makes use of the algebraic structure of the monadic combinators:  
 // 'unit' and 'then' form a Monoid over monadic combinator functions, as do
-// 'fail' and 'choice'. Together they form a Distributive Lattice with 'then'
-// as the meet (infimum) and 'choice' as the join (supremum) operator, a fact
-// that is not utilized in the code. Because of the sequential nature of the
-// employed resolution algorithm combined with the 'cut', neither the lattice
-// nor the monoids are commutative.
+// 'fail' and 'choice', which allows us to fold a sequence of combinators into
+// a single one. Taken thogether, these structures form a Distributive Lattice
+// with 'then' as the meet (infimum) and 'choice' as the join (supremum)
+// operator, a fact that is not utilized in the code, though. Because of the
+// sequential nature of the employed resolution algorithm combined with the
+// 'cut', neither the lattice nor the monoids are commutative.
 //
 // Due to the absence of Tail Call Elimination in C#, Trampolining with
 // Thunking is used to prevent stack overflows.

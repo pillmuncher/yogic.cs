@@ -255,6 +255,9 @@ https://en.wikipedia.org/wiki/Backtracking
 Monoids:  
 https://en.wikipedia.org/wiki/Monoid
 
+Folding on Monoids:  
+https://bartoszmilewski.com/2020/06/15/monoidal-catamorphisms/
+
 Distributive Lattices:  
 https://en.wikipedia.org/wiki/Distributive_lattice
 
