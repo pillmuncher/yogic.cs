@@ -1,5 +1,5 @@
 // Copyright (c) 2023 Mick Krippendorf <m.krippendorf@freenet.de>
-
+//
 // A library of Monadic Combinators for Logic Programming.
 //
 // It uses the Triple-Barreled Continuation Monad for resolution,
@@ -7,8 +7,8 @@
 //
 // To keep more closely to the terminology of logic programming and to not
 // bother users too much with the terminology of monads and continuations, the
-// monadic computation type is called 'step' and the monadic continuation type
-// is called 'goal'.
+// monadic computation type is called 'Step' and the monadic continuation type
+// is called 'Goal'.
 //
 // A set of basic combinators you would expect in such a library is provided,
 // like 'unit' (succeeds once), 'fail' (never succeeds), and 'cut' (succeeds
@@ -32,26 +32,31 @@
 
 namespace yogic
 {
-    // The type of the Substitution Environment:
+    // Only used for recursive unification of collections:
+    using Seq = System.Collections.Generic.ICollection<object>;
+
+    // The type of the Substitution Environment.
+    // ImmutableDictionary brings everything we need for Trailing.
     using Subst = System.Collections.Immutable.ImmutableDictionary<Variable, object>;
 
     // A Tuple of this type is returned for each successful resolution step.
     // This enables Tail Call ELimination through Thunking and Trampolining.
     using Result = Tuple<System.Collections.Immutable.ImmutableDictionary<Variable, object>, Next>;
 
-    // A function type that represents a backtracking operation:
+    // A function type that represents a backtracking operation.
     public delegate Result? Next();
 
-    // A function type that represents a successful resolution:
+    // A function type that represents a successful resolution.
     public delegate Result? Emit(Subst subst, Next next);
 
-    // The monadic computation type. 'succeed' represents the current
-    // continuation and 'backtrack' represents the normal backtracking path.
-    // The 'escape' is continuation is only invoked by the 'cut' combinator to
-    // curtail backtracking at the previous choice point.
+    // The monadic computation type.
+    // 'succeed' wraps the current continuation and 'backtrack' wraps the
+    // normal backtracking continuation. 'escape' wraps the continuation that
+    // can be invoked by a subsequent 'cut' to curtail backtracking at the
+    // previous choice point.
     public delegate Result? Step(Emit succeed, Next backtrack, Next escape);
 
-    // The monadic continuation type:
+    // The monadic continuation type.
     public delegate Step Goal(Subst subst);
 
     public class Variable
@@ -82,7 +87,7 @@ namespace yogic
 
         private static object deref(Subst subst, object obj)
         {
-            // chase down Variable bindings:
+            // Chase down Variable bindings:
             while (obj is Variable && subst.ContainsKey((Variable)obj))
             {
                 obj = subst[(Variable)obj];
@@ -126,7 +131,7 @@ namespace yogic
 
         private static Goal choice(Goal goal1, Goal goal2)
         {
-            // we make 'goal2' the new backtracking path of 'goal1':
+            // We make 'goal2' the new backtracking path of 'goal1':
             return subst =>
                 (succeed, backtrack, escape) =>
                     goal1(subst)(succeed, () => goal2(subst)(succeed, backtrack, escape), escape);
@@ -146,15 +151,25 @@ namespace yogic
         // Negation as failure:
         public static Goal not(Goal goal) => or(and(goal, cut, fail), unit);
 
+        private static Goal _unifySeqs(Seq seq1, Seq seq2)
+        {
+            if (seq1.GetType() != seq2.GetType() || seq1.Count != seq2.Count)
+            {
+                return fail;
+            };
+            return and_from_enumerable(from pair in seq1.Zip(seq2) select _unify(pair));
+        }
+
         private static Goal _unify(ValueTuple<object, object> pair)
         {
-            // using an 'ImmutableDictionary' makes trailing easy:
+            // Using an 'ImmutableDictionary' makes trailing easy:
             return subst =>
                 (deref(subst, pair.Item1), deref(subst, pair.Item2)) switch
                 {
                     (var o1, var o2) when o1 == o2 => unit(subst),
                     (Variable v, var o) => unit(subst.Add(v, o)),
                     (var o, Variable v) => unit(subst.Add(v, o)),
+                    (Seq seq1, Seq seq2) => _unifySeqs(seq1, seq2)(subst),
                     _ => fail(subst)
                 };
         }
