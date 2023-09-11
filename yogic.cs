@@ -2,8 +2,14 @@
 //
 // A library of Monadic Combinators for Logic Programming.
 //
+//
 // It uses the Triple-Barreled Continuation Monad for resolution,
 // backtracking, and branch pruning.
+//
+//
+// “The continuation that obeys only obvious stack semantics,
+// O grasshopper, is not the true continuation.” — Guy Steele.
+//
 //
 // To keep more closely to the terminology of logic programming and to not
 // bother users too much with the terminology of monads and continuations, the
