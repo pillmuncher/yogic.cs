@@ -58,9 +58,9 @@ namespace yogic
 
     // The monadic computation type.
     // 'succeed' wraps the current continuation and 'backtrack' wraps the
-    // normal backtracking continuation. 'escape' wraps the continuation that
-    // can be invoked by a subsequent 'cut' to curtail backtracking at the
-    // previous choice point.
+    // continuation for normal backtracking. 'escape' wraps the continuation
+    // that a subsequent 'cut' invokes to curtail backtracking at the previous
+    // choice point.
     public delegate Result? Step(Emit succeed, Next backtrack, Next escape);
 
     // The monadic continuation type.
