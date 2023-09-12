@@ -12,7 +12,7 @@
 //
 //
 // To keep more closely to the terminology of logic programming and to not
-// bother users too much with the terminology of monads and continuations, the
+// bother users too much with jargon like 'Monad' and 'Continuation', the
 // monadic computation type is called 'Step' and the monadic continuation type
 // is called 'Goal'.
 //
