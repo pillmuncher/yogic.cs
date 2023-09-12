@@ -107,7 +107,7 @@ Note that `jim`, `bob`, `joe` and `ian` are not part of the result of the
 second query because we didn't specify that they are human. Also note that the
 third query doesn't produce any solutions. `dog(x)` is only true if there
 exists an `x` such that x is a dog. In Predicate Logic we would write
-`∃x:dog(x)`, and its when we negate that, we arrive at `-∃x:dog(x)`, which is
+`∃x:dog(x)`, and when we negate that, we arrive at `-∃x:dog(x)`, which is
 equivalent to `∀x:-dog(x)`, meaning that nothing is a dog. Since we defined a
 predicate `dog(_)` in our universe, that assertion is false.
 
