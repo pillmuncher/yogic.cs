@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Mick Krippendorf <m.krippendorf@freenet.de>
 
-using yogic;
-using static yogic.Yogic;
+using Yogic;
+using static Yogic.Combinators;
 
 public static class Example {
 

@@ -26,8 +26,8 @@ of `b`. Then we define rules that specify what a descendant and a mortal being
 is. We then run queries that tell us which individuals are descendants of whom
 and which individuals are both mortal and no dogs:
 ```csharp
-using yogic;
-using static yogic.Yogic;
+using Yogic;
+using static Yogic.Combinators;
 
 public static class Example {
 

@@ -37,7 +37,7 @@
 // Due to the absence of Tail Call Elimination in C#, Trampolining with
 // Thunking is used to prevent stack overflows.
 
-namespace yogic
+namespace Yogic
 {
     // Only used for recursive unification of collections:
     using Seq = System.Collections.Generic.ICollection<object>;
@@ -78,7 +78,7 @@ namespace yogic
         public override string ToString() => $"Variable({Name})";
     }
 
-    public static class Yogic
+    public static class Combinators
     {
         public class SubstProxy
         {
