@@ -105,10 +105,11 @@ archimedes is mortal and no dog.
 ```
 Note that `jim`, `bob`, `joe` and `ian` are not part of the result of the
 second query because we didn't specify that they are human. Also note that the
-third query doesn't produce any solutions, because in the clause `not(dog(x))`
-the variable `x` isn't bound yet. Unbound variables are implicitely
-∀-quantified and by saying `not(dog(x))` we're saying that nothing is a dog,
-which in the universe we defined is not true.
+third query doesn't produce any solutions. `dog(x)` is only true if there
+exists an `x` such that x is a dog. In Predicate Logic we would write
+`∃x:dog(x)`, and its when we negate that, we arrive at `-∃x:dog(x)`, which is
+equivalent to `∀x:-dog(x)`, meaning that nothing is a dog. Since we defined a
+predicate `dog(_)` in our universe, that assertion is false.
 
 ## **How it works:**
 
