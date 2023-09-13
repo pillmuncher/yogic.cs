@@ -17,22 +17,22 @@
 // is called 'Goal'.
 //
 // A set of basic combinators you would expect in such a library is provided,
-// like 'unit' (succeeds once), 'fail' (never succeeds), and 'cut' (succeeds
-// once, then curtails backtracking at the previous choice point), 'and' for
-// conjunction of goals, 'or' for adjunction, 'not' for negation, and 'unify'
-// and 'unify_any' for unification. The resolution process is started by
+// like 'Unit' (succeeds once), 'Fail' (never succeeds), and 'Cut' (succeeds
+// once, then curtails backtracking at the previous choice point), 'And' for
+// conjunction of goals, 'Or' for adjunction, 'Not' for negation, and 'Unify'
+// and 'Unify_any' for unification. The resolution process is started by
 // calling 'resolve' on a goal and then iterating over the solutions, which
 // consist of substitution environments (proxy mappings) of variables to their
 // bindings.
 //
 // The code makes use of the algebraic structure of the monadic combinators:  
-// 'unit' and 'then' form a Monoid over monadic combinator functions, as do
-// 'fail' and 'choice', which allows us to fold a sequence of combinators into
+// 'Unit' and 'Then' form a Monoid over monadic combinator functions, as do
+// 'Fail' and 'Choice', which allows us to fold a sequence of combinators into
 // a single one. Taken thogether, these structures form a Distributive Lattice
-// with 'then' as the meet (infimum) and 'choice' as the join (supremum)
+// with 'Then' as the meet (infimum) and 'Choice' as the join (supremum)
 // operator, a fact that is not utilized in the code, though. Because of the
 // sequential nature of the employed resolution algorithm combined with the
-// 'cut', neither the lattice nor the monoids are commutative.
+// 'Cut', neither the lattice nor the monoids are commutative.
 //
 // Due to the absence of Tail Call Elimination in C#, Trampolining with
 // Thunking is used to prevent stack overflows.
@@ -89,10 +89,10 @@ namespace Yogic
                 Subst = subst;
             }
 
-            public object this[Variable v] => deref(Subst, v);
+            public object this[Variable v] => Deref(Subst, v);
         }
 
-        private static object deref(Subst subst, object obj)
+        private static object Deref(Subst subst, object obj)
         {
             // Chase down Variable bindings:
             while (obj is Variable && subst.ContainsKey((Variable)obj))
@@ -102,41 +102,41 @@ namespace Yogic
             return obj;
         }
 
-        private static Step bind(Step step, Goal goal)
+        private static Step Bind(Step step, Goal goal)
         {
             // Make 'goal' the continuation of 'step':
             return (succeed, backtrack, escape) =>
                 step((subst, next) => goal(subst)(succeed, next, escape), backtrack, escape);
         }
 
-        public static Step unit(Subst subst)
+        public static Step Unit(Subst subst)
         {
             return (succeed, backtrack, escape) => succeed(subst, backtrack);
         }
 
-        public static Step cut(Subst subst)
+        public static Step Cut(Subst subst)
         {
             return (succeed, backtrack, escape) => succeed(subst, escape);
         }
 
-        public static Step fail(Subst subst)
+        public static Step Fail(Subst subst)
         {
             return (succeed, backtrack, escape) => backtrack();
         }
 
-        private static Goal then(Goal goal1, Goal goal2)
+        private static Goal Then(Goal goal1, Goal goal2)
         {
             // Sequencing is the default behavior of 'bind':
-            return subst => bind(goal1(subst), goal2);
+            return subst => Bind(goal1(subst), goal2);
         }
 
-        private static Goal and_from_enumerable(IEnumerable<Goal> goals) =>
+        private static Goal AndFromEnumerable(IEnumerable<Goal> goals) =>
             // 'unit' and 'then' form a monoid, so we can just fold:
-            goals.Aggregate<Goal, Goal>(unit, then);
+            goals.Aggregate<Goal, Goal>(Unit, Then);
 
-        public static Goal and(params Goal[] goals) => and_from_enumerable(goals);
+        public static Goal And(params Goal[] goals) => AndFromEnumerable(goals);
 
-        private static Goal choice(Goal goal1, Goal goal2)
+        private static Goal Choice(Goal goal1, Goal goal2)
         {
             // We make 'goal2' the new backtracking path of 'goal1':
             return subst =>
@@ -144,10 +144,10 @@ namespace Yogic
                     goal1(subst)(succeed, () => goal2(subst)(succeed, backtrack, escape), escape);
         }
 
-        private static Goal or_from_enumerable(IEnumerable<Goal> goals)
+        private static Goal OrFromEnumerable(IEnumerable<Goal> goals)
         {
             // 'fail' and 'choice' form a monoid, so we can just fold:
-            var choices = goals.Aggregate<Goal, Goal>(fail, choice);
+            var choices = goals.Aggregate<Goal, Goal>(Fail, Choice);
             // we inject 'backtrack' as the new escape path, so we can
             // curtail backtracking here and immediately continue at the
             // previous choice point instead.
@@ -155,47 +155,47 @@ namespace Yogic
                 (succeed, backtrack, escape) => choices(subst)(succeed, backtrack, backtrack);
         }
 
-        public static Goal or(params Goal[] goals) => or_from_enumerable(goals);
+        public static Goal Or(params Goal[] goals) => OrFromEnumerable(goals);
 
         // Negation as failure:
-        public static Goal not(Goal goal) => or(and(goal, cut, fail), unit);
+        public static Goal Not(Goal goal) => Or(And(goal, Cut, Fail), Unit);
 
-        private static Goal _unifySeqs(Seq seq1, Seq seq2)
+        private static Goal UnifySeqs(Seq seq1, Seq seq2)
         {
             if (seq1.GetType() != seq2.GetType() || seq1.Count != seq2.Count)
             {
-                return fail;
+                return Fail;
             };
-            return and_from_enumerable(from pair in seq1.Zip(seq2) select _unify(pair));
+            return AndFromEnumerable(from pair in seq1.Zip(seq2) select UnifyPair(pair));
         }
 
-        private static Goal _unify(ValueTuple<object, object> pair)
+        private static Goal UnifyPair(ValueTuple<object, object> pair)
         {
             // Using an 'ImmutableDictionary' makes trailing easy:
             return subst =>
-                (deref(subst, pair.Item1), deref(subst, pair.Item2)) switch
+                (Deref(subst, pair.Item1), Deref(subst, pair.Item2)) switch
                 {
-                    (var o1, var o2) when o1 == o2 => unit(subst),
-                    (Variable v, var o) => unit(subst.Add(v, o)),
-                    (var o, Variable v) => unit(subst.Add(v, o)),
-                    (Seq seq1, Seq seq2) => _unifySeqs(seq1, seq2)(subst),
-                    _ => fail(subst)
+                    (var o1, var o2) when o1 == o2 => Unit(subst),
+                    (Variable v, var o) => Unit(subst.Add(v, o)),
+                    (var o, Variable v) => Unit(subst.Add(v, o)),
+                    (Seq seq1, Seq seq2) => UnifySeqs(seq1, seq2)(subst),
+                    _ => Fail(subst)
                 };
         }
 
-        public static Goal unify(params ValueTuple<object, object>[] pairs) =>
-            and_from_enumerable(from pair in pairs select _unify(pair));
+        public static Goal Unify(params ValueTuple<object, object>[] pairs) =>
+            AndFromEnumerable(from pair in pairs select UnifyPair(pair));
 
-        public static Goal unify_any(Variable v, params object[] objects) =>
-            or_from_enumerable(from o in objects select _unify((v, o)));
+        public static Goal UnifyAny(Variable v, params object[] objects) =>
+            OrFromEnumerable(from o in objects select UnifyPair((v, o)));
 
-        private static Result? quit() => null;
+        private static Result? Quit() => null;
 
-        private static Result? emit(Subst subst, Next next) => new(subst, next);
+        private static Result? Emit(Subst subst, Next next) => new(subst, next);
 
-        public static IEnumerable<SubstProxy> resolve(Goal goal)
+        public static IEnumerable<SubstProxy> Resolve(Goal goal)
         {
-            var result = goal(Subst.Empty)(emit, quit, quit);
+            var result = goal(Subst.Empty)(Emit, Quit, Quit);
             // We have to implement Tail Call Elimination ourself:
             while (null != result)
             {

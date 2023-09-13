@@ -21,7 +21,7 @@ enlightenment.
 ## **An Example:**
 
 We represent logical facts as functions that specify which individuals are
-humans and dogs and define a `child(a, b)` relation such that `a` is the child
+humans and dogs and define a `Child(a, b)` relation such that `a` is the child
 of `b`. Then we define rules that specify what a descendant and a mortal being
 is. We then run queries that tell us which individuals are descendants of whom
 and which individuals are both mortal and no dogs:
@@ -31,58 +31,58 @@ using static Yogic.Combinators;
 
 public static class Example {
 
-    public static Goal human(Variable a) {      //  socrates, plato, and archimedes are human
-        return unify_any(a, "socrates", "plato", "archimedes");
+    public static Goal Human(Variable a) {      //  socrates, plato, and archimedes are human
+        return UnifyAny(a, "socrates", "plato", "archimedes");
     }
 
-    public static Goal dog(Variable a) {        // fluffy, daisy, and fifi are dogs
-        return unify_any(a, "fluffy", "daisy", "fifi");
+    public static Goal Dog(Variable a) {        // fluffy, daisy, and fifi are dogs
+        return UnifyAny(a, "fluffy", "daisy", "fifi");
     }
 
-    public static Goal child(Variable a, Variable b) {
-        return or(
-            unify((a, "jim"), (b, "bob")),      // jim is a child of bob.
-            unify((a, "joe"), (b, "bob")),      // joe is a child of bob.
-            unify((a, "ian"), (b, "jim")),      // ian is a child of jim.
-            unify((a, "fifi"), (b, "fluffy")),  // fifi is a child of fluffy.
-            unify((a, "fluffy"), (b, "daisy"))  // fluffy is a child of daisy.
+    public static Goal Child(Variable a, Variable b) {
+        return Or(
+            Unify((a, "jim"), (b, "bob")),      // jim is a child of bob.
+            Unify((a, "joe"), (b, "bob")),      // joe is a child of bob.
+            Unify((a, "ian"), (b, "jim")),      // ian is a child of jim.
+            Unify((a, "fifi"), (b, "fluffy")),  // fifi is a child of fluffy.
+            Unify((a, "fluffy"), (b, "daisy"))  // fluffy is a child of daisy.
         );
     }
 
-    public static Goal descendant(Variable a, Variable c) {
+    public static Goal Descendant(Variable a, Variable c) {
         var b = new Variable("b");
         // by returning a lambda function we
         // create another level of indirection,
         // so that the recursion doesn't
         // immediately trigger an infinite loop
         // and cause a stack overflow:
-        return (subst) => or(                   // a is a descendant of c iff:
-            child(a, c),                        // a is a child of c, or
-            and(child(a, b), descendant(b, c))  // a is a child of b and b is a descendant of c.
+        return (subst) => Or(                   // a is a descendant of c iff:
+            Child(a, c),                        // a is a child of c, or
+            And(Child(a, b), Descendant(b, c))  // a is a child of b and b is a descendant of c.
         )(subst);
     }
 
-    public static Goal mortal(Variable a) {
+    public static Goal Mortal(Variable a) {
         var b = new Variable("b");
-        return (subst) => or(                   // a is mortal iff:
-            human(a),                           // a is human, or
-            dog(a),                             // a is a dog, or
-            and(descendant(a, b), mortal(b))    // a descends from a mortal.
+        return (subst) => Or(                   // a is mortal iff:
+            Human(a),                           // a is human, or
+            Dog(a),                             // a is a dog, or
+            And(Descendant(a, b), Mortal(b))    // a descends from a mortal.
         )(subst);
     }
 
     public static void Main() {
         var x = new Variable("x");
         var y = new Variable("y");
-        foreach (var subst in resolve(descendant(x, y))) {
+        foreach (var subst in Resolve(Descendant(x, y))) {
             Console.WriteLine($"{subst[x]} is a descendant of {subst[y]}.");
         };
         Console.WriteLine();
-        foreach (var subst in resolve(and(mortal(x), not(dog(x))))) {
+        foreach (var subst in Resolve(And(Mortal(x), Not(Dog(x))))) {
             Console.WriteLine($"{subst[x]} is mortal and no dog.");
         };
         Console.WriteLine();
-        foreach (var subst in resolve(and(not(dog(x)), mortal(x)))) {
+        foreach (var subst in Resolve(And(Not(Dog(x)), Mortal(x)))) {
             Console.WriteLine($"{subst[x]} is mortal and no dog.");
         };
     }
@@ -105,11 +105,11 @@ archimedes is mortal and no dog.
 ```
 Note that `jim`, `bob`, `joe` and `ian` are not part of the result of the
 second query because we didn't specify that they are human. Also note that the
-third query doesn't produce any solutions. `dog(x)` is only true if there
+third query doesn't produce any solutions. `Dog(x)` is only true if there
 exists an `x` such that x is a dog. In Predicate Logic we would write
 `∃x:dog(x)`, and when we negate that, we arrive at `-∃x:dog(x)`, which is
 equivalent to `∀x:-dog(x)`, meaning that nothing is a dog. Since we defined a
-predicate `dog(_)` in our universe, that assertion is false.
+predicate `Dog(_)` in our universe, that assertion is false.
 
 ## **How it works:**
 
@@ -143,7 +143,7 @@ Just write functions that take in Variables and other values like in the
 example above, and return combinator functions of type ``Goal``, constructed
 by composing your functions with the combinator functions provided by this
 module, and start the resolution by giving an initial function, a so-called
-*goal*, to ``resolve()`` and iterate over the results, one for each way *goal*
+*goal*, to `Resolve()` and iterate over the results, one for each way *goal*
 can be proven. No result means a failed resolution, that is the function
 cannot be proven in the universe described by the given set of
 functions/predicates.
@@ -171,13 +171,13 @@ public delegate Step Goal(Subst subst)
 - A function type that represents a resolvable logical statement.  
 
 ```csharp
-public static Step unit(Subst subst)
+public static Step Unit(Subst subst)
 ```
 - Takes a substitution environment `subst` into a computation.  
   Succeeds once and then initates backtracking.
 
 ```csharp
-public static Step cut(Subst subst)
+public static Step Cut(Subst subst)
 ```
 - Takes a substitution environment `subst` into a computation.  
   Succeeds once, but instead of normal backtracking aborts the current
@@ -185,39 +185,39 @@ public static Step cut(Subst subst)
   search space.
 
 ```csharp
-public static Step fail(Subst subst)
+public static Step Fail(Subst subst)
 ```
 - Takes a substitution environment `subst` into a computation.  
   Never succeeds. Immediately initiates backtracking.
 
 ```csharp
-public static Goal and(params Goal[] goals)
+public static Goal And(params Goal[] goals)
 ```
 - Conjunction of multiple goals.  
   Takes a variable number of goals and returns a new goal that tries all of
   them in series. Fails if any goal fails.
 
 ```csharp
-public static Goal or(params Goal[] goals)
+public static Goal Or(params Goal[] goals)
 ```
 - A choice between multiple goals.  
   Takes a variable number of goals and returns a new goal that tries all of
   them in series. Fails only if all goals fail. This defines a *choice point*.
 
 ```csharp
-public static Goal not(Goal goal)
+public static Goal Not(Goal goal)
 ```
 - Negates `goal`.  
   Fails if `goal` succeeds and vive versa.
 
 ```csharp
-public static Goal unify(params ValueTuple<object, object>[] pairs)
+public static Goal Unify(params ValueTuple<object, object>[] pairs)
 ```
 - Tries to unify pairs of objects.  
   Fails if any pair is not unifiable.
 
 ```csharp
-public static Goal unify_any(Variable v, params object[] objects)
+public static Goal UnifyAny(Variable v, params object[] objects)
 ```
 - Tries to unify a variable with any one of objects.  
   Fails if no object is unifiable.
@@ -233,7 +233,7 @@ public class SubstProxy
 - A mapping representing the Variable bindings of a solution.  
 
 ```csharp
-public static IEnumerable<SubstProxy> resolve(Goal goal)
+public static IEnumerable<SubstProxy> Resolve(Goal goal)
 ```
 - Perform logical resolution of `goal`.  
 
