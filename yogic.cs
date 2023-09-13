@@ -148,7 +148,9 @@ namespace Yogic
         {
             // 'fail' and 'choice' form a monoid, so we can just fold:
             var choices = goals.Aggregate<Goal, Goal>(fail, choice);
-            // we make 'backtrack' the new escape path, so we can curtail backtracking:
+            // we inject 'backtrack' as the new escape path, so we can
+            // curtail backtracking here and immediately continue at the
+            // previous choice point instead.
             return subst =>
                 (succeed, backtrack, escape) => choices(subst)(succeed, backtrack, backtrack);
         }
