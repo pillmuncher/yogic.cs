@@ -16,65 +16,65 @@ enlightenment.
 
 - **Backtracking and the Cut**: Internally, the code uses the Triple-Barrelled
   Continuation Monad for resolution, backtracking, and branch pruning via the
-  ``cut`` combinator.
+  `Cut` combinator.
 
 ## **An Example:**
 
 We represent logical facts as functions that specify which individuals are
-humans and dogs and define a `Child(a, b)` relation such that `a` is the child
-of `b`. Then we define rules that specify what a descendant and a mortal being
-is. We then run queries that tell us which individuals are descendants of whom
-and which individuals are both mortal and no dogs:
+humans and dogs and define a `ChildOf(a, b)` relation such that `a` is the
+child of `b`. Then we define rules that specify what a descendant and a mortal
+being is. We then run queries that tell us which individuals are descendants
+of whom and which individuals are both mortal and not a dog:
 ```csharp
 using Yogic;
 using static Yogic.Combinators;
 
 public static class Example {
 
-    public static Goal Human(Variable a) {      //  socrates, plato, and archimedes are human
+    public static Goal Human(Variable a) {          // socrates, plato, and archimedes are human
         return UnifyAny(a, "socrates", "plato", "archimedes");
     }
 
-    public static Goal Dog(Variable a) {        // fluffy, daisy, and fifi are dogs
+    public static Goal Dog(Variable a) {            // fluffy, daisy, and fifi are dogs
         return UnifyAny(a, "fluffy", "daisy", "fifi");
     }
 
-    public static Goal Child(Variable a, Variable b) {
+    public static Goal ChildOf(Variable a, Variable b) {
         return Or(
-            Unify((a, "jim"), (b, "bob")),      // jim is a child of bob.
-            Unify((a, "joe"), (b, "bob")),      // joe is a child of bob.
-            Unify((a, "ian"), (b, "jim")),      // ian is a child of jim.
-            Unify((a, "fifi"), (b, "fluffy")),  // fifi is a child of fluffy.
-            Unify((a, "fluffy"), (b, "daisy"))  // fluffy is a child of daisy.
+            Unify((a, "jim"), (b, "bob")),          // jim is a child of bob.
+            Unify((a, "joe"), (b, "bob")),          // joe is a child of bob.
+            Unify((a, "ian"), (b, "jim")),          // ian is a child of jim.
+            Unify((a, "fifi"), (b, "fluffy")),      // fifi is a child of fluffy.
+            Unify((a, "fluffy"), (b, "daisy"))      // fluffy is a child of daisy.
         );
     }
 
-    public static Goal Descendant(Variable a, Variable c) {
+    public static Goal DescendantOf(Variable a, Variable c) {
         var b = new Variable("b");
         // by returning a lambda function we
         // create another level of indirection,
         // so that the recursion doesn't
         // immediately trigger an infinite loop
         // and cause a stack overflow:
-        return (subst) => Or(                   // a is a descendant of c iff:
-            Child(a, c),                        // a is a child of c, or
-            And(Child(a, b), Descendant(b, c))  // a is a child of b and b is a descendant of c.
+        return (subst) => Or(                       // a is a descendant of c iff:
+            ChildOf(a, c),                          // a is a child of c, or
+            And(ChildOf(a, b), DescendantOf(b, c))  // a is a child of b and b is a descendant of c.
         )(subst);
     }
 
     public static Goal Mortal(Variable a) {
         var b = new Variable("b");
-        return (subst) => Or(                   // a is mortal iff:
-            Human(a),                           // a is human, or
-            Dog(a),                             // a is a dog, or
-            And(Descendant(a, b), Mortal(b))    // a descends from a mortal.
+        return (subst) => Or(                       // a is mortal iff:
+            Human(a),                               // a is human, or
+            Dog(a),                                 // a is a dog, or
+            And(DescendantOf(a, b), Mortal(b))      // a descends from a mortal.
         )(subst);
     }
 
     public static void Main() {
         var x = new Variable("x");
         var y = new Variable("y");
-        foreach (var subst in Resolve(Descendant(x, y))) {
+        foreach (var subst in Resolve(DescendantOf(x, y))) {
             Console.WriteLine($"{subst[x]} is a descendant of {subst[y]}.");
         };
         Console.WriteLine();
