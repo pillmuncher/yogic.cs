@@ -39,9 +39,6 @@
 
 namespace Yogic
 {
-    // Only used for recursive unification of collections:
-    using Seq = System.Collections.Generic.ICollection<object>;
-
     // The type of the Substitution Environment.
     // ImmutableDictionary brings everything we need for Trailing.
     using Subst = System.Collections.Immutable.ImmutableDictionary<Variable, object>;
@@ -130,11 +127,11 @@ namespace Yogic
             return subst => Bind(goal1(subst), goal2);
         }
 
-        private static Goal AndFromEnumerable(IEnumerable<Goal> goals) =>
+        public static Goal And(IEnumerable<Goal> goals) =>
             // 'unit' and 'then' form a monoid, so we can just fold:
             goals.Aggregate<Goal, Goal>(Unit, Then);
 
-        public static Goal And(params Goal[] goals) => AndFromEnumerable(goals);
+        public static Goal And(params Goal[] goals) => And((IEnumerable<Goal>)goals);
 
         private static Goal Choice(Goal goal1, Goal goal2)
         {
@@ -144,7 +141,7 @@ namespace Yogic
                     goal1(subst)(succeed, () => goal2(subst)(succeed, backtrack, escape), escape);
         }
 
-        private static Goal OrFromEnumerable(IEnumerable<Goal> goals)
+        public static Goal Or(IEnumerable<Goal> goals)
         {
             // 'fail' and 'choice' form a monoid, so we can just fold:
             var choices = goals.Aggregate<Goal, Goal>(Fail, Choice);
@@ -155,19 +152,10 @@ namespace Yogic
                 (succeed, backtrack, escape) => choices(subst)(succeed, backtrack, backtrack);
         }
 
-        public static Goal Or(params Goal[] goals) => OrFromEnumerable(goals);
+        public static Goal Or(params Goal[] goals) => Or((IEnumerable<Goal>)goals);
 
         // Negation as failure:
         public static Goal Not(Goal goal) => Or(And(goal, Cut, Fail), Unit);
-
-        private static Goal UnifySeqs(Seq seq1, Seq seq2)
-        {
-            if (seq1.GetType() != seq2.GetType() || seq1.Count != seq2.Count)
-            {
-                return Fail;
-            };
-            return AndFromEnumerable(from pair in seq1.Zip(seq2) select UnifyPair(pair));
-        }
 
         private static Goal UnifyPair(ValueTuple<object, object> pair)
         {
@@ -178,16 +166,18 @@ namespace Yogic
                     (var o1, var o2) when o1 == o2 => Unit(subst),
                     (Variable v, var o) => Unit(subst.Add(v, o)),
                     (var o, Variable v) => Unit(subst.Add(v, o)),
-                    (Seq seq1, Seq seq2) => UnifySeqs(seq1, seq2)(subst),
                     _ => Fail(subst)
                 };
         }
 
         public static Goal Unify(params ValueTuple<object, object>[] pairs) =>
-            AndFromEnumerable(from pair in pairs select UnifyPair(pair));
+            And(from pair in pairs select UnifyPair(pair));
 
         public static Goal UnifyAny(Variable v, params object[] objects) =>
-            OrFromEnumerable(from o in objects select UnifyPair((v, o)));
+            UnifyAny<object>(v, objects);
+
+        public static Goal UnifyAny<T>(Variable v, IEnumerable<T> objects) =>
+            Or(from o in objects select UnifyPair((v, o)));
 
         private static Result? Quit() => null;
 
@@ -195,7 +185,7 @@ namespace Yogic
 
         public static IEnumerable<SubstProxy> Resolve(Goal goal)
         {
-            var result = goal(Subst.Empty)(Emit, Quit, Quit);
+            Result? result = goal(Subst.Empty)(Emit, Quit, Quit);
             // We have to implement Tail Call Elimination ourself:
             while (null != result)
             {
