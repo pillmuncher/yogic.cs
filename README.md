@@ -180,7 +180,7 @@ public delegate Step Goal(Subst subst)
 public static Step Unit(Subst subst)
 ```
 - Takes a substitution environment `subst` into a computation.  
-  Succeeds once and then initates backtracking.
+  Succeeds once and then initiates backtracking.
 
 ```csharp
 public static Step Cut(Subst subst)
