@@ -129,11 +129,11 @@ namespace Yogic
             return subst => Bind(goal1(subst), goal2);
         }
 
-        public static Goal And(Goal goal, IEnumerable<Goal> goals) =>
+        public static Goal And(IEnumerable<Goal> goals) =>
             // 'unit' and 'then' form a monoid, so we can just fold:
-            goals.Prepend(goal).Aggregate<Goal, Goal>(Unit, Then);
+            goals.Aggregate<Goal, Goal>(Unit, Then);
 
-        public static Goal And(params Goal[] goals) => And(goals);
+        public static Goal And(Goal goal, params Goal[] goals) => And(goals.Prepend(goal));
 
         private static Goal Choice(Goal goal1, Goal goal2)
         {
