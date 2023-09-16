@@ -40,6 +40,9 @@ using System.Collections.Immutable;
 
 namespace Yogic
 {
+    using Seq = IReadOnlyCollection<object>;
+    using Pair = ValueTuple<object, object>;
+
     // The type of the Substitution Environment.
     // ImmutableDictionary brings everything we need for Trailing.
     using Subst = ImmutableDictionary<Variable, object>;
@@ -161,9 +164,7 @@ namespace Yogic
             // Negation as failure:
             Or(And(goal, Cut, Fail), Unit);
 
-        public static Goal Unify<T1, T2>(T1 o1, T2 o2)
-            where T1 : notnull
-            where T2 : notnull
+        public static Goal Unify(object o1, object o2)
         {
             // Using an 'ImmutableDictionary' makes trailing easy:
             return subst =>
@@ -172,27 +173,22 @@ namespace Yogic
                     (var x1, var x2) when x1.Equals(x2) => Unit(subst),
                     (Variable v, var o) => Unit(subst.Add(v, o)),
                     (var o, Variable v) => Unit(subst.Add(v, o)),
-                    (ICollection<object> s1, ICollection<object> s2) => UnifyAll(s1, s2)(subst),
+                    (Seq s1, Seq s2) when s1.Count != s2.Count => UnifyPairs(s1.Zip(s2))(subst),
                     _ => Fail(subst)
                 };
         }
 
-        public static Goal UnifyAll<T1, T2>(ICollection<T1> o1, ICollection<T2> o2) {
-            // Only sequences of same size can be unified:
-            if (o1.Count != o2.Count) {
-                return Fail;
-            }
-            return And(from pair in o1.Zip(o2) select Unify(pair.Item1, pair.Item2));
-        }
-
-        public static Goal UnifyPairwise<T1, T2>(params ValueTuple<T1, T2>[] pairs) =>
+        public static Goal UnifyPairs(IEnumerable<Pair> pairs) =>
             And(from pair in pairs select Unify(pair.Item1, pair.Item2));
 
-        public static Goal UnifyAny<T>(Variable v, IEnumerable<T> objects) =>
-            Or(from o in objects select UnifyPairwise((v, o)));
+        public static Goal UnifyPairs(Pair pair, params Pair[] pairs) =>
+            UnifyPairs(pairs.Prepend(pair));
 
-        public static Goal UnifyAny<T>(Variable v, T o, params T[] objects) =>
-            UnifyAny<T>(v, objects.Prepend(o));
+        public static Goal UnifyAny(Variable v, IEnumerable<object> objects) =>
+            Or(from o in objects select Unify(v, o));
+
+        public static Goal UnifyAny(Variable v, object o, params object[] objects) =>
+            UnifyAny(v, objects.Prepend(o));
 
         private static Result? Quit() => null;
 
