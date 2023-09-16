@@ -219,21 +219,21 @@ public static Goal Not(Goal goal)
 ```csharp
 public static Goal Unify(object o1, object o2)
 ```
-- Try to unify two objects.  
+- Tries to unify two objects.  
   Fails if they aren't unifiable.
 
 ```csharp
 public static Goal UnifyAll(IEnumerable<Pair> pairs)
-public static Goal UnifyAll(Pair pair, params Pair[] pairs)
+public static Goal UnifyAll(params Pair[] pairs)
 ```
-- Try to unify pairs of objects.  
+- Tries to unify pairs of objects.  
   Fails if any pair is not unifiable.
 
 ```csharp
 public static Goal UnifyAny(Variable v, IEnumerable<object> objects)
-public static Goal UnifyAny(Variable v, object o, params object[] objects)
+public static Goal UnifyAny(Variable v, params object[] objects)
 ```
-- Try to unify a variable with any one of objects.  
+- Tries to unify a variable with any one of objects.  
   Fails if no object is unifiable.
 
 ```csharp
