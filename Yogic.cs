@@ -36,6 +36,9 @@
 // Due to the absence of Tail Call Elimination in C#, Trampolining with
 // Thunking is used to prevent stack overflows.
 
+using System;
+using System.Linq;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 
 namespace Yogic
@@ -75,6 +78,16 @@ namespace Yogic
         {
             Name = name;
         }
+
+        // Should this be used to make Variables more magical?
+        //
+        // public static implicit operator string(Variable v) {
+        //     return v.Name;
+        // }
+
+        // public static implicit operator Variable(string name) {
+        //     return new Variable(name);
+        // }
 
         public override string ToString() => $"Variable({Name})";
     }
