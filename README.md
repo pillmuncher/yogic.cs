@@ -151,8 +151,20 @@ functions/predicates.
 ## **API:**
 
 ```csharp
+public class Variable
+```
+- Represents named logical variables.  
+
+```csharp
+public class SubstProxy
+```
+- A mapping representing the Variable bindings of a solution.  
+
+```csharp
 Seq = IReadOnlyCollection<object>;
 Pair = ValueTuple<object, object>;
+Subst = ImmutableDictionary<Variable, object>;
+Result = Tuple<ImmutableDictionary<Variable, object>, Next>;
 ```
 - Miscellaneous type shortcuts.
 
@@ -240,11 +252,6 @@ public static Goal UnifyAny(Variable v, params object[] objects)
 public class Variable
 ```
 - Represents named logical variables.  
-
-```csharp
-public class SubstProxy
-```
-- A mapping representing the Variable bindings of a solution.  
 
 ```csharp
 public static IEnumerable<SubstProxy> Resolve(Goal goal)
