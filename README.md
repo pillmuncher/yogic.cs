@@ -223,8 +223,8 @@ public static Goal Unify(object o1, object o2)
   Fails if they aren't unifiable.
 
 ```csharp
-public static Goal UnifyPairs(IEnumerable<Pair> pairs)
-public static Goal UnifyPairs(Pair pair, params Pair[] pairs)
+public static Goal UnifyAll(IEnumerable<Pair> pairs)
+public static Goal UnifyAll(Pair pair, params Pair[] pairs)
 ```
 - Try to unify pairs of objects.  
   Fails if any pair is not unifiable.
