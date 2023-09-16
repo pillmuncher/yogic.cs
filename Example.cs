@@ -45,7 +45,7 @@ public static class Example {
         )(subst);
     }
 
-    public static void Main1() {
+    public static void Main() {
         var x = new Variable("x");
         var y = new Variable("y");
         foreach (var subst in Resolve(DescendantOf(x, y))) {

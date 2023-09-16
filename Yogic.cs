@@ -171,9 +171,9 @@ namespace Yogic
                 (Deref(subst, o1), Deref(subst, o2)) switch
                 {
                     (var x1, var x2) when x1.Equals(x2) => Unit(subst),
+                    (Seq s1, Seq s2) when s1.Count == s2.Count => UnifyAll(s1.Zip(s2))(subst),
                     (Variable v, var o) => Unit(subst.Add(v, o)),
                     (var o, Variable v) => Unit(subst.Add(v, o)),
-                    (Seq s1, Seq s2) when s1.Count == s2.Count => UnifyAll(s1.Zip(s2))(subst),
                     _ => Fail(subst)
                 };
         }
