@@ -12,18 +12,17 @@
 //
 //
 // To keep more closely to the terminology of logic programming and to not
-// bother users too much with jargon like 'Monad' and 'Continuation', the
+// bother users too much with jargon like "Monad" and "Continuation", the
 // monadic computation type is called 'Step' and the monadic continuation type
 // is called 'Goal'.
 //
 // A set of basic combinators you would expect in such a library is provided,
 // like 'Unit' (succeeds once), 'Fail' (never succeeds), and 'Cut' (succeeds
 // once, then curtails backtracking at the previous choice point), 'And' for
-// conjunction of goals, 'Or' for adjunction, 'Not' for negation, and 'Unify'
-// and 'Unify_any' for unification. The resolution process is started by
-// calling 'resolve' on a goal and then iterating over the solutions, which
-// consist of substitution environments (proxy mappings) of variables to their
-// bindings.
+// conjunction of goals, 'Or' for adjunction, 'Not' for negation, and 'Unify*'
+// for unification. The resolution process is started by calling 'Resolve' on
+// a goal and then iterating over the solutions, which consist of substitution
+// environments (proxy mappings) of variables to their bindings.
 //
 // The code makes use of the algebraic structure of the monadic combinators:  
 // 'Unit' and 'Then' form a Monoid over monadic combinator functions, as do
