@@ -37,15 +37,17 @@
 // Due to the absence of Tail Call Elimination in C#, Trampolining with
 // Thunking is used to prevent stack overflows.
 
+using System.Collections.Immutable;
+
 namespace Yogic
 {
     // The type of the Substitution Environment.
     // ImmutableDictionary brings everything we need for Trailing.
-    using Subst = System.Collections.Immutable.ImmutableDictionary<Variable, object>;
+    using Subst = ImmutableDictionary<Variable, object>;
 
     // A Tuple of this type is returned for each successful resolution step.
     // This enables Tail Call ELimination through Thunking and Trampolining.
-    using Result = Tuple<System.Collections.Immutable.ImmutableDictionary<Variable, object>, Next>;
+    using Result = Tuple<ImmutableDictionary<Variable, object>, Next>;
 
     // A function type that represents a backtracking operation.
     public delegate Result? Next();
@@ -157,27 +159,39 @@ namespace Yogic
         // Negation as failure:
         public static Goal Not(Goal goal) => Or(And(goal, Cut, Fail), Unit);
 
-        private static Goal UnifyPair(ValueTuple<object, object> pair)
+        public static Goal Unify<T1, T2>(T1 o1, T2 o2)
+            where T1 : notnull
+            where T2 : notnull
         {
             // Using an 'ImmutableDictionary' makes trailing easy:
             return subst =>
-                (Deref(subst, pair.Item1), Deref(subst, pair.Item2)) switch
+                (Deref(subst, o1), Deref(subst, o2)) switch
                 {
-                    (var o1, var o2) when o1 == o2 => Unit(subst),
+                    (var x1, var x2) when x1.Equals(x2) => Unit(subst),
                     (Variable v, var o) => Unit(subst.Add(v, o)),
                     (var o, Variable v) => Unit(subst.Add(v, o)),
+                    (ICollection<object> s1, ICollection<object> s2) => UnifyAll(s1, s2)(subst),
                     _ => Fail(subst)
                 };
         }
 
-        public static Goal Unify(params ValueTuple<object, object>[] pairs) =>
-            And(from pair in pairs select UnifyPair(pair));
+        public static Goal UnifyAll<T1, T2>(System.Collections.Generic.ICollection<T1> o1, System.Collections.Generic.ICollection<T2> o2) {
+            if (o1.Count != o2.Count) {
+                return Fail;
+            }
+            else {
+                return And(from pair in o1.Zip(o2) select Unify(pair.Item1, pair.Item2));
+            }
+        }
 
-        public static Goal UnifyAny(Variable v, params object[] objects) =>
-            UnifyAny<object>(v, objects);
+        public static Goal UnifyPairwise<T1, T2>(params ValueTuple<T1, T2>[] pairs) =>
+            And(from pair in pairs select Unify(pair.Item1, pair.Item2));
 
         public static Goal UnifyAny<T>(Variable v, IEnumerable<T> objects) =>
-            Or(from o in objects select UnifyPair((v, o)));
+            Or(from o in objects select UnifyPairwise((v, o)));
+
+        public static Goal UnifyAny<T>(Variable v, T o, params T[] objects) =>
+            UnifyAny<T>(v, objects.Prepend(o));
 
         private static Result? Quit() => null;
 
