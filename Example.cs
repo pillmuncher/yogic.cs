@@ -15,11 +15,11 @@ public static class Example {
 
     public static Goal ChildOf(Variable a, Variable b) {
         return Or(
-            UnifyPairs((a, "jim"), (b, "bob")),          // jim is a child of bob.
-            UnifyPairs((a, "joe"), (b, "bob")),          // joe is a child of bob.
-            UnifyPairs((a, "ian"), (b, "jim")),          // ian is a child of jim.
-            UnifyPairs((a, "fifi"), (b, "fluffy")),      // fifi is a child of fluffy.
-            UnifyPairs((a, "fluffy"), (b, "daisy"))      // fluffy is a child of daisy.
+            UnifyAll((a, "jim"), (b, "bob")),          // jim is a child of bob.
+            UnifyAll((a, "joe"), (b, "bob")),          // joe is a child of bob.
+            UnifyAll((a, "ian"), (b, "jim")),          // ian is a child of jim.
+            UnifyAll((a, "fifi"), (b, "fluffy")),      // fifi is a child of fluffy.
+            UnifyAll((a, "fluffy"), (b, "daisy"))      // fluffy is a child of daisy.
         );
     }
 

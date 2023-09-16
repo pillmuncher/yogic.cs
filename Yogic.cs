@@ -173,16 +173,16 @@ namespace Yogic
                     (var x1, var x2) when x1.Equals(x2) => Unit(subst),
                     (Variable v, var o) => Unit(subst.Add(v, o)),
                     (var o, Variable v) => Unit(subst.Add(v, o)),
-                    (Seq s1, Seq s2) when s1.Count == s2.Count => UnifyPairs(s1.Zip(s2))(subst),
+                    (Seq s1, Seq s2) when s1.Count == s2.Count => UnifyAll(s1.Zip(s2))(subst),
                     _ => Fail(subst)
                 };
         }
 
-        public static Goal UnifyPairs(IEnumerable<Pair> pairs) =>
+        public static Goal UnifyAll(IEnumerable<Pair> pairs) =>
             And(from pair in pairs select Unify(pair.Item1, pair.Item2));
 
-        public static Goal UnifyPairs(Pair pair, params Pair[] pairs) =>
-            UnifyPairs(pairs.Prepend(pair));
+        public static Goal UnifyAll(Pair pair, params Pair[] pairs) =>
+            UnifyAll(pairs.Prepend(pair));
 
         public static Goal UnifyAny(Variable v, IEnumerable<object> objects) =>
             Or(from o in objects select Unify(v, o));
