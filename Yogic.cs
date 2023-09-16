@@ -154,7 +154,7 @@ namespace Yogic
                 (succeed, backtrack, escape) => choices(subst)(succeed, backtrack, backtrack);
         }
 
-        public static Goal Or(params Goal[] goals) => Or((IEnumerable<Goal>)goals);
+        public static Goal Or(Goal goal, params Goal[] goals) => Or(goals.Prepend(goal));
 
         // Negation as failure:
         public static Goal Not(Goal goal) => Or(And(goal, Cut, Fail), Unit);
@@ -175,13 +175,12 @@ namespace Yogic
                 };
         }
 
-        public static Goal UnifyAll<T1, T2>(System.Collections.Generic.ICollection<T1> o1, System.Collections.Generic.ICollection<T2> o2) {
+        public static Goal UnifyAll<T1, T2>(ICollection<T1> o1, ICollection<T2> o2) {
+            // Only sequences of same size can be unified:
             if (o1.Count != o2.Count) {
                 return Fail;
             }
-            else {
-                return And(from pair in o1.Zip(o2) select Unify(pair.Item1, pair.Item2));
-            }
+            return And(from pair in o1.Zip(o2) select Unify(pair.Item1, pair.Item2));
         }
 
         public static Goal UnifyPairwise<T1, T2>(params ValueTuple<T1, T2>[] pairs) =>
@@ -195,7 +194,7 @@ namespace Yogic
 
         private static Result? Quit() => null;
 
-        private static Result? Emit(Subst subst, Next next) => new(subst, next);
+        private static Result? Emit(Subst subst, Next next) => new (subst, next);
 
         public static IEnumerable<SubstProxy> Resolve(Goal goal)
         {
