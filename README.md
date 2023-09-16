@@ -249,11 +249,6 @@ public static Goal UnifyAny(Variable v, params object[] objects)
   Fails if no object is unifiable.
 
 ```csharp
-public class Variable
-```
-- Represents named logical variables.  
-
-```csharp
 public static IEnumerable<SubstProxy> Resolve(Goal goal)
 ```
 - Perform logical resolution of `goal`.  
