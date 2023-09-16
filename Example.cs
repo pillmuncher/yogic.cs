@@ -15,11 +15,11 @@ public static class Example {
 
     public static Goal ChildOf(Variable a, Variable b) {
         return Or(
-            UnifyPairwise((a, "jim"), (b, "bob")),          // jim is a child of bob.
-            UnifyPairwise((a, "joe"), (b, "bob")),          // joe is a child of bob.
-            UnifyPairwise((a, "ian"), (b, "jim")),          // ian is a child of jim.
-            UnifyPairwise((a, "fifi"), (b, "fluffy")),      // fifi is a child of fluffy.
-            UnifyPairwise((a, "fluffy"), (b, "daisy"))      // fluffy is a child of daisy.
+            UnifyPairs((a, "jim"), (b, "bob")),          // jim is a child of bob.
+            UnifyPairs((a, "joe"), (b, "bob")),          // joe is a child of bob.
+            UnifyPairs((a, "ian"), (b, "jim")),          // ian is a child of jim.
+            UnifyPairs((a, "fifi"), (b, "fluffy")),      // fifi is a child of fluffy.
+            UnifyPairs((a, "fluffy"), (b, "daisy"))      // fluffy is a child of daisy.
         );
     }
 
@@ -45,7 +45,7 @@ public static class Example {
         )(subst);
     }
 
-    public static void Main() {
+    public static void Main1() {
         var x = new Variable("x");
         var y = new Variable("y");
         foreach (var subst in Resolve(DescendantOf(x, y))) {
