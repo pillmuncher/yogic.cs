@@ -133,7 +133,8 @@ namespace Yogic
             // 'unit' and 'then' form a monoid, so we can just fold:
             goals.Aggregate<Goal, Goal>(Unit, Then);
 
-        public static Goal And(Goal goal, params Goal[] goals) => And(goals.Prepend(goal));
+        public static Goal And(Goal goal, params Goal[] goals) =>
+            And(goals.Prepend(goal));
 
         private static Goal Choice(Goal goal1, Goal goal2)
         {
@@ -154,10 +155,12 @@ namespace Yogic
                 (succeed, backtrack, escape) => choices(subst)(succeed, backtrack, backtrack);
         }
 
-        public static Goal Or(Goal goal, params Goal[] goals) => Or(goals.Prepend(goal));
+        public static Goal Or(Goal goal, params Goal[] goals) =>
+            Or(goals.Prepend(goal));
 
-        // Negation as failure:
-        public static Goal Not(Goal goal) => Or(And(goal, Cut, Fail), Unit);
+        public static Goal Not(Goal goal) =>
+            // Negation as failure:
+            Or(And(goal, Cut, Fail), Unit);
 
         public static Goal Unify<T1, T2>(T1 o1, T2 o2)
             where T1 : notnull
