@@ -4,7 +4,7 @@
 - A set of operations and rules defined on a collection of things, used to
   describe relationships between elements within that collection. Yogic's
   combinator functions form algebraic structures, in particular
-  [Monoids](#Monoid) and a [Distributive Lattice](#Distributive%20Lattice).
+  [Monoids](#Monoid) and a [Distributive Lattice](#Distributive\ Lattice).
 
 ### **Backtracking**:  
 - A technique employed in search and [Logic Programming](#Logic%20Programming)
