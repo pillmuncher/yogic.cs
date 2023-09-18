@@ -1,6 +1,6 @@
-## **GLOSSARY**
+# **GLOSSARY**
 
-### **Algebraic Structure**:  
+# **Algebraic Structure**:  
 - A set of operations and rules defined on a collection of things, used to
 describe relationships between elements within that collection. Yogic's
 combinator functions form algebraic structures, in particular
@@ -72,7 +72,7 @@ Monads are used for managing side effects and computations in a structured
 way. In Yogic, the Triple-Barrelled Continuation Monad is used for managing
 logical computations.
 
-### **Monoid**:  
+# **Monoid**:  
 - A mathematical structure consisting of a Set and an associative binary
 operation with an identity element. In Yogic, the combinators `Then` and
 `Unit` form a Monoid, as do `Choice` and `Fail`.
