@@ -51,7 +51,7 @@
   elements `Unit` and `Fail` form a Distributive Lattice.
 
 ### **Goal**:  
-- In [Logic Programming](#Logic Programming), a [Goal](#Goal) represents a
+- In [Logic Programming](#Logic-Programming), a [Goal](#Goal) represents a
   resolvable logical statement or query. It defines the tasks to be
   accomplished during the [Resolution ](#Resolution) process.
 
@@ -111,5 +111,5 @@
 
 ### **Unification**:  
 - The process of finding [substitutions](#Substitution-Environment) for
-  [Logical Variables}(#Logical-Variables) such that two terms become equal.
+  [Logical Variables](#Logical-Variables) such that two terms become equal.
   It's a fundamental operation in [Logic Programming](#Logic-Programming).
