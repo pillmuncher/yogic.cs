@@ -5,6 +5,7 @@ public class Variable```
 - Represents named logical variables.
 
 ```csharp
+using Subst = ImmutableDictionary<Variable, object>;
 ```
 - Represents variable bindings within a solution.
 
