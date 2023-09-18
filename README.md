@@ -59,7 +59,7 @@ puzzle where numbers have to be assigned to letters, such that all sets of
 assignments are compatible with each other. Typically, there is ever only a
 single solution. We solve this in a naive way, by generating all possible
 permutations and then matching each permutation until we find one that
-matches. In Logic Programming this kind of algorithm is knows as *Generate and
+matches. In Logic Programming this kind of algorithm is known as *Generate and
 Test*.
 ```csharp
 using System.Linq;
