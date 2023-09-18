@@ -13,13 +13,13 @@ program can backtrack and try an alternative path. Backtracking can also be
 used to generate an exhaustive list of solutions to a logical query.
 
 **Branch Pruning with the Cut**:  
-- In Logic programming, "cut" (or ! in the programming language Prolog) is the
+- In Logic programming, 'cut' (or '!' in the programming language Prolog) is the
 name of an operator that succeeds once and then prevents backtracking beyond
 the point where it was invoked. This effectively prunes branches in a search
 tree.
 
 **Choice Point**:  
-- In Logic Programming, a "Choice Point" is a juncture where multiple options
+- In Logic Programming, a Choice Point is a juncture where multiple options
 are available. It's used to explore different paths until a solution is found
 or all possibilities are exhausted.
 
@@ -46,7 +46,7 @@ like `Then` and `Choice` together with their respective identity elements
 `Unit` and `Fail` form a distributive lattice.
 
 **Goal**:  
-- In logic programming, a "Goal" represents a resolvable logical statement or
+- In logic programming, a Goal represents a resolvable logical statement or
 query. It defines the tasks to be accomplished during the resolution process.
 
 **Horn Clauses**:  
