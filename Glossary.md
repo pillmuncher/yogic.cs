@@ -9,26 +9,35 @@ a Distributive Lattice.
 **Backtracking**:  
 A technique employed in search and Logic Programming to explore different
 possibilities of outcomes. If a certain path does not lead to a solution, the
-program can backtrack and try an alternative path. Backtracking is also used
-to generate multiple solutions to a logical query.
+program can backtrack and try an alternative path. Backtracking can also be
+used to generate an exhaustive list of solutions to a logical query.
 
 **Branch Pruning with the Cut**:  
-In Logic programming, "cut" is the name of an operator that succeeds once and
-then prevents backtracking beyond the point where it was invoked. This
-effectively prunes branches in a search tree.
+In Logic programming, "cut" (or ! in the programming language Prolog) is the
+name of an operator that succeeds once and then prevents backtracking beyond
+the point where it was invoked. This effectively prunes branches in a search
+tree.
+
+**Choice Point**:
+In Logic Programming, a "Choice Point" is a juncture where multiple options
+are available. It's used to explore different paths until a solution is found
+or all possibilities are exhausted.
 
 **Combinators**:  
 Functions that take other functions as input and produce new functions as
-output. In Yogic combinators are used to create and manipulate logical goals.
+output. In Yogic combinators are used to create and compose logical goals.
 
 **Continuation**:  
 A representation of the future of a computation. Continuations are used to
-manage the flow of logical Resolution and Backtracking.
+manage the flow of logical Resolution and Backtracking. In Yogic, there are at
+any point three possible futures: One in which the current Goal succeeds, one
+where it fails, and one where it succeeds but after that curtails
+backtracking at the previous choice point.
 
 **Continuation Monad**:  
 A monad that encapsulates computations with continuations. Yogic employs the
 Triple-Barrelled Continuation Monad to manage Resolution, Backtracking and
-Branch Pruning withe the Cut.
+Branch Pruning with the Cut.
 
 **Distributive Lattice**:  
 A mathematical structure where two binary operations, meet (infimum) and join
@@ -56,10 +65,6 @@ Variables in logic programming that can be bound to values or other variables
 in the substitution environment. Like mathematical variables, they represent a
 single value and cannot be re-asigned another.
 
-**Modus Ponens**:  
-A common rule of inference in logic. If you have a premise in the form "if A
-then B," and you know that A is true, you can infer that B is also true.
-
 **Monad**:  
 A concept of Category Theory and a design pattern in Functional Preogramming.
 Monads are used for managing side effects and computations in a structured
@@ -78,7 +83,7 @@ treated as evidence of its negation.
 **Resolution**:  
 A fundamental process in Logic Programming and formal reasoning. It involves
 deriving new facts or conclusions from existing ones by applying logical rules
-and inference methods, such as the Modus Ponens.
+and inference methods.
 
 **Substitution Environment**:  
 A key data structure in Logic Programming that maps logical Variables to their

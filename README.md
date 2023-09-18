@@ -4,19 +4,53 @@
 It's called Yogic because logic programming is another step on the path to
 enlightenment.
 
-## **Key features:**
+## **Key Features:**
 
-- **Horn Clauses as Composable Combinators**: Define facts and rules of
-  first-order logic by simply composing combinator functions.
 
-- **Unification, Substitution, and Logical Variables**: The substitution
-  environment provides Variable bindings and is incrementally constructed
-  during resolution through the Unification operation. It is returned for each
-  successful resolution.
+Yogic is a toolset designed to simplify logic programming tasks. It provides
+an efficient way to express, query, and solve logical problems.
 
-- **Backtracking and the Cut**: Internally, the code uses the Triple-Barrelled
-  Continuation Monad for resolution, backtracking, and branch pruning via the
-  `Cut` combinator.
+1. **Combinator Functions for Logic Statements**:
+
+   Begin by thinking of your logical statements as combinations of facts and
+   rules. These statements can be represented using combinator functions
+   provided by the library. Each function encapsulates a specific logical
+   operation.
+
+2. **Resolution - Finding Solutions**:
+
+   Define your logical goals using these combinator functions. A goal
+   represents a statement or query you want to resolve. To find solutions to
+   your goals, call the `Resolve` method on them. This method starts the
+   resolution process.
+
+3. **Unification and Substitution of Variables**:
+
+   Unification is a fundamental operation in logic programming. It's a way to
+   match and bind objects together. During the resolution process, the library
+   handles unification for you. As goals are pursued and objects are matched,
+   a substitution environment is constructed. This environment maps logical
+   variables to their bindings or values.
+
+4. **Backtracking for Multiple Paths**:
+
+   Logic programming often involves exploring different possibilities. If a
+   particular path or goal doesn't succeed, the library automatically
+   backtracks to explore other alternatives. You don't need to manage this
+   backtracking manually; it's handled seamlessly.
+
+5. **Optimizing with the 'Cut' Combinator**:
+
+   To optimize your logical queries, you can use the `Cut` combinator. It
+   serves as a way to curtail backtracking at specific points in your logic.
+   By strategically placing 'Cut' combinators, you can prune branches of the
+   search tree that are no longer relevant. This can significantly improve the
+   efficiency of your logic programs.
+
+By combining these elements, you can express and solve complex logical
+problems effectively using the Logic Programming Combinators Library. It
+abstracts away many of the intricacies of logic programming, allowing you to
+focus on defining your logic in a more intuitive and structured manner.
 
 ## **An Example:**
 
@@ -124,18 +158,9 @@ gn  ⟶  f(x1,...,xm)
 
 We call ``f(x1,...,xm)`` the *head* and each ``gi`` a *body*.
 
-We prove these by *modus ponens*:
-
-```
-A  ⟶  B            gi  ⟶  f(x1,...,xm)
-A                  gi
-⎯⎯⎯⎯⎯          ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
-B                  f(x1,...,xm)
-```
-
 A function with head ``f(x1,...,xm)`` is proven by proving any of
-``g1,...,gn`` recursively. When we reach a goal that has no body, there's
-nothing left to prove. This process is called a *resolution*.
+``g1,...,gn`` recursively. When we reach a goal that has a head but no body,
+there's nothing left to prove. This process is called a *resolution*.
 
 ## **How to use it:**
 
@@ -150,109 +175,6 @@ functions/predicates.
 
 ## **API:**
 
-```csharp
-public class Variable
-```
-- Represents named logical variables.  
-
-```csharp
-public class SubstProxy
-```
-- A mapping representing the Variable bindings of a solution.  
-
-```csharp
-Seq = IReadOnlyCollection<object>;
-Pair = ValueTuple<object, object>;
-Subst = ImmutableDictionary<Variable, object>;
-Result = Tuple<ImmutableDictionary<Variable, object>, Next>;
-```
-- Miscellaneous type shortcuts.
-
-```csharp
-public delegate Result? Next()
-```
-- A function type that represents a backtracking operation.  
-
-```csharp
-public delegate Result? Emit(Subst subst, Next next)
-```
-- A function type that represents a successful resolution.  
-
-```csharp
-public delegate Result? Step(Emit succeed, Next backtrack, Next escape)
-```
-- A function type that represents a resolution step.  
-
-```csharp
-public delegate Step Goal(Subst subst)
-```
-- A function type that represents a resolvable logical statement.  
-
-```csharp
-public static Step Unit(Subst subst)
-```
-- Takes a substitution environment `subst` into a computation.  
-  Succeeds once and then initiates backtracking.
-
-```csharp
-public static Step Cut(Subst subst)
-```
-- Takes a substitution environment `subst` into a computation.  
-  Succeeds once, but instead of normal backtracking aborts the current
-  computation and jumps to the previous choice point, effectively pruning the
-  search space.
-
-```csharp
-public static Step Fail(Subst subst)
-```
-- Takes a substitution environment `subst` into a computation.  
-  Never succeeds. Immediately initiates backtracking.
-
-```csharp
-public static Goal And(params Goal[] goals)
-```
-- Conjunction of multiple goals.  
-  Takes a variable number of goals and returns a new goal that tries all of
-  them in series. Fails if any goal fails.
-
-```csharp
-public static Goal Or(params Goal[] goals)
-```
-- A choice between multiple goals.  
-  Takes a variable number of goals and returns a new goal that tries all of
-  them in series. Fails only if all goals fail. This defines a *choice point*.
-
-```csharp
-public static Goal Not(Goal goal)
-```
-- Negates `goal`.  
-  Fails if `goal` succeeds and vive versa.
-
-```csharp
-public static Goal Unify(object o1, object o2)
-```
-- Tries to unify two objects.  
-  Fails if they aren't unifiable.
-
-```csharp
-public static Goal UnifyAll(IEnumerable<Pair> pairs)
-public static Goal UnifyAll(params Pair[] pairs)
-```
-- Tries to unify pairs of objects.  
-  Fails if any pair is not unifiable.
-
-```csharp
-public static Goal UnifyAny(Variable v, IEnumerable<object> objects)
-public static Goal UnifyAny(Variable v, params object[] objects)
-```
-- Tries to unify a variable with any one of objects.  
-  Fails if no object is unifiable.
-
-```csharp
-public static IEnumerable<SubstProxy> Resolve(Goal goal)
-```
-- Perform logical resolution of `goal`.  
-
 ## Links:
 
 Horn Clauses:  
@@ -266,38 +188,3 @@ https://eli.thegreenplace.net/2018/unification/
 
 Backtracking:  
 https://en.wikipedia.org/wiki/Backtracking
-
-## More Links:
-
-Monoids:  
-https://en.wikipedia.org/wiki/Monoid
-
-Folding on Monoids:  
-https://bartoszmilewski.com/2020/06/15/monoidal-catamorphisms/
-
-Distributive Lattices:  
-https://en.wikipedia.org/wiki/Distributive_lattice
-
-Monads:  
-https://en.wikipedia.org/wiki/Monad_(functional_programming)
-
-Monads Explained in C# (again):  
-https://mikhail.io/2018/07/monads-explained-in-csharp-again/
-
-Discovering the Continuation Monad in C#:  
-https://functionalprogramming.medium.com/deriving-continuation-monad-from-callbacks-23d74e8331d0
-
-Continuations:  
-https://en.wikipedia.org/wiki/Continuation
-
-Continuations Made Simple and Illustrated:  
-https://www.ps.uni-saarland.de/~duchier/python/continuations.html
-
-The Discovery of Continuations:  
-https://www.cs.ru.nl/~freek/courses/tt-2011/papers/cps/histcont.pdf
-
-Tail Calls:  
-https://en.wikipedia.org/wiki/Tail_call
-
-On Recursion, Continuations and Trampolines:  
-https://eli.thegreenplace.net/2017/on-recursion-continuations-and-trampolines/
