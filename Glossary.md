@@ -1,4 +1,4 @@
-Here's a glossary of terms based on the code and the related concepts:
+##**GLOSSARY**:
 
 **Algebraic Structure**:  
 A set of operations and rules defined on a collection of things, used to
