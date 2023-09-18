@@ -34,26 +34,26 @@
   manage the flow of logical [Resolution](#Resolution) and
   [Backtracking](#Backtracking). In Yogic, there are at any point three
   possible futures: One in which the current [Goal](#Goal) succeeds, one where
-  it fails, and one where it succeeds but after that curtails
+  it fails, and one where it succeeds once and after that curtails
   [Backtracking](#Backtracking) at the previous [Choice Point](#Choice Point).
 
 ### **Continuation Monad**:  
 - A [Monad](#Monad) that encapsulates computations with
-  [Continuations](#Continuation). Yogic employs the Triple-Barrelled
-  Continuation Monad to manage [Resolution](#Resolution),
+  [Continuations](#Continuation). Yogic employs the *Triple-Barrelled
+  Continuation Monad* to manage [Resolution](#Resolution),
   [Backtracking](#Backtracking) and [Branch Pruning with the
   Cut](#Branch-Pruning-with-the-Cut).
 
 ### **Distributive Lattice**:  
-- A mathematical structure where two binary operations, meet (infimum) and
-  join (supremum), satisfy certain distributive properties. In the code,
-  the combinators `Then` and `Choice` together with their respective identity
+- A mathematical structure where two binary operations, *meet* (infimum) and
+  *join* (supremum), satisfy certain distributive properties. In the code, the
+  combinators `Then` and `Choice` together with their respective identity
   elements `Unit` and `Fail` form a Distributive Lattice.
 
 ### **Goal**:  
 - In [Logic Programming](#Logic-Programming), a [Goal](#Goal) represents a
   resolvable logical statement or query. It defines the tasks to be
-  accomplished during the [Resolution ](#Resolution) process.
+  accomplished during the [Resolution](#Resolution) process.
 
 ### **Horn Clauses**:  
 - A specific form of logical formula where there is at most one non-negated
@@ -67,16 +67,17 @@
   deductive reasoning and is used to derive conclusions.
 
 ### **Logical Variables**:  
-- Variables in [Logic Programming](#Logic-Programming) can be bound to
-  values or other variables in the [Substitution
-  Environment](#Substitution-Environment). Like mathematical variables, they
-  represent a value and cannot be re-asigned another.
+- Variables in [Logic Programming](#Logic-Programming) are automatically bound
+  to values or other variables in the [Substitution
+  Environment](#Substitution-Environment) during [Resolution](#Resolution).
+  Like mathematical variables, they represent a value and cannot be re-asigned
+  another.
 
 ### **Monad**:  
 - A concept of Category Theory and a design pattern in Functional Programming.
   Monads are used for managing side effects and computations in a structured
-  way. In Yogic, the Triple-Barrelled Continuation Monad is used for managing
-  logical computations.
+  way. In Yogic, the *Triple-Barrelled Continuation Monad* is used for
+  managing logical computations.
 
 ### **Monoid**:  
 - A mathematical structure consisting of a Set and an associative binary
@@ -94,11 +95,12 @@
 
 ### **Substitution Environment**:  
 - A key data structure in [Logic Programming](#Logic-Programming) that maps
-  [Logical Variables](#Logical-Variables) to their bindings.
+  [Logical Variables](#Logical-Variables) to values. These are called their
+  *bindings*.
 
 ### **Tail Call Elimination**:  
-- A technique to optimize nested function calls by avoiding the accumulation
-  of stack frames.
+- A technique to optimize deeply chained function calls by avoiding the
+  accumulation of stack frames.
 
 ### **Thunking**:  
 - Thunking is a technique where a function's execution is delayed until it is
@@ -106,8 +108,8 @@
   Elimination](#Tail-Call-Elimination).
 
 ### **Trampolining**:  
-- A technique for handling nested function calls without using additional
-  stack space. It turns these calls into a loop.
+- A technique for handling function calls without using additional stack
+  space. It turns these calls into a loop.
 
 ### **Unification**:  
 - The process of finding [substitutions](#Substitution-Environment) for
