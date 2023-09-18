@@ -173,18 +173,54 @@ can be proven. No result means a failed resolution, that is the function
 cannot be proven in the universe described by the given set of
 functions/predicates.
 
-## **API:**
+## **Documentation:**
+
+- [API Documentation](API.md)
+- [Glossary](Glossary.md)
 
 ## Links:
 
-Horn Clauses:  
+### **Horn Clauses**:  
 https://en.wikipedia.org/wiki/Horn_clause
 
-Logical Resolution:  
+### **Logical Resolution**:  
 http://web.cse.ohio-state.edu/~stiff.4/cse3521/logical-resolution.html
 
-Unification:  
+### **Unification**:  
 https://eli.thegreenplace.net/2018/unification/
 
-Backtracking:  
+### **Backtracking**:  
 https://en.wikipedia.org/wiki/Backtracking
+
+### **Monoids**:  
+https://en.wikipedia.org/wiki/Monoid
+
+### **Folding on Monoids**:  
+https://bartoszmilewski.com/2020/06/15/monoidal-catamorphisms/
+
+### **Distributive Lattices**:  
+https://en.wikipedia.org/wiki/Distributive_lattice
+
+### **Monads**:  
+https://en.wikipedia.org/wiki/Monad_(functional_programming)
+
+### **Monads Explained in C# (again)**:  
+https://mikhail.io/2018/07/monads-explained-in-csharp-again/
+
+### **Discovering the Continuation Monad in C#**:  
+https://functionalprogramming.medium.com/deriving-continuation-monad-from-callbacks-23d74e8331d0
+
+### **Continuations**:  
+https://en.wikipedia.org/wiki/Continuation
+
+### **Continuations Made Simple and Illustrated**:  
+https://www.ps.uni-saarland.de/~duchier/python/continuations.html
+
+### **The Discovery of Continuations**:  
+https://www.cs.ru.nl/~freek/courses/tt-2011/papers/cps/histcont.pdf
+
+### **Tail Calls**:  
+https://en.wikipedia.org/wiki/Tail_call
+
+### **On Recursion, Continuations and Trampolines**:  
+https://eli.thegreenplace.net/2017/on-recursion-continuations-and-trampolines/
