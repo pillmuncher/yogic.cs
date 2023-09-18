@@ -52,7 +52,7 @@ using Subst = ImmutableDictionary<Variable, object>;
 
 // A Tuple of this type is returned for each successful resolution step.
 // This enables Tail Call ELimination through Thunking and Trampolining.
-using Result = Tuple<ImmutableDictionary<Variable, object>, Next>;
+using Result = (ImmutableDictionary<Variable, object> Subst, Next Cont);
 
 // A function type that represents a backtracking operation.
 public delegate Result? Next();
@@ -211,7 +211,7 @@ public static class Combinators
 
     private static Result? Quit() => null;
 
-    private static Result? Emit(Subst subst, Next next) => new(subst, next);
+    private static Result? Emit(Subst subst, Next next) => (Subst: subst, Cont: next);
 
     public static IEnumerable<SubstProxy> Resolve(Goal goal)
     {
@@ -219,8 +219,8 @@ public static class Combinators
         // We have to implement Tail Call Elimination ourself:
         while (null != result)
         {
-            yield return new SubstProxy(result.Item1);
-            result = result.Item2();
+            yield return new SubstProxy(result?.Subst);
+            result = result?.Cont();
         }
     }
 }
