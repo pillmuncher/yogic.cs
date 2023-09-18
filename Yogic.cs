@@ -301,13 +301,12 @@ public static class Combinators
     {
         Result? result = goal(Subst.Empty)(Emit, Quit, Quit);
         // We have to implement Tail Call Elimination ourself:
-        while (null != result)
+        while (result is (var subst, var cont))
         {
-            var subst = result?.Subst;
-            if (null != subst) {
+            if (subst is not null) {
                 yield return new SubstProxy(subst);
             }
-            result = result?.Cont();
+            result = cont();
         }
     }
 }
