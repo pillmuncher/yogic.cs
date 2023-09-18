@@ -163,11 +163,13 @@ public static class Combinators
         return obj;
     }
 
-    private static Step Bind(Step step, Goal goal)
+    public static Step Bind(Step step, Goal goal)
     {
         // Make 'goal' the continuation of 'step':
         return (succeed, backtrack, escape) =>
-            step((subst, next) => goal(subst)(succeed, next, escape), backtrack, escape);
+            (null, () => step((subst, next) => goal(subst)(succeed, next, escape),
+                               backtrack,
+                               escape));
     }
 
     public static Step Unit(Subst subst)
@@ -276,7 +278,10 @@ public static class Combinators
         // We have to implement Tail Call Elimination ourself:
         while (null != result)
         {
-            yield return new SubstProxy(result?.Subst);
+            var subst = result?.Subst;
+            if (null != subst) {
+                yield return new SubstProxy(subst);
+            }
             result = result?.Cont();
         }
     }
