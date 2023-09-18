@@ -18,8 +18,8 @@ name of an operator that succeeds once and then prevents backtracking beyond
 the point where it was invoked. This effectively prunes branches in a search
 tree.
 
-**Choice Point**:
-In Logic Programming, a "Choice Point" is a juncture where multiple options
+**Choice Point**:  
+- In Logic Programming, a "Choice Point" is a juncture where multiple options
 are available. It's used to explore different paths until a solution is found
 or all possibilities are exhausted.
 
