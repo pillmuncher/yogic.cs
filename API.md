@@ -15,7 +15,7 @@ using Pair = ValueTuple<object, object>;
 using Subst = ImmutableDictionary<Variable, object>;
 using Result = Tuple<ImmutableDictionary<Variable, object>, Next>;
 ```
-Miscellaneous Type Alisases.
+- Miscellaneous Type Alisases.
 
 ```csharp
 public delegate Result? Next();
