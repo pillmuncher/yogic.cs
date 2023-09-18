@@ -1,10 +1,11 @@
 # **GLOSSARY**
 
 ### **Algebraic Structure**:  
-- A set of operations and rules defined on a collection of things, used to
-  describe relationships between elements within that collection. Yogic's
-  combinator functions form algebraic structures, in particular two
-  [Monoids](#Monoid) and a [Distributive Lattice](#Distributive-Lattice).
+- A collection of things, together with a set of operations and rules defined
+  on it. Used to describe relationships between elements within that
+  collection. Yogic's combinator functions form algebraic structures, in
+  particular two [Monoids](#Monoid) and a [Distributive
+  Lattice](#Distributive-Lattice).
 
 ### **Backtracking**:  
 - A technique employed in search and [Logic Programming](#Logic-Programming)
