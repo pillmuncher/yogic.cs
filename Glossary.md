@@ -1,4 +1,4 @@
-**GLOSSARY**:
+## **GLOSSARY**
 
 **Algebraic Structure**:  
 A set of operations and rules defined on a collection of things, used to
