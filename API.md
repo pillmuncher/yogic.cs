@@ -1,6 +1,6 @@
 
 ```csharp
-public class Variable```
+public class Variable
 ```
 - Represents named logical variables.
 
