@@ -1,40 +1,97 @@
 // Copyright (c) 2023 Mick Krippendorf <m.krippendorf@freenet.de>
 //
-// A library of Monadic Combinators for Logic Programming.
+// A Monadic Combinator framework for Logic Programming, allowing users to
+// express and solve logical problems in programmatic form.
 //
 //
-// It uses the Triple-Barreled Continuation Monad for resolution,
+//     “The continuation that obeys only obvious stack semantics,
+//     O grasshopper, is not the true continuation.” — Guy L. Steele.
+//
+//
+// Overview:
+//
+// We use a specialized Monad known as the Triple-Barreled Continuation Monad
+// to drive the resolution process. It is responsible for handling resolution,
 // backtracking, and branch pruning.
 //
 //
-// “The continuation that obeys only obvious stack semantics,
-// O grasshopper, is not the true continuation.” — Guy Steele.
+// Simplified Terminology:
+//
+// To make logic programming more accessible and user-friendly, we've
+// introduced simplified terminology. Instead of using abstract terms like
+// "Monad" and "Continuation," we've defined two main types:
+//
+// 1. 'Step': Represents a monadic computation step. It can succeed, invoke
+// backtracking, or esacpe, that is, jump back to the previous choice point,
+// thus pruning the search space.
+//
+// 2. 'Goal': Represents a logical statement or query that we want to resolve.
+// Goals take a substitution environment and produce 'Steps.'
 //
 //
-// To keep more closely to the terminology of logic programming and to not
-// bother users too much with jargon like "Monad" and "Continuation", the
-// monadic computation type is called 'Step' and the monadic continuation type
-// is called 'Goal'.
+// Basic Combinators:
 //
-// A set of basic combinators you would expect in such a library is provided,
-// like 'Unit' (succeeds once), 'Fail' (never succeeds), and 'Cut' (succeeds
-// once, then curtails backtracking at the previous choice point), 'And' for
-// conjunction of goals, 'Or' for adjunction, 'Not' for negation, and 'Unify*'
-// for unification. The resolution process is started by calling 'Resolve' on
-// a goal and then iterating over the solutions, which consist of substitution
-// environments (proxy mappings) of variables to their bindings.
+// We provide a set of essential combinators that you'd expect in a logic
+// programming library:
 //
-// The code makes use of the algebraic structure of the monadic combinators:
-// 'Unit' and 'Then' form a Monoid over monadic combinator functions, as do
-// 'Fail' and 'Choice', which allows us to fold a sequence of combinators into
-// a single one. Taken thogether, these structures form a Distributive Lattice
-// with 'Then' as the meet (infimum) and 'Choice' as the join (supremum)
-// operator, a fact that is not utilized in the code, though. Because of the
-// sequential nature of the employed resolution algorithm combined with the
-// 'Cut', neither the lattice nor the monoids are commutative.
+// - 'Unit': Succeeds once and represents success.
 //
-// Due to the absence of Tail Call Elimination in C#, Trampolining with
-// Thunking is used to prevent stack overflows.
+// - 'Fail': Never succeeds and represents failure.
+//
+// - 'Cut': Succeeds once and then curtails backtracking at the previous
+// choice point.
+//
+// - 'And': Represents conjunction of goals, meaning all goals must succeed
+// for it to succeed.
+//
+// - 'Or': Represents adjunction of goals, meaning any goal success leads to
+// its success.
+//
+// - 'Not': Represents negation as failure, i.e., it succeeds only when the
+// given goal fails.
+//
+// - 'Unify*': A set of unification combinators for matching objects and
+// binding variables to objects and other variables.
+//
+//
+// Resolution Process:
+//
+// The core of this library is the 'Resolve' method. The resolution process is
+// started by calling 'Resolve' on a goal. It returns an enumerable collection
+// of substitution environments (proxy mappings) of variables to their
+// bindings. These are the solutions to logical queries.
+//
+//
+// Algebraic Structure:
+//
+// Under the hood, we make use of the algebraic structure of monadic
+// combinators. Specifically:
+//
+// - 'Unit' and 'Then' form a Monoid over monadic combinator functions.
+//
+// - 'Fail' and 'Choice' also form a Monoid.
+//
+// These structures allow us to fold a sequence of combinators into a single
+// one. Additionally, they form a Distributive Lattice where 'Then' is the
+// meet (infimum) and 'Choice' the join (supremum) operator, and 'Unit' and
+// 'Fail' their respective identity elements. Although not explicitly used in
+// the code, these properties reflect the inherent structure of the
+// combinators. Users of this library, on the other hand, might make use
+// these distributive properties of the Lattice.
+//
+// It's important to note that due to the sequential nature of the employed
+// resolution algorithm combined with the 'Cut' combinator, neither the
+// lattice nor the monoids are commutative.
+//
+//
+// Tail Call Elimination:
+//
+// C# lacks proper Tail Call Elimination, which can lead to stack overflows in
+// recursive logic programming. To mitigate this somewhat, we use a technique
+// known as Trampolining with Thunking. It allows us to prevent stack overflow
+// issues by, instead of returning just a solution to a query, also returning
+// the thunk (a parameterless function) to be executed next.
+
 
 using System.Linq;
 using System.Collections.Generic;
