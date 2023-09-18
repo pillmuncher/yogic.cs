@@ -10,10 +10,10 @@ using Subst = ImmutableDictionary<Variable, object>;
 - Represents variable bindings within a solution.
 
 ```csharp
-Seq = IReadOnlyCollection<object>;
-Pair = ValueTuple<object, object>;
-Subst = ImmutableDictionary<Variable, object>;
-Result = Tuple<ImmutableDictionary<Variable, object>, Next>;
+using Seq = IReadOnlyCollection<object>;
+using Pair = ValueTuple<object, object>;
+using Subst = ImmutableDictionary<Variable, object>;
+using Result = Tuple<ImmutableDictionary<Variable, object>, Next>;
 ```
 Miscellaneous Type Alisases.
 
