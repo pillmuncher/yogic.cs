@@ -42,6 +42,7 @@ using System.Collections.Immutable;
 
 namespace Yogic;
 
+// Miscellaneous type aliases.
 using Seq = IReadOnlyCollection<object>;
 using Pair = ValueTuple<object, object>;
 
@@ -98,9 +99,9 @@ public static class Combinators
     private static object Deref(Subst subst, object obj)
     {
         // Chase down Variable bindings:
-        while (obj is Variable && subst.ContainsKey((Variable)obj))
+        while (obj is Variable variable && subst.ContainsKey(variable))
         {
-            obj = subst[(Variable)obj];
+            obj = subst[variable];
         }
         return obj;
     }
@@ -158,7 +159,7 @@ public static class Combinators
         var choices = goals.Aggregate<Goal, Goal>(Fail, Choice);
         // we inject 'backtrack' as the new escape path, so we can
         // curtail backtracking here and immediately continue at the
-        // previous choice point instead.
+        // previous choice point instead:
         return subst =>
             (succeed, backtrack, escape) => choices(subst)(succeed, backtrack, backtrack);
     }
