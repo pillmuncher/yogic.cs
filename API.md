@@ -93,34 +93,34 @@ public static IEnumerable<SubstProxy> Resolve(Goal goal)
 ## Links:
 
 ### **Monoids**:  
-https://en.wikipedia.org/wiki/Monoid
+- https://en.wikipedia.org/wiki/Monoid
 
 ### **Folding on Monoids**:  
-https://bartoszmilewski.com/2020/06/15/monoidal-catamorphisms/
+- https://bartoszmilewski.com/2020/06/15/monoidal-catamorphisms/
 
 ### **Distributive Lattices**:  
-https://en.wikipedia.org/wiki/Distributive_lattice
+- https://en.wikipedia.org/wiki/Distributive_lattice
 
 ### **Monads**:  
-https://en.wikipedia.org/wiki/Monad_(functional_programming)
+- https://en.wikipedia.org/wiki/Monad_(functional_programming)
 
 ### **Monads Explained in C# (again)**:  
-https://mikhail.io/2018/07/monads-explained-in-csharp-again/
+- https://mikhail.io/2018/07/monads-explained-in-csharp-again/
 
 ### **Discovering the Continuation Monad in C#**:  
-https://functionalprogramming.medium.com/deriving-continuation-monad-from-callbacks-23d74e8331d0
+- https://functionalprogramming.medium.com/deriving-continuation-monad-from-callbacks-23d74e8331d0
 
 ### **Continuations**:  
-https://en.wikipedia.org/wiki/Continuation
+- https://en.wikipedia.org/wiki/Continuation
 
 ### **Continuations Made Simple and Illustrated**:  
-https://www.ps.uni-saarland.de/~duchier/python/continuations.html
+- https://www.ps.uni-saarland.de/~duchier/python/continuations.html
 
 ### **The Discovery of Continuations**:  
-https://www.cs.ru.nl/~freek/courses/tt-2011/papers/cps/histcont.pdf
+- https://www.cs.ru.nl/~freek/courses/tt-2011/papers/cps/histcont.pdf
 
 ### **Tail Calls**:  
-https://en.wikipedia.org/wiki/Tail_call
+- https://en.wikipedia.org/wiki/Tail_call
 
 ### **On Recursion, Continuations and Trampolines**:  
-https://eli.thegreenplace.net/2017/on-recursion-continuations-and-trampolines/
+- https://eli.thegreenplace.net/2017/on-recursion-continuations-and-trampolines/
