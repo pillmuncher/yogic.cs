@@ -4,21 +4,21 @@
 // express and solve logical problems in programmatic form.
 //
 //
+// Overview:
+//
+// The Triple-Barrelled Continuation Monad:
+//
 //     “The continuation that obeys only obvious stack semantics,
 //     O grasshopper, is not the true continuation.” — Guy L. Steele.
 //
-//
-// Overview:
-//
-// We use a specialized Monad known as the Triple-Barreled Continuation Monad
-// to drive the resolution process. It is responsible for handling resolution,
-// backtracking, and branch pruning.
+// We use this Monad to drive the resolution process. It is responsible for
+// handling resolution, backtracking, and branch pruning.
 //
 //
 // Simplified Terminology:
 //
 // To make logic programming more accessible and user-friendly, we've
-// introduced simplified terminology. Instead of using abstract terms like
+// introduced simplified terminology. Instead of using abstract jargon like
 // "Monad" and "Continuation," we've defined two main types:
 //
 // 1. 'Step': Represents a monadic computation step. It can succeed, invoke
@@ -44,22 +44,21 @@
 // - 'And': Represents conjunction of goals, meaning all goals must succeed
 // for it to succeed.
 //
-// - 'Or': Represents adjunction of goals, meaning any goal success leads to
-// its success.
-//
+// - 'Or': Represents adjunction of goals, meaning it succeeds if any one of
+// the goals succeeds.
+// 
 // - 'Not': Represents negation as failure, i.e., it succeeds only when the
-// given goal fails.
+// given goal fails and vice versa.
 //
-// - 'Unify*': A set of unification combinators for matching objects and
-// binding variables to objects and other variables.
+// - 'Unify*': A set of unification combinators for matching objects with each
+// otehr and binding variables to objects and other variables.
 //
 //
 // Resolution Process:
 //
-// The core of this library is the 'Resolve' method. The resolution process is
-// started by calling 'Resolve' on a goal. It returns an enumerable collection
-// of substitution environments (proxy mappings) of variables to their
-// bindings. These are the solutions to logical queries.
+// A resolution process is started by calling 'Resolve' on a goal. It returns
+// an enumerable collection of substitution environments (proxy mappings) of
+// variables to their bindings. These are the solutions to a logical query.
 //
 //
 // Algebraic Structure:
