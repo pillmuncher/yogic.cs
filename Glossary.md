@@ -3,7 +3,8 @@
 **Algebraic Structure**:  
 - A set of operations and rules defined on a collection of things, used to
 describe relationships between elements within that collection. Yogic's
-combinator functions form algebraic structures, in particular Monoids and
+combinator functions form algebraic structures, in particular
+[Monoids](Glossary.md#Monoid) and
 a Distributive Lattice.
 
 **Backtracking**:  
