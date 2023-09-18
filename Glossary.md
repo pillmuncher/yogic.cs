@@ -10,11 +10,11 @@
 - A technique employed in search and [Logic Programming](#Logic-Programming)
   to explore different possibilities of outcomes. If a certain path does not
   lead to a solution, the program can backtrack and try an alternative path.
-  Backtracking can also be used to generate an exhaustive list of solutions to
-  a logical query.
+  Backtracking can also be used to generate an exhaustive list of solutions
+  for a logical query.
 
 ### **Branch Pruning with the Cut**:  
-- In [Logic Programming](#Logic-Programming), 'cut' (or '!' in the programming
+- In [Logic Programming](#Logic-Programming), *cut* (or *!* in the programming
   language Prolog) is the name of an operator that succeeds once and then
   prevents backtracking beyond the point where it was invoked. This
   effectively prunes branches in a search tree.
