@@ -40,6 +40,12 @@ public delegate Step Goal(Subst subst);
 - A function type that represents a resolvable logical statement.
 
 ```csharp
+public static Step Bind(Step step, Goal goal)
+```
+- Make `goal` the continuation of `step`. Sequencing is the default behavior
+  of `Bind`.
+
+```csharp
 public static Step Unit(Subst subst)
 ```
 - Takes a substitution environment `subst` into a computation. Succeeds once
