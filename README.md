@@ -48,9 +48,9 @@ an efficient way to express, query, and solve logical problems.
    efficiency of your logic programs.
 
 By combining these elements, you can express and solve complex logical
-problems effectively using the Logic Programming Combinators Library. It
-abstracts away many of the intricacies of logic programming, allowing you to
-focus on defining your logic in a more intuitive and structured manner.
+problems effectively. Many of the intricacies of Logic Programming are
+abstracted away, allowing you to focus on defining your logic in a more
+intuitive and structured manner.
 
 ## **An Example:**
 
