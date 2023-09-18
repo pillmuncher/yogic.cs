@@ -291,10 +291,8 @@ public static class Combinators
         return UnifyAny(v, objects.Prepend(o));
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static Result? Quit() => null;
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static Result? Emit(Subst subst, Next next) => (Subst: subst, Cont: next);
 
     public static IEnumerable<SubstProxy> Resolve(Goal goal)
