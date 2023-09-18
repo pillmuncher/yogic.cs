@@ -54,96 +54,116 @@ intuitive and structured manner.
 
 ## **An Example:**
 
-We represent logical facts as functions that specify which individuals are
-humans and dogs and define a `ChildOf(a, b)` relation such that `a` is the
-child of `b`. Then we define rules that specify what a descendant and a mortal
-being is. We then run queries that tell us which individuals are descendants
-of whom and which individuals are both mortal and not a dog:
+A classic example of Logic Programming is puzzle solving. Here we have a
+puzzle where numbers have to be assigned to letters, such that all sets of
+assignments are compatible with each other. Typically, there is ever only a
+single solution. We solve this in a naive way, by generating all possible
+permutations and then matching each permutation until we find one that
+matches. In Logic Programming this kind of algorithm is knows as *Generate and
+Test*.
 ```csharp
-using Yogic;
+using System.Linq;
+using System.Collections.Generic;
+
+namespace Yogic.Puzzle;
+
 using static Yogic.Combinators;
 
-public static class Example {
-
-    public static Goal Human(Variable a) {          // socrates, plato, and archimedes are human
-        return UnifyAny(a, "socrates", "plato", "archimedes");
+public static class Puzzle
+{
+    static IEnumerable<List<object>> GetPermutations(List<int> numbers)
+    {
+        if (1 == numbers.Count)
+        {
+            yield return new List<object> { (object)numbers[0] };
+        }
+        else
+        {
+            for (var i = 0; i < numbers.Count; ++i)
+            {
+                var number = numbers[i];
+                numbers.RemoveAt(i);
+                foreach (var permutation in GetPermutations(numbers))
+                {
+                    yield return new List<object>(permutation.Prepend<object>(number));
+                }
+                numbers.Insert(i, number);
+            }
+        }
     }
 
-    public static Goal Dog(Variable a) {            // fluffy, daisy, and fifi are dogs
-        return UnifyAny(a, "fluffy", "daisy", "fifi");
-    }
-
-    public static Goal ChildOf(Variable a, Variable b) {
-        return Or(
-            UnifyAll((a, "jim"), (b, "bob")),       // jim is a child of bob.
-            UnifyAll((a, "joe"), (b, "bob")),       // joe is a child of bob.
-            UnifyAll((a, "ian"), (b, "jim")),       // ian is a child of jim.
-            UnifyAll((a, "fifi"), (b, "fluffy")),   // fifi is a child of fluffy.
-            UnifyAll((a, "fluffy"), (b, "daisy"))   // fluffy is a child of daisy.
+    private static Goal Solver(ValueTuple<int[], Variable[]>[] pairs)
+    {
+        return And(
+            from pair in pairs
+            select Or(
+                from permutation in GetPermutations(new List<int>(pair.Item1))
+                select Unify(permutation, pair.Item2)
+            )
         );
     }
 
-    public static Goal DescendantOf(Variable a, Variable c) {
+    public static void Main()
+    {
+        var a = new Variable("a");
         var b = new Variable("b");
-        // by returning a lambda function we
-        // create another level of indirection,
-        // so that the recursion doesn't
-        // immediately trigger an infinite loop
-        // and cause a stack overflow:
-        return (subst) => Or(                       // a is a descendant of c iff:
-            ChildOf(a, c),                          // a is a child of c, or
-            And(ChildOf(a, b), DescendantOf(b, c))  // a is a child of b and b is a descendant of c.
-        )(subst);
-    }
+        var c = new Variable("c");
+        var d = new Variable("d");
+        var e = new Variable("e");
+        var f = new Variable("f");
+        var g = new Variable("g");
+        var h = new Variable("h");
+        var i = new Variable("i");
+        var j = new Variable("j");
+        var k = new Variable("k");
+        var l = new Variable("l");
 
-    public static Goal Mortal(Variable a) {
-        var b = new Variable("b");
-        return (subst) => Or(                       // a is mortal iff:
-            Human(a),                               // a is human, or
-            Dog(a),                                 // a is a dog, or
-            And(DescendantOf(a, b), Mortal(b))      // a descends from a mortal.
-        )(subst);
-    }
+        var puzzle = new ValueTuple<int[], Variable[]>[]
+        {
+            new (new int[] { 1, 2, 3, 4, 6, 8, 12 }, new Variable[] { a, c, f, g, i, j, k }),
+            new (new int[] { 1, 2, 4, 5, 6, 7, 12 }, new Variable[] { a, b, f, i, j, k, l }),
+            new (new int[] { 1, 2, 6, 7, 8, 9, 10 }, new Variable[] { a, c, d, e, f, k, l }),
+            new (new int[] { 1, 3, 5, 8, 9, 10, 11 }, new Variable[] { b, c, d, e, f, g, h }),
+            new (new int[] { 2, 4, 5, 8, 10, 11, 12 }, new Variable[] { a, b, c, e, h, i, j }),
+            new (new int[] { 3, 4, 5, 7, 8, 10, 11 }, new Variable[] { b, c, e, g, h, j, l }),
+        };
 
-    public static void Main() {
-        var x = new Variable("x");
-        var y = new Variable("y");
-        foreach (var subst in Resolve(DescendantOf(x, y))) {
-            Console.WriteLine($"{subst[x]} is a descendant of {subst[y]}.");
-        };
-        Console.WriteLine();
-        foreach (var subst in Resolve(And(Mortal(x), Not(Dog(x))))) {
-            Console.WriteLine($"{subst[x]} is mortal and no dog.");
-        };
-        Console.WriteLine();
-        foreach (var subst in Resolve(And(Not(Dog(x)), Mortal(x)))) {
-            Console.WriteLine($"{subst[x]} is mortal and no dog.");
-        };
-    }
+        var goal = Solver(puzzle);
 
+        foreach (var subst in Resolve(goal))
+        {
+            Console.WriteLine($"a = {subst[a]}");
+            Console.WriteLine($"b = {subst[b]}");
+            Console.WriteLine($"c = {subst[c]}");
+            Console.WriteLine($"d = {subst[d]}");
+            Console.WriteLine($"e = {subst[e]}");
+            Console.WriteLine($"f = {subst[f]}");
+            Console.WriteLine($"g = {subst[g]}");
+            Console.WriteLine($"h = {subst[h]}");
+            Console.WriteLine($"i = {subst[i]}");
+            Console.WriteLine($"j = {subst[j]}");
+            Console.WriteLine($"k = {subst[k]}");
+            Console.WriteLine($"l = {subst[l]}");
+            Console.WriteLine();
+        }
+    }
 }
 ```
 **Result:**
 ```
-jim is a descendant of bob.
-joe is a descendant of bob.
-ian is a descendant of jim.
-fifi is a descendant of fluffy.
-fluffy is a descendant of daisy.
-ian is a descendant of bob.
-fifi is a descendant of daisy.
-
-socrates is mortal and no dog.
-plato is mortal and no dog.
-archimedes is mortal and no dog.
+a = 2
+b = 5
+c = 8
+d = 9
+e = 10
+f = 1
+g = 3
+h = 11
+i = 12
+j = 4
+k = 6
+l = 7
 ```
-Note that `jim`, `bob`, `joe` and `ian` are not part of the result of the
-second query because we didn't specify that they are human. Also note that the
-third query doesn't produce any solutions. `Dog(x)` is only true if there
-exists an `x` such that x is a dog. In Predicate Logic we would write
-`∃x:dog(x)`, and when we negate that, we arrive at `-∃x:dog(x)`, which is
-equivalent to `∀x:-dog(x)`, meaning that nothing is a dog. Since we defined a
-predicate `Dog(_)` in our universe, that assertion is false.
 
 ## **How it works:**
 
