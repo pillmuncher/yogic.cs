@@ -35,7 +35,7 @@
   [Backtracking](#Backtracking). In Yogic, there are at any point three
   possible futures: One in which the current [Goal](#Goal) succeeds, one where
   it fails, and one where it succeeds but after that curtails
-  [Backtracking](#Backtracking) at the previous choice point.
+  [Backtracking](#Backtracking) at the previous [Choice Point](#Choice Point).
 
 ### **Continuation Monad**:  
 - A [Monad](#Monad) that encapsulates computations with
@@ -47,7 +47,7 @@
 ### **Distributive Lattice**:  
 - A mathematical structure where two binary operations, meet (infimum) and
   join (supremum), satisfy certain distributive properties. In the code,
-  combinators like `Then` and `Choice` together with their respective identity
+  the combinators `Then` and `Choice` together with their respective identity
   elements `Unit` and `Fail` form a Distributive Lattice.
 
 ### **Goal**:  
@@ -67,7 +67,7 @@
   deductive reasoning and is used to derive conclusions.
 
 ### **Logical Variables**:  
-- Variables in [Logic Programming](#Logic-Programming) that can be bound to
+- Variables in [Logic Programming](#Logic-Programming) can be bound to
   values or other variables in the [Substitution
   Environment](#Substitution-Environment). Like mathematical variables, they
   represent a value and cannot be re-asigned another.
