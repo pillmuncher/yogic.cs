@@ -36,7 +36,7 @@
   [Backtracking](#Backtracking). In Yogic, there are at any point three
   possible futures: One in which the current [Goal](#Goal) succeeds, one where
   it fails, and one where it succeeds once and after that curtails
-  [Backtracking](#Backtracking) at the previous [Choice Point](#Choice Point).
+  [Backtracking](#Backtracking) at the previous [Choice Point](#Choice-Point).
 
 ### **Continuation Monad**:  
 - A [Monad](#Monad) that encapsulates computations with
@@ -105,12 +105,16 @@
 
 ### **Thunking**:  
 - Thunking is a technique where a function's execution is delayed until it is
-  needed. Yogic uses it to implement [Tail Call
-  Elimination](#Tail-Call-Elimination).
+  needed. This usually takes the form of a parameter-less function (a
+  so-called *Thunk*) which can be passed around in a program and executed at
+  different point in the code from where it was created. Yogic uses it to
+  implement [Tail Call Elimination](#Tail-Call-Elimination).
 
 ### **Trampolining**:  
 - A technique for handling function calls without using additional stack
-  space. It turns these calls into a loop.
+  space. It turns these calls into a loop. It's a way to implement [Tail Call
+  Elimination](#Tail-Call-Elimination) in a language that doesn't support it
+  but has function objects, like C#.
 
 ### **Unification**:  
 - The process of finding [substitutions](#Substitution-Environment) for
