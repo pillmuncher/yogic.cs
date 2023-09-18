@@ -13,15 +13,19 @@
 - `Result = Tuple<ImmutableDictionary<Variable, object>, Next>;`
 
 ### `Next` Delegate
+- `public delegate Result? Next();`
 - A function type that represents a backtracking operation.
 
 ### `Emit` Delegate
+- `public delegate Result? Emit(Subst subst, Next next);`
 - A function type that represents a successful resolution.
 
 ### `Step` Delegate
+- `public delegate Result? Step(Emit succeed, Next backtrack, Next escape);`
 - A function type that represents a resolution step.
 
 ### `Goal` Delegate
+- `public delegate Step Goal(Subst subst);`
 - A function type that represents a resolvable logical statement.
 
 ### `Unit` Method
