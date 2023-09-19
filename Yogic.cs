@@ -47,7 +47,7 @@
 //
 // - 'Or': Represents adjunction of goals, meaning it succeeds if any one of
 // the goals succeeds.
-// 
+//
 // - 'Not': Represents negation as failure, i.e., it succeeds only when the
 // given goal fails and vice versa.
 //
@@ -164,6 +164,7 @@ public static class Combinators
         }
         return obj;
     }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static Result tailcall(Next cont) => (null, cont);
 
@@ -172,9 +173,9 @@ public static class Combinators
     {
         // Make 'goal' the continuation of 'step':
         return (succeed, backtrack, escape) =>
-            tailcall(() => step((subst, next) => goal(subst)(succeed, next, escape),
-                               backtrack,
-                               escape));
+            tailcall(
+                () => step((subst, next) => goal(subst)(succeed, next, escape), backtrack, escape)
+            );
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -221,9 +222,14 @@ public static class Combinators
         // We make 'goal2' the new backtracking path of 'goal1':
         return subst =>
             (succeed, backtrack, escape) =>
-                tailcall(() => goal1(subst)(succeed,
-                                          () => goal2(subst)(succeed, backtrack, escape),
-                                          escape));
+                tailcall(
+                    () =>
+                        goal1(subst)(
+                            succeed,
+                            () => goal2(subst)(succeed, backtrack, escape),
+                            escape
+                        )
+                );
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -301,7 +307,8 @@ public static class Combinators
         // We have to implement Tail Call Elimination ourself:
         while (result is (var subst, var cont))
         {
-            if (subst is not null) {
+            if (subst is not null)
+            {
                 yield return new SubstProxy(subst);
             }
             result = cont();
