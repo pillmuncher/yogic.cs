@@ -151,6 +151,7 @@ public static class Combinators
             this.subst = subst;
         }
 
+        // Derefing is the whole reason we need this class:
         public object this[Variable v] => Deref(subst, v);
     }
 
