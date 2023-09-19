@@ -252,10 +252,10 @@ public static class Combinators
         return Or(goals.Prepend(goal));
     }
 
-    // Negation as failure:
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Goal Not(Goal goal)
     {
+        // Negation as failure:
         return Or(And(goal, Cut, Fail), Unit);
     }
 
