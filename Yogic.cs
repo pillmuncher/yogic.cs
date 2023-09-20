@@ -149,14 +149,14 @@ public class SubstProxy
         this.subst = subst;
     }
 
-    // Deref'ing here is the whole reason we need this class:
-    public object this[Variable v] => Combinators.Deref(subst, v);
+    // deref'ing here is the whole reason we need this class:
+    public object this[Variable v] => Combinators.deref(subst, v);
 }
 
 public static class Combinators
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static object Deref(Subst subst, object obj)
+    internal static object deref(Subst subst, object obj)
     {
         // Chase down Variable bindings:
         while (obj is Variable variable && subst.ContainsKey(variable))
@@ -166,19 +166,19 @@ public static class Combinators
         return obj;
     }
 
-    private static Result? Quit() => null;
+    private static Result? quit() => null;
 
-    private static Result? Emit(Subst subst, Next next) => (subst, next);
+    private static Result? emit(Subst subst, Next next) => (subst, next);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static Result TailCall(Next next) => (null, next);
+    private static Result tailcall(Next next) => (null, next);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Step Bind(Step step, Goal goal)
     {
         // Make 'goal' the continuation of 'step':
         return (succeed, backtrack, escape) =>
-            TailCall(
+            tailcall(
                 () => step((subst, next) => goal(subst)(succeed, next, escape), backtrack, escape)
             );
     }
@@ -186,19 +186,19 @@ public static class Combinators
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Step Unit(Subst subst)
     {
-        return (succeed, backtrack, escape) => TailCall(() => succeed(subst, backtrack));
+        return (succeed, backtrack, escape) => tailcall(() => succeed(subst, backtrack));
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Step Cut(Subst subst)
     {
-        return (succeed, backtrack, escape) => TailCall(() => succeed(subst, escape));
+        return (succeed, backtrack, escape) => tailcall(() => succeed(subst, escape));
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Step Fail(Subst subst)
     {
-        return (succeed, backtrack, escape) => TailCall(backtrack);
+        return (succeed, backtrack, escape) => tailcall(backtrack);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -227,7 +227,7 @@ public static class Combinators
         // We make 'goal2' the new backtracking path of 'goal1':
         return subst =>
             (succeed, backtrack, escape) =>
-                TailCall(
+                tailcall(
                     () =>
                         goal1(subst)(
                             succeed,
@@ -247,7 +247,7 @@ public static class Combinators
         // previous choice point instead:
         return subst =>
             (succeed, backtrack, escape) =>
-                TailCall(() => choices(subst)(succeed, backtrack, backtrack));
+                tailcall(() => choices(subst)(succeed, backtrack, backtrack));
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -268,7 +268,7 @@ public static class Combinators
     {
         // Using an 'ImmutableDictionary' makes trailing easy:
         return subst =>
-            (Deref(subst, o1), Deref(subst, o2)) switch
+            (deref(subst, o1), deref(subst, o2)) switch
             {
                 (var x1, var x2) when x1.Equals(x2) => Unit(subst),
                 (Seq s1, Seq s2) when s1.Count == s2.Count => UnifyAll(s1.Zip(s2))(subst),
@@ -304,7 +304,7 @@ public static class Combinators
 
     public static IEnumerable<SubstProxy> Resolve(Goal goal)
     {
-        Result? result = goal(Subst.Empty)(Emit, Quit, Quit);
+        Result? result = goal(Subst.Empty)(emit, quit, quit);
         // We have to implement Tail Call Elimination ourself:
         while (result is (var subst, var next))
         {
