@@ -1,7 +1,9 @@
 // Copyright (c) 2021 Mick Krippendorf <m.krippendorf@freenet.de>
 
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
+
+using MoreLinq;
 
 namespace Yogic.Puzzle;
 
@@ -9,34 +11,13 @@ using static Yogic.Combinators;
 
 public static class Puzzle
 {
-    static IEnumerable<List<object>> GetPermutations(List<int> numbers)
-    {
-        if (1 == numbers.Count)
-        {
-            yield return new List<object> { (object)numbers[0] };
-        }
-        else
-        {
-            for (var i = 0; i < numbers.Count; ++i)
-            {
-                var number = numbers[i];
-                numbers.RemoveAt(i);
-                foreach (var permutation in GetPermutations(numbers))
-                {
-                    yield return new List<object>(permutation.Prepend<object>(number));
-                }
-                numbers.Insert(i, number);
-            }
-        }
-    }
-
-    private static Goal Solver(ValueTuple<int[], Variable[]>[] pairs)
+    private static Goal Solver(ValueTuple<List<Variable>, List<object>>[] pairs)
     {
         return And(
             from pair in pairs
             select Or(
-                from permutation in GetPermutations(new List<int>(pair.Item1))
-                select Unify(permutation, pair.Item2)
+                from permutation in pair.Item2.Permutations()
+                select Unify(pair.Item1, permutation)
             )
         );
     }
@@ -56,19 +37,17 @@ public static class Puzzle
         var k = new Variable("k");
         var l = new Variable("l");
 
-        var puzzle = new ValueTuple<int[], Variable[]>[]
+        var puzzle = new ValueTuple<List<Variable>, List<object>>[]
         {
-            new (new int[] { 1, 2, 3, 4, 6, 8, 12 }, new Variable[] { a, c, f, g, i, j, k }),
-            new (new int[] { 1, 2, 4, 5, 6, 7, 12 }, new Variable[] { a, b, f, i, j, k, l }),
-            new (new int[] { 1, 2, 6, 7, 8, 9, 10 }, new Variable[] { a, c, d, e, f, k, l }),
-            new (new int[] { 1, 3, 5, 8, 9, 10, 11 }, new Variable[] { b, c, d, e, f, g, h }),
-            new (new int[] { 2, 4, 5, 8, 10, 11, 12 }, new Variable[] { a, b, c, e, h, i, j }),
-            new (new int[] { 3, 4, 5, 7, 8, 10, 11 }, new Variable[] { b, c, e, g, h, j, l }),
+            (new() { a, b, c, e, h, i, j }, new() { 2, 4, 5, 8, 10, 11, 12 }),
+            (new() { a, b, f, i, j, k, l }, new() { 1, 2, 4, 5, 6, 7, 12 }),
+            (new() { a, c, d, e, f, k, l }, new() { 1, 2, 6, 7, 8, 9, 10 }),
+            (new() { a, c, f, g, i, j, k }, new() { 1, 2, 3, 4, 6, 8, 12 }),
+            (new() { b, c, d, e, f, g, h }, new() { 1, 3, 5, 8, 9, 10, 11 }),
+            (new() { b, c, e, g, h, j, l }, new() { 3, 4, 5, 7, 8, 10, 11 }),
         };
 
-        var goal = Solver(puzzle);
-
-        foreach (var subst in Resolve(goal))
+        foreach (var subst in Resolve(Solver(puzzle)))
         {
             Console.WriteLine($"a = {subst[a]}");
             Console.WriteLine($"b = {subst[b]}");
