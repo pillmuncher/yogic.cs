@@ -130,7 +130,7 @@ public delegate Step Goal(Subst subst);
 
 public class Variable
 {
-    private string name;
+    private readonly string name;
 
     public Variable(string name)
     {
@@ -142,7 +142,7 @@ public class Variable
 
 public class SubstProxy
 {
-    private Subst subst;
+    private readonly Subst subst;
 
     internal SubstProxy(Subst subst)
     {
