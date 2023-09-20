@@ -216,9 +216,9 @@ public static class Combinators
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Goal And(Goal goal, params Goal[] goals)
+    public static Goal And(params Goal[] goals)
     {
-        return And(goals.Prepend(goal));
+        return And(goals);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -251,9 +251,9 @@ public static class Combinators
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Goal Or(Goal goal, params Goal[] goals)
+    public static Goal Or(params Goal[] goals)
     {
-        return Or(goals.Prepend(goal));
+        return Or(goals);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -285,9 +285,9 @@ public static class Combinators
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Goal UnifyAny(Variable v, object o, params object[] objects)
+    public static Goal UnifyAny(Variable variable, params object[] objects)
     {
-        return UnifyAny(v, objects.Prepend(o));
+        return UnifyAny(variable, objects);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -297,9 +297,9 @@ public static class Combinators
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Goal UnifyAll(Pair pair, params Pair[] pairs)
+    public static Goal UnifyAll(params Pair[] pairs)
     {
-        return UnifyAll(pairs.Prepend(pair));
+        return UnifyAll(pairs);
     }
 
     public static IEnumerable<SubstProxy> Resolve(Goal goal)
