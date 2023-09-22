@@ -1,7 +1,7 @@
 // Copyright (c) 2021 Mick Krippendorf <m.krippendorf@freenet.de>
 
-using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Generic;
 
 using MoreLinq;
 
@@ -9,9 +9,12 @@ namespace Yogic.Puzzle;
 
 using static Yogic.Combinators;
 
+using PuzzleDefinition = ValueTuple<List<Variable>, List<object>>;
+using Candidates = Dictionary<object, HashSet<Variable>>;
+
 public static class Puzzle
 {
-    private static Goal Solver(ValueTuple<List<Variable>, List<object>>[] pairs)
+    private static Goal Solver1(PuzzleDefinition[] pairs)
     {
         return And(
             from pair in pairs
@@ -19,6 +22,26 @@ public static class Puzzle
                 from permutation in pair.Item2.Permutations()
                 select Unify(pair.Item1, permutation)
             )
+        );
+    }
+
+    private static Candidates Simplify(PuzzleDefinition[] puzzle)
+    {
+        var candidates = new Candidates();
+        foreach (var (variables, numbers) in puzzle)
+            foreach (var number in numbers)
+                if (candidates.ContainsKey(number))
+                    candidates[number].IntersectWith(variables);
+                else
+                    candidates[number] = new HashSet<Variable>(variables);
+        return candidates;
+    }
+
+    internal static Goal Solver2(PuzzleDefinition[] puzzle)
+    {
+        return And(
+            from pair in Simplify(puzzle)
+            select Or(from variable in pair.Value select Unify(variable, pair.Key))
         );
     }
 
@@ -37,7 +60,7 @@ public static class Puzzle
         var k = new Variable("k");
         var l = new Variable("l");
 
-        var puzzle = new ValueTuple<List<Variable>, List<object>>[]
+        var puzzle = new PuzzleDefinition[]
         {
             (new() { a, b, c, e, h, i, j }, new() { 2, 4, 5, 8, 10, 11, 12 }),
             (new() { a, b, f, i, j, k, l }, new() { 1, 4, 5, 6, 7, 8, 12 }),
@@ -47,7 +70,7 @@ public static class Puzzle
             (new() { b, c, e, g, h, j, l }, new() { 2, 3, 4, 5, 7, 10, 11 }),
         };
 
-        foreach (var subst in Resolve(Solver(puzzle)))
+        foreach (var subst in Resolve(Solver2(puzzle)))
         {
             Console.WriteLine($"a = {subst[a]}");
             Console.WriteLine($"b = {subst[b]}");
