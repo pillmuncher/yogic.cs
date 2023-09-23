@@ -306,7 +306,7 @@ public static class Combinators
     {
         Result? result = goal(Subst.Empty)(emit, quit, quit);
         // We have to implement Tail Call Elimination ourself:
-        while (result is (var subst, var next))
+        while (result is var (subst, next))
         {
             if (subst is not null)
             {
