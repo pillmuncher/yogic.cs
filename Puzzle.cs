@@ -29,11 +29,19 @@ public static class Puzzle
     {
         var candidates = new Candidates();
         foreach (var (variables, numbers) in puzzle)
+        {
             foreach (var number in numbers)
+            {
                 if (candidates.ContainsKey(number))
+                {
                     candidates[number].IntersectWith(variables);
+                }
                 else
+                {
                     candidates[number] = new HashSet<Variable>(variables);
+                }
+            }
+        }
         return candidates;
     }
 
@@ -41,7 +49,9 @@ public static class Puzzle
     {
         return And(
             from pair in Simplify(puzzle)
-            select Or(from variable in pair.Value select Unify(variable, pair.Key))
+            select Or(
+                from variable in pair.Value
+                select Unify(variable, pair.Key))
         );
     }
 
