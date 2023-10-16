@@ -1,11 +1,11 @@
 # yogic.cs
+
 **An embedded DSL of monadic combinators for first-order logic programming in C#.**
 
 It's called Yogic because logic programming is another step on the path to
 enlightenment.
 
 ## **Key Features:**
-
 
 Yogic is a toolset designed to simplify logic programming tasks. It provides
 an efficient way to express, query, and solve logical problems.
@@ -61,6 +61,7 @@ single solution. We solve this in a naive way, by generating all possible
 permutations and then matching each permutation until we find one that
 matches. In Logic Programming this kind of algorithm is known as *Generate and
 Test*.
+
 ```csharp
 using System.Collections.Generic;
 using System.Linq;
@@ -128,7 +129,9 @@ public static class Puzzle
     }
 }
 ```
+
 **Result:**
+
 ```
 a = 8
 b = 5
@@ -146,7 +149,7 @@ l = 7
 
 ## **How it works:**
 
-We interpret a function ``f(x1,...,xm) { return or(g1,...,gn); }``
+We interpret a function `f(x1,...,xm) { return or(g1,...,gn); }`
 as a set of logical implications:
 
 ```
@@ -155,16 +158,16 @@ g1  ⟶  f(x1,...,xm)
 gn  ⟶  f(x1,...,xm)
 ```
 
-We call ``f(x1,...,xm)`` the *head* and each ``gi`` a *body*.
+We call `f(x1,...,xm)` the *head* and each `gi` a *body*.
 
-A function with head ``f(x1,...,xm)`` is proven by proving any of
-``g1,...,gn`` recursively. When we reach a goal that has a head but no body,
+A function with head `f(x1,...,xm)` is proven by proving any of
+`g1,...,gn` recursively. When we reach a goal that has a head but no body,
 there's nothing left to prove. This process is called a *resolution*.
 
 ## **How to use it:**
 
 Just write functions that take in Variables and other values like in the
-example above, and return combinator functions of type ``Goal``, constructed
+example above, and return combinator functions of type `Goal`, constructed
 by composing your functions with the combinator functions provided by this
 module, and start the resolution by giving an initial function, a so-called
 *goal*, to `Resolve()` and iterate over the results, one for each way *goal*
@@ -174,52 +177,67 @@ functions/predicates.
 
 ## **Documentation:**
 
-- [API Documentation](API.md)
-- [Glossary](Glossary.md)
+* [API Documentation](API.md)
+* [Glossary](Glossary.md)
 
 ## Links:
 
-### **Horn Clauses**:  
-https://en.wikipedia.org/wiki/Horn_clause
+### **Horn Clauses**:
 
-### **Logical Resolution**:  
+https://en.wikipedia.org/wiki/Horn\_clause
+
+### **Logical Resolution**:
+
 http://web.cse.ohio-state.edu/~stiff.4/cse3521/logical-resolution.html
 
-### **Unification**:  
+### **Unification**:
+
 https://eli.thegreenplace.net/2018/unification/
 
-### **Backtracking**:  
+### **Backtracking**:
+
 https://en.wikipedia.org/wiki/Backtracking
 
-### **Monoids**:  
+### **Monoids**:
+
 https://en.wikipedia.org/wiki/Monoid
 
-### **Folding on Monoids**:  
+### **Folding on Monoids**:
+
 https://bartoszmilewski.com/2020/06/15/monoidal-catamorphisms/
 
-### **Distributive Lattices**:  
-https://en.wikipedia.org/wiki/Distributive_lattice
+### **Distributive Lattices**:
 
-### **Monads**:  
-https://en.wikipedia.org/wiki/Monad_(functional_programming)
+https://en.wikipedia.org/wiki/Distributive\_lattice
 
-### **Monads Explained in C# (again)**:  
+### **Monads**:
+
+https://en.wikipedia.org/wiki/Monad\_(functional\_programming)
+
+### **Monads Explained in C# (again)**:
+
 https://mikhail.io/2018/07/monads-explained-in-csharp-again/
 
-### **Discovering the Continuation Monad in C#**:  
+### **Discovering the Continuation Monad in C#**:
+
 https://functionalprogramming.medium.com/deriving-continuation-monad-from-callbacks-23d74e8331d0
 
-### **Continuations**:  
+### **Continuations**:
+
 https://en.wikipedia.org/wiki/Continuation
 
-### **Continuations Made Simple and Illustrated**:  
+### **Continuations Made Simple and Illustrated**:
+
 https://www.ps.uni-saarland.de/~duchier/python/continuations.html
 
-### **The Discovery of Continuations**:  
+### **The Discovery of Continuations**:
+
 https://www.cs.ru.nl/~freek/courses/tt-2011/papers/cps/histcont.pdf
 
-### **Tail Calls**:  
-https://en.wikipedia.org/wiki/Tail_call
+### **Tail Calls**:
 
-### **On Recursion, Continuations and Trampolines**:  
+https://en.wikipedia.org/wiki/Tail\_call
+
+### **On Recursion, Continuations and Trampolines**:
+
 https://eli.thegreenplace.net/2017/on-recursion-continuations-and-trampolines/
