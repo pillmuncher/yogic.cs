@@ -92,7 +92,6 @@
 // issues by, instead of returning just a solution to a query, also returning
 // the thunk (a parameterless function) to be executed next.
 
-
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -279,15 +278,15 @@ public static class Combinators
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Goal UnifyAny(Variable v, IEnumerable<object> objects)
+    public static Goal UnifyAny(object o1, IEnumerable<object> objects)
     {
-        return Or(from o in objects select Unify(v, o));
+        return Or(from o2 in objects select Unify(o1, o2));
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Goal UnifyAny(Variable variable, params object[] objects)
+    public static Goal UnifyAny(object o, params object[] os)
     {
-        return UnifyAny(variable, objects);
+        return UnifyAny(o, os);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

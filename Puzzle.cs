@@ -9,7 +9,7 @@ namespace Yogic.Puzzle;
 
 using static Yogic.Combinators;
 
-using PuzzleDefinition = ValueTuple<List<Variable>, List<object>>;
+using PuzzleDefinition = ValueTuple<HashSet<Variable>, HashSet<object>>;
 using Candidates = Dictionary<object, HashSet<Variable>>;
 
 public static class Puzzle
@@ -47,12 +47,7 @@ public static class Puzzle
 
     internal static Goal Solver2(PuzzleDefinition[] puzzle)
     {
-        return And(
-            from pair in Simplify(puzzle)
-            select Or(
-                from variable in pair.Value
-                select Unify(variable, pair.Key))
-        );
+        return And(from pair in Simplify(puzzle) select UnifyAny(pair.Key, pair.Value));
     }
 
     public static void Main()
