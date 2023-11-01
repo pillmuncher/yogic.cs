@@ -121,7 +121,7 @@ public delegate Result? Emit(Subst subst, Next next);
 // The monadic computation type.
 // 'succeed' wraps the current continuation and 'backtrack' wraps the
 // continuation for normal backtracking. 'escape' wraps the continuation
-// that a subsequent 'cut' invokes to curtail backtracking at the previous
+// that a subsequent 'Cut' invokes to curtail backtracking at the previous
 // choice point.
 public delegate Result? Step(Emit succeed, Next backtrack, Next escape);
 
@@ -204,14 +204,14 @@ public static class Combinators
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Goal Then(Goal goal1, Goal goal2)
     {
-        // Sequencing is the default behavior of 'bind':
+        // Sequencing is the default behavior of 'Bind':
         return subst => Bind(goal1(subst), goal2);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Goal And(IEnumerable<Goal> goals)
     {
-        // 'unit' and 'then' form a monoid, so we can just fold:
+        // 'Unit' and 'Then' form a monoid, so we can just fold:
         return goals.Aggregate<Goal, Goal>(Unit, Then);
     }
 
@@ -240,7 +240,7 @@ public static class Combinators
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Goal Or(IEnumerable<Goal> goals)
     {
-        // 'fail' and 'choice' form a monoid, so we can just fold:
+        // 'Fail' and 'Choice' form a monoid, so we can just fold:
         var choices = goals.Aggregate<Goal, Goal>(Fail, Choice);
         // we inject 'backtrack' as the new escape path, so we can
         // curtail backtracking here and immediately continue at the
