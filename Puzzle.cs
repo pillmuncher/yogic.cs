@@ -1,4 +1,4 @@
-// Copyright (c) 2021 Mick Krippendorf <m.krippendorf@freenet.de>
+// Copyright (c) 2023 Mick Krippendorf <m.krippendorf@freenet.de>
 
 using System.Linq;
 using System.Collections.Generic;
