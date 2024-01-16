@@ -42,8 +42,8 @@
 // - 'Or': Represents adjunction of goals, meaning it succeeds if any one of
 //   the goals succeeds.
 //
-// - 'Not': Represents negation as failure, i.e., it succeeds only when the
-//   given goal fails and vice versa.
+// - 'Not': Represents negation. Succeeds only when the given goal fails and
+//   vice versa.
 //
 // - 'Unify*': A set of unification combinators for matching objects with each
 //   other and binding variables to objects and other variables.
@@ -51,7 +51,7 @@
 //
 // A resolution process is started by calling 'Resolve' on a goal. It returns
 // an enumerable collection of substitution environments (proxy mappings) of
-// variables to their bindings. These are the solutions to a logical query.
+// variables to their bindings, each representing a solution.
 //
 //
 // Under the hood, we make use of the algebraic structure of monadic
@@ -66,19 +66,20 @@
 // meet (infimum) and 'Choice' the join (supremum) operator, and 'Unit' and
 // 'Fail' their respective identity elements. Although not explicitly used in
 // the code, these properties reflect the inherent structure of the
-// combinators. Users of this library, on the other hand, might make use
-// these distributive properties of the Lattice.
+// combinators. Users of this library might make use these distributive
+// properties of the Lattice.
 //
 // It's important to note that due to the sequential nature of the employed
 // resolution algorithm combined with the 'Cut' combinator, neither the
 // lattice nor the monoids are commutative.
 //
 //
-// C# lacks proper Tail Call Elimination, which can lead to stack overflows in
-// recursive logic programming. To mitigate this, we use a technique known as
-// Trampolining with Thunking. It allows us to prevent stack overflow issues
-// by not only returning the current solution, but also a parameterless
-// function (called a thunk) to be executed next.
+// C# lacks proper Tail Call Elimination, which can lead to stack overflows.
+// To mitigate this, we use a technique known as Trampolining with Thunking.
+// Instead of returning only the solution, we also return a parameterless
+// function (called a thunk) to be executed next. The 'Resolve' function acts
+// as a driver that calls the thunks in a loop until no more solutions can be
+// found.
 
 
 using System.Collections.Generic;
