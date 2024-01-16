@@ -6,33 +6,27 @@
 //
 // Overview:
 //
-//
-// The Triple-Barrelled Continuation Monad:
+// This library makes use of the Triple-Barrelled Continuation Monad.
+// We use this Monad to drive the resolution process. It is responsible for
+// handling resolution, backtracking, and branch pruning.
 //
 //     “The continuation that obeys only obvious stack semantics,
 //     O grasshopper, is not the true continuation.” — Guy L. Steele.
 //
-// We use this Monad to drive the resolution process. It is responsible for
-// handling resolution, backtracking, and branch pruning.
-//
-//
-// Simplified Terminology:
 //
 // To make logic programming more accessible and user-friendly, we've
 // introduced simplified terminology. Instead of using abstract jargon like
 // "Monad" and "Continuation," we've defined two main types:
 //
-// 1. 'Step': Represents a monadic computation step. It can succeed, invoke
-// backtracking, or esacpe, that is, jump back to the previous choice point,
-// thus pruning the search space.
+// - 'Step': Represents a monadic computation step. It either succeeds, or
+//   invokes backtracking, or esacpes back to the previous choice point, thus
+//   pruning the search space.
 //
-// 2. 'Goal': Represents a logical statement or query that we want to resolve.
-// Goals take a substitution environment and produce 'Steps.'
+// - 'Goal': Represents a logical statement or query that we want to resolve.
+//   Goals take a substitution environment and produce 'Steps.'
 //
 //
-// Basic Combinators:
-//
-// We provide a set of essential combinators that you'd expect in a logic
+// We provide a set of fundamental combinators that you'd expect in a logic
 // programming library:
 //
 // - 'Unit': Succeeds once and represents success.
@@ -40,29 +34,25 @@
 // - 'Fail': Never succeeds and represents failure.
 //
 // - 'Cut': Succeeds once and then curtails backtracking at the previous
-// choice point.
+//   choice point.
 //
 // - 'And': Represents conjunction of goals, meaning all goals must succeed
-// for it to succeed.
+//   for it to succeed.
 //
 // - 'Or': Represents adjunction of goals, meaning it succeeds if any one of
-// the goals succeeds.
+//   the goals succeeds.
 //
 // - 'Not': Represents negation as failure, i.e., it succeeds only when the
-// given goal fails and vice versa.
+//   given goal fails and vice versa.
 //
 // - 'Unify*': A set of unification combinators for matching objects with each
-// otehr and binding variables to objects and other variables.
+//   other and binding variables to objects and other variables.
 //
-//
-// Resolution Process:
 //
 // A resolution process is started by calling 'Resolve' on a goal. It returns
 // an enumerable collection of substitution environments (proxy mappings) of
 // variables to their bindings. These are the solutions to a logical query.
 //
-//
-// Algebraic Structure:
 //
 // Under the hood, we make use of the algebraic structure of monadic
 // combinators. Specifically:
@@ -84,13 +74,11 @@
 // lattice nor the monoids are commutative.
 //
 //
-// Tail Call Elimination:
-//
 // C# lacks proper Tail Call Elimination, which can lead to stack overflows in
-// recursive logic programming. To mitigate this somewhat, we use a technique
-// known as Trampolining with Thunking. It allows us to prevent stack overflow
-// issues by, instead of returning just a solution to a query, also returning
-// the thunk (a parameterless function) to be executed next.
+// recursive logic programming. To mitigate this, we use a technique known as
+// Trampolining with Thunking. It allows us to prevent stack overflow issues
+// by not only returning the current solution, but also a parameterless
+// function (called a thunk) to be executed next.
 
 
 using System.Collections.Generic;

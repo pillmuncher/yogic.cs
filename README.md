@@ -1,4 +1,5 @@
 # yogic.cs
+
 **An embedded DSL of monadic combinators for first-order logic programming in C#.**
 
 It's called Yogic because logic programming is another step on the path to
@@ -6,38 +7,38 @@ enlightenment.
 
 ## **Key Features:**
 
-
-Yogic is a toolset designed to simplify logic programming tasks. It provides
+Yogic is a toolset designed to enable logic programming in C#. It provides
 an efficient way to express, query, and solve logical problems.
 
 1. **Combinator Functions for Logic Statements**:
 
-   Begin by thinking of your logical statements as combinations of facts and
+   Logical statements are usually expressed as combinations of facts and
    rules. These statements can be represented using combinator functions
    provided by the library. Each function encapsulates a specific logical
-   operation.
+   operation, such as logical negation, conjunction, disjunction, and so on.
 
 2. **Resolution - Finding Solutions**:
 
-   Define your logical goals using these combinator functions. A goal
-   represents a statement or query you want to resolve. To find solutions to
-   your goals, call the `Resolve` method on them. This method starts the
-   resolution process.
+   Define your logical goals using these combinator functions. A goal represents
+   a statement or query you want to resolve. To find solutions to your goals,
+   call the `Resolve` function on them to start the resolution process.
 
 3. **Unification and Substitution of Variables**:
 
    Unification is a fundamental operation in logic programming. It's a way to
-   match and bind objects together. During the resolution process, the library
-   handles unification for you. As goals are pursued and objects are matched,
-   a substitution environment is constructed. This environment maps logical
-   variables to their bindings or values.
+   bind objects to logical variables and match object to one another. During the
+   resolution process, the library handles unification for you. As goals are
+   pursued and objects are matched, a substitution environment is constructed.
+   This environment map of logical variables to objects can be queried after
+   a solution is found.
 
 4. **Backtracking for Multiple Paths**:
 
-   Logic programming often involves exploring different possibilities. If a
-   particular path or goal doesn't succeed, the library automatically
-   backtracks to explore other alternatives. You don't need to manage this
-   backtracking manually; it's handled seamlessly.
+   Logic programming often involves exploring different paths that might not all
+   lead to a solution. If a particular path or goal doesn't succeed, the library
+   automatically backtracks to explore other alternatives or to find all
+   solutions to a query. You don't need to specify or manage this backtracking
+   manually since it's handled automatically.
 
 5. **Optimizing with the 'Cut' Combinator**:
 
@@ -45,7 +46,8 @@ an efficient way to express, query, and solve logical problems.
    serves as a way to curtail backtracking at specific points in your logic.
    By strategically placing 'Cut' combinators, you can prune branches of the
    search tree that are no longer relevant. This can significantly improve the
-   efficiency of your logic programs.
+   efficiency of your logic programs. It can also be used as an extra-logical
+   operator to disable the search for other solutions than the current one.
 
 By combining these elements, you can express and solve complex logical
 problems effectively. Many of the intricacies of Logic Programming are
@@ -61,6 +63,7 @@ single solution. We solve this in a naive way, by generating all possible
 permutations and then matching each permutation until we find one that
 matches. In Logic Programming this kind of algorithm is known as *Generate and
 Test*.
+
 ```csharp
 using System.Collections.Generic;
 using System.Linq;
@@ -128,7 +131,9 @@ public static class Puzzle
     }
 }
 ```
+
 **Result:**
+
 ```
 a = 8
 b = 5
@@ -146,7 +151,7 @@ l = 7
 
 ## **How it works:**
 
-We interpret a function ``f(x1,...,xm) { return or(g1,...,gn); }``
+We interpret a function `f(x1,...,xm) { return or(g1,...,gn); }`
 as a set of logical implications:
 
 ```
@@ -155,16 +160,16 @@ g1  ⟶  f(x1,...,xm)
 gn  ⟶  f(x1,...,xm)
 ```
 
-We call ``f(x1,...,xm)`` the *head* and each ``gi`` a *body*.
+We call `f(x1,...,xm)` the *head* and each `gi` a *body*.
 
-A function with head ``f(x1,...,xm)`` is proven by proving any of
-``g1,...,gn`` recursively. When we reach a goal that has a head but no body,
+A function with head `f(x1,...,xm)` is proven by proving any of
+`g1,...,gn` recursively. When we reach a goal that has a head but no body,
 there's nothing left to prove. This process is called a *resolution*.
 
 ## **How to use it:**
 
 Just write functions that take in Variables and other values like in the
-example above, and return combinator functions of type ``Goal``, constructed
+example above, and return combinator functions of type `Goal`, constructed
 by composing your functions with the combinator functions provided by this
 module, and start the resolution by giving an initial function, a so-called
 *goal*, to `Resolve()` and iterate over the results, one for each way *goal*
@@ -174,52 +179,67 @@ functions/predicates.
 
 ## **Documentation:**
 
-- [API Documentation](API.md)
-- [Glossary](Glossary.md)
+* [API Documentation](API.md)
+* [Glossary](Glossary.md)
 
 ## Links:
 
-### **Horn Clauses**:  
-https://en.wikipedia.org/wiki/Horn_clause
+### **Horn Clauses**:
 
-### **Logical Resolution**:  
+https://en.wikipedia.org/wiki/Horn\_clause
+
+### **Logical Resolution**:
+
 http://web.cse.ohio-state.edu/~stiff.4/cse3521/logical-resolution.html
 
-### **Unification**:  
+### **Unification**:
+
 https://eli.thegreenplace.net/2018/unification/
 
-### **Backtracking**:  
+### **Backtracking**:
+
 https://en.wikipedia.org/wiki/Backtracking
 
-### **Monoids**:  
+### **Monoids**:
+
 https://en.wikipedia.org/wiki/Monoid
 
-### **Folding on Monoids**:  
+### **Folding on Monoids**:
+
 https://bartoszmilewski.com/2020/06/15/monoidal-catamorphisms/
 
-### **Distributive Lattices**:  
-https://en.wikipedia.org/wiki/Distributive_lattice
+### **Distributive Lattices**:
 
-### **Monads**:  
-https://en.wikipedia.org/wiki/Monad_(functional_programming)
+https://en.wikipedia.org/wiki/Distributive\_lattice
 
-### **Monads Explained in C# (again)**:  
+### **Monads**:
+
+https://en.wikipedia.org/wiki/Monad\_(functional\_programming)
+
+### **Monads Explained in C# (again)**:
+
 https://mikhail.io/2018/07/monads-explained-in-csharp-again/
 
-### **Discovering the Continuation Monad in C#**:  
+### **Discovering the Continuation Monad in C#**:
+
 https://functionalprogramming.medium.com/deriving-continuation-monad-from-callbacks-23d74e8331d0
 
-### **Continuations**:  
+### **Continuations**:
+
 https://en.wikipedia.org/wiki/Continuation
 
-### **Continuations Made Simple and Illustrated**:  
+### **Continuations Made Simple and Illustrated**:
+
 https://www.ps.uni-saarland.de/~duchier/python/continuations.html
 
-### **The Discovery of Continuations**:  
+### **The Discovery of Continuations**:
+
 https://www.cs.ru.nl/~freek/courses/tt-2011/papers/cps/histcont.pdf
 
-### **Tail Calls**:  
-https://en.wikipedia.org/wiki/Tail_call
+### **Tail Calls**:
 
-### **On Recursion, Continuations and Trampolines**:  
+https://en.wikipedia.org/wiki/Tail\_call
+
+### **On Recursion, Continuations and Trampolines**:
+
 https://eli.thegreenplace.net/2017/on-recursion-continuations-and-trampolines/
