@@ -117,10 +117,7 @@ public delegate Result? Step(Emit succeed, Next backtrack, Next escape);
 // The monadic continuation type.
 public delegate Step Goal(Subst subst);
 
-public record Variable(string name)
-{
-    public override string ToString() => $"Variable({name})";
-}
+public record Variable(string name);
 
 public class SubstProxy
 {
