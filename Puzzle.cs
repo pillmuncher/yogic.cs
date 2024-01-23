@@ -37,7 +37,7 @@ public static class Puzzle
         return candidates;
     }
 
-    internal static Goal Solver2(PuzzleDefinition[] puzzle)
+    private static Goal Solver2(PuzzleDefinition[] puzzle)
     {
         return And(
             from pair in Simplify(puzzle)
