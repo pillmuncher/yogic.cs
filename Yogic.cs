@@ -6,9 +6,8 @@
 //
 // Overview:
 //
-// This library makes use of the Triple-Barrelled Continuation Monad.
-// We use this Monad to drive the resolution process. It is responsible for
-// handling resolution, backtracking, and branch pruning.
+// We use Triple-Barrelled Continuation Monad to drive the resolution process.
+// It allows for backtracking and branch pruning.
 //
 //     “The continuation that obeys only obvious stack semantics,
 //     O grasshopper, is not the true continuation.” — Guy L. Steele.
@@ -39,11 +38,11 @@
 // - 'And': Represents conjunction of goals, meaning all goals must succeed
 //   for it to succeed.
 //
-// - 'Or': Represents adjunction of goals, meaning it succeeds if any one of
-//   the goals succeeds.
+// - 'Or': Represents adjunction of goals, meaning it succeeds if at least one
+//   of the goals succeeds.
 //
-// - 'Not': Represents negation. Succeeds only when the given goal fails and
-//   vice versa.
+// - 'Not': Represents negation. Succeeds if the given goal fails and vice
+//   versa.
 //
 // - 'Unify*': A set of unification combinators for matching objects with each
 //   other and binding variables to objects and other variables.
@@ -54,7 +53,7 @@
 // variables to their bindings, each representing a solution.
 //
 //
-// Under the hood, we make use of the algebraic structure of monadic
+// Under the hood, we make use of the algebraic structure of the monadic
 // combinators. Specifically:
 //
 // - 'Unit' and 'Then' form a Monoid over monadic combinator functions.
@@ -64,10 +63,9 @@
 // These structures allow us to fold a sequence of combinators into a single
 // one. Additionally, they form a Distributive Lattice where 'Then' is the
 // meet (infimum) and 'Choice' the join (supremum) operator, and 'Unit' and
-// 'Fail' their respective identity elements. Although not explicitly used in
-// the code, these properties reflect the inherent structure of the
-// combinators. Users of this library might make use these distributive
-// properties of the Lattice.
+// 'Fail' their respective identity elements. Although not used in our code,
+// these properties reflect the inherent structure of the combinators. Users
+// of this library might make use the distributive properties of the Lattice.
 //
 // It's important to note that due to the sequential nature of the employed
 // resolution algorithm combined with the 'Cut' combinator, neither the
