@@ -119,16 +119,9 @@ public delegate Step Goal(Subst subst);
 
 public record Variable(string name);
 
-public class SubstProxy
+public record SubstProxy(Subst subst)
 {
-    private readonly Subst subst;
-
-    internal SubstProxy(Subst subst)
-    {
-        this.subst = subst;
-    }
-
-    // deref'ing here is the whole reason we need this class:
+    // deref'ing here is the whole reason we need this record:
     public object this[Variable v] => Combinators.deref(subst, v);
 }
 
