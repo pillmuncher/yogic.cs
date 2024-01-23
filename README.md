@@ -10,14 +10,14 @@ enlightenment.
 Yogic is a toolset designed to enable logic programming in C#. It provides
 an efficient way to express, query, and solve logical problems.
 
-1. **Combinator Functions for Logic Statements**:
+1. **Logical Statements**:
 
-   Logical statements are usually expressed as combinations of facts and
-   rules. These statements can be represented using combinator functions
+   Logical statements are usually expressed as combinations of facts and rules.
+   These statements are represented by combining, well, combinator functions
    provided by the library. Each function encapsulates a specific logical
    operation, such as logical negation, conjunction, disjunction, and so on.
 
-2. **Resolution - Finding Solutions**:
+2. **Logical Queries**:
 
    Define your logical goals using these combinator functions. A goal represents
    a statement or query you want to resolve. To find solutions to your goals,
@@ -26,8 +26,8 @@ an efficient way to express, query, and solve logical problems.
 3. **Unification and Substitution of Variables**:
 
    Unification is a fundamental operation in logic programming. It's a way to
-   bind objects to logical variables and match object to one another. During the
-   resolution process, the library handles unification for you. As goals are
+   bind objects to logical variables and match objects with one another. During
+   the resolution process, the library handles unification for you. As goals are
    pursued and objects are matched, a substitution environment is constructed.
    This environment map of logical variables to objects can be queried after
    a solution is found.
@@ -35,10 +35,10 @@ an efficient way to express, query, and solve logical problems.
 4. **Backtracking for Multiple Paths**:
 
    Logic programming often involves exploring different paths that might not all
-   lead to a solution. If a particular path or goal doesn't succeed, the library
-   automatically backtracks to explore other alternatives or to find all
-   solutions to a query. You don't need to specify or manage this backtracking
-   manually since it's handled automatically.
+   lead to a solution. If a particular path or goal doesn't succeed,
+   backtracking is initiated automatically to explore other alternatives or to
+   find all solutions to a query. You don't need to specify or manage this
+   backtracking manually since it's handled automatically.
 
 5. **Optimizing with the 'Cut' Combinator**:
 
@@ -49,20 +49,19 @@ an efficient way to express, query, and solve logical problems.
    efficiency of your logic programs. It can also be used as an extra-logical
    operator to disable the search for other solutions than the current one.
 
-By combining these elements, you can express and solve complex logical
-problems effectively. Many of the intricacies of Logic Programming are
-abstracted away, allowing you to focus on defining your logic in a more
-intuitive and structured manner.
+By combining these elements, you can express and solve complex logical problems
+effectively. Many of the intricacies of Logic Programming are abstracted away,
+allowing you to focus on defining your logic in a more intuitive and structured
+manner.
 
 ## **An Example:**
 
-A classic example of Logic Programming is puzzle solving. Here we have a
-puzzle where numbers have to be assigned to letters, such that all sets of
-assignments are compatible with each other. Typically, there is ever only a
-single solution. We solve this in a naive way, by generating all possible
-permutations and then matching each permutation until we find one that
-matches. In Logic Programming this kind of algorithm is known as *Generate and
-Test*.
+A classic example of Logic Programming is puzzle solving. Here we have a puzzle
+where numbers have to be assigned to letters, such that all sets of assignments
+are compatible with each other. Typically, there is ever only a single solution.
+We solve this in a naive way, by first generating all possible permutations and
+then matching each permutation until we find a match. In Logic Programming this
+kind of algorithm is known as *Generate and Test*.
 
 ```csharp
 using System.Collections.Generic;
@@ -168,14 +167,13 @@ there's nothing left to prove. This process is called a *resolution*.
 
 ## **How to use it:**
 
-Just write functions that take in Variables and other values like in the
-example above, and return combinator functions of type `Goal`, constructed
-by composing your functions with the combinator functions provided by this
-module, and start the resolution by giving an initial function, a so-called
-*goal*, to `Resolve()` and iterate over the results, one for each way *goal*
-can be proven. No result means a failed resolution, that is the function
-cannot be proven in the universe described by the given set of
-functions/predicates.
+Just write functions that take Variables and other values as arguments, like in
+the example above, and return combinator functions of type `Goal`, constructed
+by composing your functions with the functions provided by this module, and
+start the resolution by giving an initial function, a so-called *goal*, to
+`Resolve()` and iterate over the results, one for each way *goal* can be proven.
+No result means a failed resolution, that is the function cannot be proven in
+the universe described by the given set of functions/predicates.
 
 ## **Documentation:**
 
