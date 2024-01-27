@@ -19,9 +19,10 @@ an efficient way to express, query, and solve logical problems.
 
 2. **Logical Queries**:
 
-   Define your logical goals using these combinator functions. A goal represents
-   a statement or query you want to resolve. To find solutions to your goals,
-   call the `Resolve` function on them to start the resolution process.
+   Define your logical queries using these combinator functions. A goal
+   represents a statement or query you want to resolve. To find solutions to
+   your goals, call the `Resolve` function on them to start the resolution
+   process.
 
 3. **Unification and Substitution of Variables**:
 

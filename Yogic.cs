@@ -6,11 +6,11 @@
 //
 // Overview:
 //
-// We use Triple-Barrelled Continuation Monad to drive the resolution process.
-// It allows for backtracking and branch pruning.
-//
 //     “The continuation that obeys only obvious stack semantics,
 //     O grasshopper, is not the true continuation.” — Guy L. Steele.
+//
+// We use the Triple-Barrelled Continuation Monad to drive the resolution
+// process. It allows for backtracking and branch pruning.
 //
 //
 // To make logic programming more accessible and user-friendly, we've
@@ -61,11 +61,13 @@
 // - 'Fail' and 'Choice' also form a Monoid.
 //
 // These structures allow us to fold a sequence of combinators into a single
-// one. Additionally, they form a Distributive Lattice where 'Then' is the
-// meet (infimum) and 'Choice' the join (supremum) operator, and 'Unit' and
-// 'Fail' their respective identity elements. Although not used in our code,
-// these properties reflect the inherent structure of the combinators. Users
-// of this library might make use the distributive properties of the Lattice.
+// one in the 'And' and 'Or' combinators.
+//
+// Additionally, they form a Distributive Lattice where 'Then' is the meet
+// (infimum) and 'Choice' the join (supremum) operator, and 'Unit' and 'Fail'
+// their respective identity elements. Although not used in our code, these
+// properties reflect the inherent structure of the combinators. Users of this
+// library might make use the distributive properties of the Lattice.
 //
 // It's important to note that due to the sequential nature of the employed
 // resolution algorithm combined with the 'Cut' combinator, neither the
@@ -120,13 +122,13 @@ public record Variable(string name);
 public record SubstProxy(Subst subst)
 {
     // deref'ing here is the whole reason we need this record:
-    public object this[Variable v] => Combinators.deref(subst, v);
+    public object this[Variable v] => subst.deref(v);
 }
 
 public static class Combinators
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static object deref(Subst subst, object obj)
+    internal static object deref(this Subst subst, object obj)
     {
         // Chase down Variable bindings:
         while (obj is Variable variable && subst.ContainsKey(variable))
@@ -238,7 +240,7 @@ public static class Combinators
     {
         // Using an 'ImmutableDictionary' makes trailing easy:
         return subst =>
-            (deref(subst, o1), deref(subst, o2)) switch
+            (subst.deref(o1), subst.deref(o2)) switch
             {
                 (var x1, var x2) when x1.Equals(x2) => Unit(subst),
                 (Seq s1, Seq s2) when s1.Count == s2.Count => UnifyAll(s1.Zip(s2))(subst),
