@@ -129,7 +129,7 @@
   different point in the code from where it was created. Yogic uses it to
   implement [Tail Call Elimination](#Tail-Call-Elimination).
 
-### **Traling**:
+### **Trailing**:
 
 * The process of tracking bound [Logical Variables](#Logical-Variables).
 
