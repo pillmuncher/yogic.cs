@@ -85,7 +85,6 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Runtime.CompilerServices;
 
 namespace Yogic;
 
@@ -127,7 +126,6 @@ public record SubstProxy(Subst subst)
 
 public static class Combinators
 {
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static object deref(this Subst subst, object obj)
     {
         // Chase down Variable bindings:
@@ -138,7 +136,6 @@ public static class Combinators
         return obj;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Step Bind(Step step, Goal goal)
     {
         // Make 'goal' the continuation of 'step':
@@ -148,45 +145,38 @@ public static class Combinators
             );
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Step Unit(Subst subst)
     {
         return (succeed, backtrack, escape) => tailcall(() => succeed(subst, backtrack));
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Step Cut(Subst subst)
     {
         return (succeed, backtrack, escape) => tailcall(() => succeed(subst, escape));
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Step Fail(Subst subst)
     {
         return (succeed, backtrack, escape) => tailcall(backtrack);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Goal Then(Goal goal1, Goal goal2)
     {
         // Sequencing is the default behavior of 'Bind':
         return subst => Bind(goal1(subst), goal2);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Goal And(IEnumerable<Goal> goals)
     {
         // 'Unit' and 'Then' form a monoid, so we can just fold:
         return goals.Aggregate<Goal, Goal>(Unit, Then);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Goal And(params Goal[] goals)
     {
         return And(goals);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Goal Choice(Goal goal1, Goal goal2)
     {
         // We make 'goal2' the new backtracking path of 'goal1':
@@ -202,7 +192,6 @@ public static class Combinators
                 );
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Goal Or(IEnumerable<Goal> goals)
     {
         // 'Fail' and 'Choice' form a monoid, so we can just fold:
@@ -215,20 +204,17 @@ public static class Combinators
                 tailcall(() => choices(subst)(succeed, backtrack, backtrack));
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Goal Or(params Goal[] goals)
     {
         return Or(goals);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Goal Not(Goal goal)
     {
         // Negation as failure:
         return Or(And(goal, Cut, Fail), Unit);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Goal Unify(object o1, object o2)
     {
         // Using an 'ImmutableDictionary' makes trailing easy:
@@ -243,25 +229,21 @@ public static class Combinators
             };
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Goal UnifyAny(Variable v, IEnumerable<object> objects)
     {
         return Or(from o in objects select Unify(v, o));
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Goal UnifyAny(Variable variable, params object[] objects)
     {
         return UnifyAny(variable, objects);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Goal UnifyAll(IEnumerable<Pair> pairs)
     {
         return And(from pair in pairs select Unify(pair.Item1, pair.Item2));
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Goal UnifyAll(params Pair[] pairs)
     {
         return UnifyAll(pairs);
@@ -271,7 +253,6 @@ public static class Combinators
 
     private static Result? emit(Subst subst, Next next) => (subst, next);
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static Result tailcall(Next next) => (null, next);
 
     public static IEnumerable<SubstProxy> Resolve(Goal goal)
