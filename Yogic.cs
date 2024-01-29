@@ -138,13 +138,6 @@ public static class Combinators
         return obj;
     }
 
-    private static Result? quit() => null;
-
-    private static Result? emit(Subst subst, Next next) => (subst, next);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static Result tailcall(Next next) => (null, next);
-
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Step Bind(Step step, Goal goal)
     {
@@ -273,6 +266,13 @@ public static class Combinators
     {
         return UnifyAll(pairs);
     }
+
+    private static Result? quit() => null;
+
+    private static Result? emit(Subst subst, Next next) => (subst, next);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static Result tailcall(Next next) => (null, next);
 
     public static IEnumerable<SubstProxy> Resolve(Goal goal)
     {
