@@ -118,7 +118,7 @@ public delegate Step Goal(Subst subst);
 
 public record Variable(string name);
 
-public record SubstProxy(Subst subst)
+public class SubstProxy(Subst subst)
 {
     // deref'ing here is the whole reason we need this record:
     public object this[Variable v] => subst.deref(v);
