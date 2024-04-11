@@ -86,30 +86,40 @@ This process is called a *resolution*.
 A classic example of Logic Programming is puzzle solving. Here we have a puzzle
 where numbers have to be assigned to letters, such that all sets of assignments
 are compatible with each other. Typically, there is ever only a single solution.
-We solve this in a naive way, by first generating all possible permutations and
-then matching each permutation until we find a match. In Logic Programming this
-kind of algorithm is known as *Generate and Test*.
+We solve this in a combined way, by first procedurally generating all possible
+solutions and then declaratively selecting the final solution. In Logic
+Programming this kind of algorithm is known as *Generate and Test*.
 
 ```csharp
-using System.Collections.Generic;
 using System.Linq;
-
-using MoreLinq;
-
-namespace Yogic.Puzzle;
+using System.Collections.Generic;
 
 using static Yogic.Combinators;
 
+namespace Yogic.Puzzle;
+
+using PuzzleDefinition = ValueTuple<List<Variable>, List<object>>;
+using Candidates = Dictionary<object, HashSet<Variable>>;
+
 public static class Puzzle
 {
-    private static Goal Solver(ValueTuple<List<Variable>, List<object>>[] pairs)
+    private static Candidates Simplify(PuzzleDefinition[] puzzle)
+    {
+        var candidates = new Candidates();
+        foreach (var (variables, numbers) in puzzle)
+            foreach (var number in numbers)
+                if (candidates.ContainsKey(number))
+                    candidates[number].IntersectWith(variables);
+                else
+                    candidates[number] = new HashSet<Variable>(variables);
+        return candidates;
+    }
+
+    private static Goal Solver(PuzzleDefinition[] puzzle)
     {
         return And(
-            from pair in pairs
-            select Or(
-                from permutation in pair.Item2.Permutations()
-                select Unify(pair.Item1, permutation)
-            )
+            from pair in Simplify(puzzle)
+            select Or(from variable in pair.Value select Unify(variable, pair.Key))
         );
     }
 
@@ -128,7 +138,7 @@ public static class Puzzle
         var k = new Variable("k");
         var l = new Variable("l");
 
-        var puzzle = new ValueTuple<List<Variable>, List<object>>[]
+        var puzzle = new PuzzleDefinition[]
         {
             (new() { a, b, c, e, h, i, j }, new() { 2, 4, 5, 8, 10, 11, 12 }),
             (new() { a, b, f, i, j, k, l }, new() { 1, 4, 5, 6, 7, 8, 12 }),
