@@ -120,7 +120,7 @@ public record Variable(string name);
 
 public class SubstProxy(Subst subst)
 {
-    // deref'ing here is the whole reason we need this record:
+    // deref'ing here is the whole reason we need this class:
     public object this[Variable v] => subst.deref(v);
 }
 
@@ -196,7 +196,7 @@ public static class Combinators
     {
         // 'Fail' and 'Choice' form a monoid, so we can just fold:
         var choices = goals.Aggregate<Goal, Goal>(Fail, Choice);
-        // we inject 'backtrack' as the new escape path, so we can
+        // We inject 'backtrack' as the new escape path, so we can
         // curtail backtracking here and immediately continue at the
         // previous choice point instead:
         return subst =>
