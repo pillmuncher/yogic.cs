@@ -19,10 +19,9 @@ an efficient way to express, query, and solve logical problems.
 
 2. **Logical Queries**:
 
-   Define your logical queries using these combinator functions. A goal
-   represents a statement or query you want to resolve. To find solutions to
-   your goals, call the `Resolve` function on them to start the resolution
-   process.
+   Define your logical queries using these combinator functions. A query is
+   a statement or goal you want to resolve. To find solutions to your queries,
+   call the `Resolve` function on them to start the resolution process.
 
 3. **Unification and Substitution of Variables**:
 
@@ -38,7 +37,7 @@ an efficient way to express, query, and solve logical problems.
    Logic programming often involves exploring different paths that might not all
    lead to a solution. If a particular path or goal doesn't succeed,
    backtracking is initiated automatically to explore other alternatives or to
-   find all solutions to a query. You don't need to specify or manage this
+   find all solutions for a goal. You don't need to specify or manage this
    backtracking manually since it's handled automatically.
 
 5. **Optimizing with the 'Cut' Combinator**:
@@ -54,6 +53,33 @@ By combining these elements, you can express and solve complex logical problems
 effectively. Many of the intricacies of Logic Programming are abstracted away,
 allowing you to focus on defining your logic in a more intuitive and structured
 manner.
+
+## **How to use it:**
+
+Just write functions that take Variables and other values as arguments, like in
+the example below, and return combinator functions of type `Goal`, constructed
+by composing your functions with the combinators provided by this module, and
+start the resolution by giving an initial function, a so-called *query*, to
+`Resolve()` and iterate over the results, one for each way the query can be
+solved.  No result means a failed resolution, that is the function cannot be
+proven in the universe described by the given set of functions/predicates.
+
+## **How it works:**
+
+We interpret a function `f(x1,...,xm) { return Or(g1,...,gn); }`
+as a set of logical implications:
+
+```
+g1  ⟶  f(x1,...,xm)
+...
+gn  ⟶  f(x1,...,xm)
+```
+
+We call `f(x1,...,xm)` the *head* and each `gi` a *body*.
+
+A function with head `f(x1,...,xm)` is proven by proving any of `g1,...,gn`.
+When we reach a goal that has a head but no body, there's nothing left to prove.
+This process is called a *resolution*.
 
 ## **An Example:**
 
@@ -148,33 +174,6 @@ j = 4
 k = 6
 l = 7
 ```
-
-## **How it works:**
-
-We interpret a function `f(x1,...,xm) { return or(g1,...,gn); }`
-as a set of logical implications:
-
-```
-g1  ⟶  f(x1,...,xm)
-...
-gn  ⟶  f(x1,...,xm)
-```
-
-We call `f(x1,...,xm)` the *head* and each `gi` a *body*.
-
-A function with head `f(x1,...,xm)` is proven by proving any of
-`g1,...,gn` recursively. When we reach a goal that has a head but no body,
-there's nothing left to prove. This process is called a *resolution*.
-
-## **How to use it:**
-
-Just write functions that take Variables and other values as arguments, like in
-the example above, and return combinator functions of type `Goal`, constructed
-by composing your functions with the functions provided by this module, and
-start the resolution by giving an initial function, a so-called *goal*, to
-`Resolve()` and iterate over the results, one for each way *goal* can be proven.
-No result means a failed resolution, that is the function cannot be proven in
-the universe described by the given set of functions/predicates.
 
 ## **Documentation:**
 
