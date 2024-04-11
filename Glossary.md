@@ -31,8 +31,8 @@
 
 ### **Combinators**:
 
-* Functions that take other functions as input and produce new functions as
-  output. In Yogic combinators are used to create and compose logical
+* Higher Order Functions that have no free variables and produce new functions
+  as output. In Yogic, combinators are used to create and compose logical
   [Goals](#Goal).
 
 ### **Continuation**:
@@ -88,10 +88,10 @@
 
 ### **Monad**:
 
-* A concept of Category Theory and a design pattern in Functional Programming.
-  Monads are used for managing side effects and computations in a structured
-  way. In Yogic, the *Triple-Barrelled Continuation Monad* is used for
-  managing logical computations.
+* A concept from Category Theory and a design pattern in Functional Programming.
+  Monads are used to manage side effects and computations in a structured way. In
+  Yogic, the *Triple-Barrelled Continuation Monad* is used for managing logical
+  computations.
 
 ### **Monoid**:
 
@@ -126,7 +126,7 @@
 * Thunking is a technique where a function's execution is delayed until it is
   needed. This usually takes the form of a parameter-less function (a
   so-called *Thunk*) which can be passed around in a program and executed at
-  different point in the code from where it was created. Yogic uses it to
+  a different point in the code from where it was created. Yogic uses it to
   implement [Tail Call Elimination](#Tail-Call-Elimination).
 
 ### **Trailing**:
