@@ -21,7 +21,6 @@ public class SubstProxy(Subst subst)
 ```csharp
 using Seq = IReadOnlyCollection<object>;
 using Pair = ValueTuple<object, object>;
-using Subst = ImmutableDictionary<Variable, object>;
 using Result = Tuple<ImmutableDictionary<Variable, object>, Next>;
 ```
 
@@ -89,6 +88,7 @@ public static Goal Then(Goal goal1, Goal goal2)
   `goal2`. Succeeds only of both goals succeed.
 
 ```csharp
+public static Goal And(IEnumerable<Goal> goals)
 public static Goal And(params Goal[] goals)
 ```
 
@@ -103,6 +103,7 @@ public static Goal Choice(Goal goal1, Goal goal2)
   computes `goal2`. Succeeds if at least one goal succeeds.
 
 ```csharp
+public static Goal Or(IEnumerable<Goal> goals)
 public static Goal Or(params Goal[] goals)
 ```
 
