@@ -160,7 +160,7 @@ public static class Combinators
         return (succeed, backtrack, escape) => tailcall(backtrack);
     }
 
-    private static Goal Then(Goal goal1, Goal goal2)
+    public static Goal Then(Goal goal1, Goal goal2)
     {
         // Sequencing is the default behavior of 'Bind':
         return subst => Bind(goal1(subst), goal2);
@@ -177,7 +177,7 @@ public static class Combinators
         return And(goals);
     }
 
-    private static Goal Choice(Goal goal1, Goal goal2)
+    public static Goal Choice(Goal goal1, Goal goal2)
     {
         // We make 'goal2' the new backtracking path of 'goal1':
         return subst =>
