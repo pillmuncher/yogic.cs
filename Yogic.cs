@@ -97,7 +97,7 @@ using Pair = ValueTuple<object, object>;
 using Subst = ImmutableDictionary<Variable, object>;
 
 // A Tuple of this type is returned for each successful resolution step.
-// This enables Tail Call ELimination through Thunking and Trampolining.
+// This enables Tail Call Elimination through Thunking and Trampolining.
 using Result = ValueTuple<ImmutableDictionary<Variable, object>, Next>;
 
 // A function type that represents a backtracking operation.
