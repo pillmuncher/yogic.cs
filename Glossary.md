@@ -68,7 +68,7 @@
 ### **Horn Clauses**:
 
 * A specific form of logical formula where there is at most one non-negated
-  term on the right side of an implication (=>). Horn clauses are commonly
+  term on the right side of an implication (⇒). Horn clauses are commonly
   used in [Logic Programming](#Logic-Programming). In Yogic,
   [Combinator](#Combinators) functions are interpreted as Horn Clauses.
 
