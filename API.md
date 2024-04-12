@@ -13,7 +13,7 @@ using Subst = ImmutableDictionary<Variable, object>;
 * Represents variable bindings within a solution.
 
 ```csharp
-public record SubstProxy(Subst subst)
+public class SubstProxy(Subst subst)
 ```
 
 * Wraps a substitution environment and enables automatic dereferencing.
