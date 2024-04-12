@@ -81,26 +81,12 @@ public static Step Fail(Subst subst)
   Immediately initiates backtracking.
 
 ```csharp
-public static Goal Then(Goal goal1, Goal goal2)
-```
-
-* Conjunction of two goals. Computes `goal1` first and if successful, computes
-  `goal2`. Succeeds only of both goals succeed.
-
-```csharp
 public static Goal And(IEnumerable<Goal> goals)
 public static Goal And(params Goal[] goals)
 ```
 
 * Conjunction of multiple goals. Takes a variable number of goals and returns
   a new goal that tries all of them in series. Fails if any goal fails.
-
-```csharp
-public static Goal Choice(Goal goal1, Goal goal2)
-```
-
-* Adjunction of two goals. Computes `goal1` first and if if that fails,
-  computes `goal2`. Succeeds if at least one goal succeeds.
 
 ```csharp
 public static Goal Or(IEnumerable<Goal> goals)
