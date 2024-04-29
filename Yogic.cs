@@ -116,11 +116,11 @@ public delegate Result? Step(Emit succeed, Next backtrack, Next escape);
 // The monadic continuation type.
 public delegate Step Goal(Subst subst);
 
-public record Variable(string name);
+public readonly record struct Variable(string name);
 
-public class SubstProxy(Subst subst)
+public readonly record struct SubstProxy(Subst subst)
 {
-    // deref'ing here is the whole reason we need this class:
+    // deref'ing here is the whole reason we need this struct:
     public object this[Variable v] => subst.deref(v);
 }
 
