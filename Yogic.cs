@@ -118,6 +118,7 @@ public delegate Step Goal(Subst subst);
 
 public class Variable
 {
+    // This must be a class and not a record because we want equality to be object identity.
     public readonly string name;
 
     public Variable(string name)
