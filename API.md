@@ -1,7 +1,7 @@
 # **API Documentation**
 
 ```csharp
-public record Variable(String name)
+public record Variable(string name);
 ```
 
 * Represents named logical variables.
@@ -13,7 +13,7 @@ using Subst = ImmutableDictionary<Variable, object>;
 * Represents variable bindings within a solution.
 
 ```csharp
-public class SubstProxy(Subst subst)
+public readonly record struct SubstProxy(Subst subst)
 ```
 
 * Wraps a substitution environment and enables automatic dereferencing.
