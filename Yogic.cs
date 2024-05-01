@@ -90,7 +90,7 @@ namespace Yogic;
 
 // Miscellaneous type aliases.
 using Seq = IReadOnlyCollection<object>;
-using Pair = ValueTuple<object, object>;
+using Pair = (object left, object right);
 
 // The type of the Substitution Environment.
 // ImmutableDictionary brings everything we need for Trailing.
@@ -98,7 +98,7 @@ using Subst = ImmutableDictionary<Variable, object>;
 
 // A Tuple of this type is returned for each successful resolution step.
 // This enables Tail Call Elimination through Thunking and Trampolining.
-using Result = ValueTuple<ImmutableDictionary<Variable, object>, Next>;
+using Result = (ImmutableDictionary<Variable, object> subst, Next next);
 
 // A function type that represents a backtracking operation.
 public delegate Result? Next();
@@ -107,24 +107,19 @@ public delegate Result? Next();
 public delegate Result? Emit(Subst subst, Next next);
 
 // The monadic computation type.
-// 'succeed' wraps the current continuation and 'backtrack' wraps the
-// continuation for normal backtracking. 'escape' wraps the continuation
-// that a subsequent 'Cut' invokes to curtail backtracking at the previous
-// choice point.
-public delegate Result? Step(Emit succeed, Next backtrack, Next escape);
+// 'yes' wraps the current continuation and 'no' wraps the continuation for#
+// normal backtracking. 'cut' wraps the continuation that a subsequent 'Cut'
+// invokes to curtail backtracking at the previous choice point.
+public delegate Result? Step(Emit yes, Next no, Next cut);
 
 // The monadic continuation type.
 public delegate Step Goal(Subst subst);
 
-public class Variable
+// This must be a class and not a record because we want equality tests to be
+// testing for object identity.
+public class Variable(string name)
 {
-    // This must be a class and not a record because we want equality to be object identity.
-    public readonly string name;
-
-    public Variable(string name)
-    {
-        this.name = name;
-    }
+    public string Name => name;
 }
 
 public readonly record struct SubstProxy(Subst subst)
@@ -146,123 +141,90 @@ public static class Combinators
     }
 
     public static Step Bind(Step step, Goal goal)
-    {
         // Make 'goal' the continuation of 'step':
-        return (succeed, backtrack, escape) =>
-            tailcall(
-                () => step((subst, next) => goal(subst)(succeed, next, escape), backtrack, escape)
-            );
-    }
+        => (yes, no, cut)
+        => tailcall(() => step(yes: (subst, next) => goal(subst)(yes, no: next, cut), no, cut));
 
     public static Step Unit(Subst subst)
-    {
-        return (succeed, backtrack, escape) => tailcall(() => succeed(subst, backtrack));
-    }
+        => (yes, no, cut)
+        => tailcall(() => yes(subst, next: no));
 
     public static Step Cut(Subst subst)
-    {
-        return (succeed, backtrack, escape) => tailcall(() => succeed(subst, escape));
-    }
+        => (yes, no, cut)
+        => tailcall(() => yes(subst, next: cut));
 
     public static Step Fail(Subst subst)
-    {
-        return (succeed, backtrack, escape) => tailcall(backtrack);
-    }
+        => (yes, no, cut)
+        => tailcall(no);
 
     public static Goal Then(Goal goal1, Goal goal2)
-    {
         // Sequencing is the default behavior of 'Bind':
-        return subst => Bind(goal1(subst), goal2);
-    }
+        => subst
+        => Bind(goal1(subst), goal2);
 
     public static Goal And(IEnumerable<Goal> goals)
-    {
         // 'Unit' and 'Then' form a monoid, so we can just fold:
-        return goals.Aggregate<Goal, Goal>(Unit, Then);
-    }
+        => goals.Aggregate<Goal, Goal>(Unit, Then);
 
     public static Goal And(params Goal[] goals)
-    {
-        return And(goals);
-    }
+        => And(goals);
 
     public static Goal Choice(Goal goal1, Goal goal2)
-    {
         // We make 'goal2' the new backtracking path of 'goal1':
-        return subst =>
-            (succeed, backtrack, escape) =>
-                tailcall(
-                    () =>
-                        goal1(subst)(
-                            succeed,
-                            () => goal2(subst)(succeed, backtrack, escape),
-                            escape
-                        )
-                );
-    }
+        => subst
+        => (yes, no, cut)
+        => tailcall(() => goal1(subst)(yes, no: () => goal2(subst)(yes, no, cut), cut));
+
+    private static Goal or_impl(Goal goals)
+        // We inject 'no' as the new cut path, so we can curtail backtracking
+        // here and immediately continue at the previous choice point instead:
+        => subst
+        => (yes, no, cut)
+        => tailcall(() => goals(subst)(yes, no, cut: no));
 
     public static Goal Or(IEnumerable<Goal> goals)
-    {
         // 'Fail' and 'Choice' form a monoid, so we can just fold:
-        var choices = goals.Aggregate<Goal, Goal>(Fail, Choice);
-        // We inject 'backtrack' as the new escape path, so we can
-        // curtail backtracking here and immediately continue at the
-        // previous choice point instead:
-        return subst =>
-            (succeed, backtrack, escape) =>
-                tailcall(() => choices(subst)(succeed, backtrack, backtrack));
-    }
+        => or_impl(goals.Aggregate<Goal, Goal>(Fail, Choice));
 
     public static Goal Or(params Goal[] goals)
-    {
-        return Or(goals);
-    }
+        => Or(goals);
 
     public static Goal Not(Goal goal)
-    {
         // Negation as failure:
-        return Or(And(goal, Cut, Fail), Unit);
-    }
-
-    public static Goal Unify(object o1, object o2)
-    {
-        // Using an 'ImmutableDictionary' makes trailing easy:
-        return subst =>
-            (subst.deref(o1), subst.deref(o2)) switch
-            {
-                (var x1, var x2) when x1 == x2 => Unit(subst),
-                (Seq s1, Seq s2) when s1.Count == s2.Count => UnifyAll(s1.Zip(s2))(subst),
-                (Variable v, var o) => Unit(subst.Add(v, o)),
-                (var o, Variable v) => Unit(subst.Add(v, o)),
-                _ => Fail(subst)
-            };
-    }
+        => Or(And(goal, Cut, Fail), Unit);
 
     public static Goal UnifyAny(Variable v, IEnumerable<object> objects)
-    {
-        return Or(from o in objects select Unify(v, o));
-    }
+        => Or(from o in objects select Unify(v, o));
 
     public static Goal UnifyAny(Variable variable, params object[] objects)
-    {
-        return UnifyAny(variable, objects);
-    }
+        => UnifyAny(variable, objects);
 
     public static Goal UnifyAll(IEnumerable<Pair> pairs)
-    {
-        return And(from pair in pairs select Unify(pair.Item1, pair.Item2));
-    }
+        => And(from pair in pairs select Unify(pair.left, pair.right));
 
     public static Goal UnifyAll(params Pair[] pairs)
-    {
-        return UnifyAll(pairs);
-    }
+        => UnifyAll(pairs);
 
-    private static Result? quit() => null;
+    public static Goal Unify(object left, object right)
+        // Using an 'ImmutableDictionary' makes trailing easy:
+        => subst
+        => (subst.deref(left), subst.deref(right)) switch
+        {
+            (var x1, var x2) when x1 == x2 => Unit(subst),
+            (Seq s1, Seq s2) when s1.Count == s2.Count => UnifyAll(s1.Zip(s2))(subst),
+            (Variable v, var o) => Unit(subst.Add(v, o)),
+            (var o, Variable v) => Unit(subst.Add(v, o)),
+            _ => Fail(subst)
+        };
 
-    private static Result? emit(Subst subst, Next next) => (subst, next);
+    private static Result? quit()
+        => null;
 
-    private static Result tailcall(Next next) => (null, next);
+    private static Result? emit(Subst subst, Next next)
+        => (subst, next);
+
+    private static Result tailcall(Next next)
+        => (null, next);
 
     public static IEnumerable<SubstProxy> Resolve(Goal goal)
     {
@@ -277,4 +239,5 @@ public static class Combinators
             result = next();
         }
     }
+
 }

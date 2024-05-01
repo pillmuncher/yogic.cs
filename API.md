@@ -20,8 +20,8 @@ public readonly record struct SubstProxy(Subst subst);
 
 ```csharp
 using Seq = IReadOnlyCollection<object>;
-using Pair = ValueTuple<object, object>;
-using Result = Tuple<ImmutableDictionary<Variable, object>, Next>;
+using Pair = (object left, object right);
+using Result = (Subst subst, Next next);
 ```
 
 * Miscellaneous Type Alisases.
@@ -39,8 +39,7 @@ public delegate Result? Emit(Subst subst, Next next);
 * A function type that represents a successful resolution.
 
 ```csharp
-public delegate Result? Step(Emit succeed, Next backtrack, Next
-escape);
+public delegate Result? Step(Emit yes, Next no, Next cut);
 ```
 
 * A function type that represents a resolution step.
@@ -118,7 +117,7 @@ public static Goal Not(Goal goal)
 * Negates `goal`. Fails if `goal` succeeds, and vice versa.
 
 ```csharp
-public static Goal Unify(object o1, object o2)
+public static Goal Unify(object left, object right)
 ```
 
 * Attempts to unify two objects. Fails if they aren't unifiable.
