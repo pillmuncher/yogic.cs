@@ -141,7 +141,7 @@ public static class Combinators
         return obj;
     }
 
-    public static Step Bind(Step step, Goal goal)
+    public static Step Bind(this Step step, Goal goal)
         // Make 'goal' the continuation of 'step':
         => (yes, no, cut)
         => tailcall(() => step(yes: (subst, next) => goal(subst)(yes, no: next, cut), no, cut));
@@ -161,7 +161,7 @@ public static class Combinators
     public static Goal Then(Goal goal1, Goal goal2)
         // Sequencing is the default behavior of 'Bind':
         => subst
-        => Bind(goal1(subst), goal2);
+        => goal1(subst).Bind(goal2);
 
     public static Goal And(IEnumerable<Goal> goals)
         // 'Unit' and 'Then' form a monoid, so we can just fold:
