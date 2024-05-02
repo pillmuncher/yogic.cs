@@ -72,6 +72,7 @@ public static class Puzzle
             Console.WriteLine($"k = {subst[k]}");
             Console.WriteLine($"l = {subst[l]}");
             Console.WriteLine();
+            Console.WriteLine(a);
         }
     }
 }

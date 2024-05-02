@@ -22,7 +22,7 @@
 //   pruning the search space.
 //
 // - 'Goal': Represents a logical statement or query that we want to resolve.
-//   Goals take a substitution environment and produce 'Steps.'
+//   Goals take a substitution environment and produce a 'Step'.
 //
 //
 // We provide a set of fundamental combinators that you'd expect in a logic
@@ -120,6 +120,7 @@ public delegate Step Goal(Subst subst);
 public class Variable(string name)
 {
     public string Name => name;
+    public override string ToString() => $"""Variable(Name="{name}")""";
 }
 
 public readonly record struct SubstProxy(Subst subst)
@@ -229,7 +230,7 @@ public static class Combinators
     public static IEnumerable<SubstProxy> Resolve(Goal goal)
     {
         Result? result = goal(Subst.Empty)(emit, quit, quit);
-        // We have to implement Tail Call Elimination ourself:
+        // We have to implement Tail Call Elimination ourselves:
         while (result is (var subst, var next))
         {
             if (subst is not null)
