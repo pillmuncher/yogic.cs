@@ -86,9 +86,10 @@ This process is called a *resolution*.
 A classic example of Logic Programming is puzzle solving. Here we have a puzzle
 where numbers have to be assigned to letters, such that all sets of assignments
 are compatible with each other. Typically, there is ever only a single solution.
-We solve this in a combined way, by first procedurally generating all possible
-solutions and then declaratively selecting the final solution. In Logic
-Programming this kind of algorithm is known as *Generate and Test*.
+We solve this in a combined way, by first procedurally generating a set of
+candidate letters for each number and then declaratively specifying how
+a solution should look like. We leave it to the `Resolve()` function to compute
+the actual solution.
 
 ```csharp
 using System.Linq;
