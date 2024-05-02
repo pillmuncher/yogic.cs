@@ -98,7 +98,7 @@ using static Yogic.Combinators;
 
 namespace Yogic.Puzzle;
 
-using PuzzleDefinition = (List<Variable> variables, List<int> numbers);
+using PuzzleDefinition = (HashSet<Variable> variables, HashSet<int> numbers);
 using Candidates = Dictionary<object, HashSet<Variable>>;
 
 public static class Puzzle
@@ -140,12 +140,12 @@ public static class Puzzle
 
         var puzzle = new PuzzleDefinition[]
         {
-            (new() { a, b, c, e, h, i, j }, new() { 2, 4, 5, 8, 10, 11, 12 }),
-            (new() { a, b, f, i, j, k, l }, new() { 1, 4, 5, 6, 7, 8, 12 }),
-            (new() { a, c, d, e, f, k, l }, new() { 1, 2, 6, 7, 8, 9, 10 }),
-            (new() { a, c, f, g, i, j, k }, new() { 1, 2, 3, 4, 6, 8, 12 }),
-            (new() { b, c, d, e, f, g, h }, new() { 1, 2, 3, 5, 9, 10, 11 }),
-            (new() { b, c, e, g, h, j, l }, new() { 2, 3, 4, 5, 7, 10, 11 }),
+            ([ a, b, c, e, h, i, j ], [ 2, 4, 5, 8, 10, 11, 12 ]),
+            ([ a, b, f, i, j, k, l ], [ 1, 4, 5, 6, 7, 8, 12 ]),
+            ([ a, c, d, e, f, k, l ], [ 1, 2, 6, 7, 8, 9, 10 ]),
+            ([ a, c, f, g, i, j, k ], [ 1, 2, 3, 4, 6, 8, 12 ]),
+            ([ b, c, d, e, f, g, h ], [ 1, 2, 3, 5, 9, 10, 11 ]),
+            ([ b, c, e, g, h, j, l ], [ 2, 3, 4, 5, 7, 10, 11 ]),
         };
 
         foreach (var subst in Resolve(Solver(puzzle)))
