@@ -71,7 +71,7 @@ public static class Puzzle
             ([ b, c, e, g, h, j, l ], [ 2, 3, 4, 5, 7, 10, 11 ]),
         };
 
-        foreach (var subst in Resolve(Solver2(puzzle)))
+        foreach (var subst in Resolve(Solver1(puzzle)))
         {
             Console.WriteLine($"a = {subst[a]}");
             Console.WriteLine($"b = {subst[b]}");

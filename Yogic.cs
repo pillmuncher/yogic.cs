@@ -196,10 +196,10 @@ public static class Combinators
     public static Goal UnifyAny(Variable variable, params object[] objects)
         => UnifyAny(variable, objects);
 
-    public static Goal UnifyAll<T1, T2>(IEnumerable<ValueTuple<T1, T2>> pairs)
+    public static Goal UnifyAll<T1, T2>(IEnumerable<(T1, T2)> pairs)
         => And(from pair in pairs select Unify(pair.Item1, pair.Item2));
 
-    public static Goal UnifyAll<T1, T2>(params ValueTuple<T1, T2>[] pairs)
+    public static Goal UnifyAll<T1, T2>(params (T1, T2)[] pairs)
         => UnifyAll(pairs);
 
     public static Goal Unify<T1, T2>(T1 left, T2 right)
