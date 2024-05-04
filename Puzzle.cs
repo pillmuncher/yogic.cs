@@ -3,6 +3,8 @@
 using System.Linq;
 using System.Collections.Generic;
 
+using MoreLinq;
+
 using static Yogic.Combinators;
 
 namespace Yogic.Puzzle;
@@ -12,6 +14,18 @@ using Candidates = Dictionary<object, HashSet<Variable>>;
 
 public static class Puzzle
 {
+
+    private static Goal Solver1(PuzzleDefinition[] puzzle)
+    {
+        return And(
+            from line in puzzle
+            select Or(
+                from permutation in line.numbers.Permutations()
+                select UnifyAll(line.variables.Zip(permutation))
+            )
+        );
+    }
+
     private static Candidates Simplify(PuzzleDefinition[] puzzle)
     {
         var candidates = new Candidates();
@@ -24,7 +38,7 @@ public static class Puzzle
         return candidates;
     }
 
-    private static Goal Solver(PuzzleDefinition[] puzzle)
+    private static Goal Solver2(PuzzleDefinition[] puzzle)
     {
         return And(
             from pair in Simplify(puzzle)
@@ -57,7 +71,7 @@ public static class Puzzle
             ([ b, c, e, g, h, j, l ], [ 2, 3, 4, 5, 7, 10, 11 ]),
         };
 
-        foreach (var subst in Resolve(Solver(puzzle)))
+        foreach (var subst in Resolve(Solver2(puzzle)))
         {
             Console.WriteLine($"a = {subst[a]}");
             Console.WriteLine($"b = {subst[b]}");

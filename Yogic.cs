@@ -88,10 +88,6 @@ using System.Linq;
 
 namespace Yogic;
 
-// Miscellaneous type aliases.
-using Seq = IReadOnlyCollection<object>;
-using Pair = (object left, object right);
-
 // The type of the Substitution Environment.
 // ImmutableDictionary brings everything we need for Trailing.
 using Subst = ImmutableDictionary<Variable, object>;
@@ -168,7 +164,7 @@ public static class Combinators
         => goals.Aggregate<Goal, Goal>(Unit, Then);
 
     public static Goal And(params Goal[] goals)
-        => And(goals);
+        => goals.Aggregate<Goal, Goal>(Unit, Then);
 
     public static Goal Choice(Goal goal1, Goal goal2)
         // We make 'goal2' the new backtracking path of 'goal1':
@@ -188,7 +184,7 @@ public static class Combinators
         => or_impl(goals.Aggregate<Goal, Goal>(Fail, Choice));
 
     public static Goal Or(params Goal[] goals)
-        => Or(goals);
+        => or_impl(goals.Aggregate<Goal, Goal>(Fail, Choice));
 
     public static Goal Not(Goal goal)
         // Negation as failure:
@@ -200,22 +196,27 @@ public static class Combinators
     public static Goal UnifyAny(Variable variable, params object[] objects)
         => UnifyAny(variable, objects);
 
-    public static Goal UnifyAll(IEnumerable<Pair> pairs)
-        => And(from pair in pairs select Unify(pair.left, pair.right));
+    public static Goal UnifyAll<T1, T2>(IEnumerable<ValueTuple<T1, T2>> pairs)
+        => And(from pair in pairs select Unify(pair.Item1, pair.Item2));
 
-    public static Goal UnifyAll(params Pair[] pairs)
+    public static Goal UnifyAll<T1, T2>(params ValueTuple<T1, T2>[] pairs)
         => UnifyAll(pairs);
 
-    public static Goal Unify(object left, object right)
+    public static Goal Unify<T1, T2>(T1 left, T2 right)
         // Using an 'ImmutableDictionary' makes trailing easy:
         => subst
         => (subst.deref(left), subst.deref(right)) switch
         {
-            (var x1, var x2) when x1 == x2 => Unit(subst),
-            (Seq s1, Seq s2) when s1.Count == s2.Count => UnifyAll(s1.Zip(s2))(subst),
-            (Variable v, var o) => Unit(subst.Add(v, o)),
-            (var o, Variable v) => Unit(subst.Add(v, o)),
-            _ => Fail(subst)
+            (ICollection<T1> s1, ICollection<T2> s2) when s1.Count == s2.Count
+                => UnifyAll(s1.Zip(s2))(subst),
+            (Variable v, var o)
+                => Unit(subst.Add(v, o)),
+            (var o, Variable v)
+                => Unit(subst.Add(v, o)),
+            (var x1, var x2) when x1.Equals(x2)
+                => Unit(subst),
+            _
+                => Fail(subst)
         };
 
     private static Result? quit()

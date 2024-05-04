@@ -19,12 +19,10 @@ public readonly record struct SubstProxy(Subst subst);
 * Wraps a substitution environment and enables automatic dereferencing.
 
 ```csharp
-using Seq = IReadOnlyCollection<object>;
-using Pair = (object left, object right);
 using Result = (Subst subst, Next next);
 ```
 
-* Miscellaneous Type Alisases.
+* The result type of a resolution step.
 
 ```csharp
 public delegate Result? Next();
