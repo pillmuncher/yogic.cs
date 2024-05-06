@@ -202,21 +202,15 @@ public static class Combinators
     public static Goal UnifyAll<T1, T2>(params (T1, T2)[] pairs)
         => UnifyAll(pairs);
 
-    public static Goal Unify<T1, T2>(T1 left, T2 right)
+    public static Goal Unify(object left, object right)
         // Using an 'ImmutableDictionary' makes trailing easy:
         => subst
         => (subst.deref(left), subst.deref(right)) switch
         {
-            (ICollection<T1> s1, ICollection<T2> s2) when s1.Count == s2.Count
-                => UnifyAll(s1.Zip(s2))(subst),
-            (Variable v, var o)
-                => Unit(subst.Add(v, o)),
-            (var o, Variable v)
-                => Unit(subst.Add(v, o)),
-            (var x1, var x2) when x1.Equals(x2)
-                => Unit(subst),
-            _
-                => Fail(subst)
+            (var x1, var x2) when x1.Equals(x2) => Unit(subst),
+            (Variable v, var o) => Unit(subst.Add(v, o)),
+            (var o, Variable v) => Unit(subst.Add(v, o)),
+            _ => Fail(subst)
         };
 
     private static Result? quit()

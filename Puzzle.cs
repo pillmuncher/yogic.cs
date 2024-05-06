@@ -9,7 +9,7 @@ using static Yogic.Combinators;
 
 namespace Yogic.Puzzle;
 
-using PuzzleDefinition = (HashSet<Variable> variables, HashSet<int> numbers);
+using PuzzleDefinition = (List<Variable> variables, List<int> numbers);
 using Candidates = Dictionary<object, HashSet<Variable>>;
 
 public static class Puzzle
