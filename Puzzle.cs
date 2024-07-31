@@ -48,18 +48,18 @@ public static class Puzzle
 
     public static void Main()
     {
-        var a = new Variable("a");
-        var b = new Variable("b");
-        var c = new Variable("c");
-        var d = new Variable("d");
-        var e = new Variable("e");
-        var f = new Variable("f");
-        var g = new Variable("g");
-        var h = new Variable("h");
-        var i = new Variable("i");
-        var j = new Variable("j");
-        var k = new Variable("k");
-        var l = new Variable("l");
+        Variable a = new("a");
+        Variable b = new("b");
+        Variable c = new("c");
+        Variable d = new("d");
+        Variable e = new("e");
+        Variable f = new("f");
+        Variable g = new("g");
+        Variable h = new("h");
+        Variable i = new("i");
+        Variable j = new("j");
+        Variable k = new("k");
+        Variable l = new("l");
 
         var puzzle = new PuzzleDefinition[]
         {
@@ -71,7 +71,7 @@ public static class Puzzle
             ([ b, c, e, g, h, j, l ], [ 2, 3, 4, 5, 7, 10, 11 ]),
         };
 
-        foreach (var subst in Resolve(Solver1(puzzle)))
+        foreach (var subst in Resolve(Solver2(puzzle)))
         {
             Console.WriteLine($"a = {subst[a]}");
             Console.WriteLine($"b = {subst[b]}");
