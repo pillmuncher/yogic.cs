@@ -7,9 +7,6 @@
         <Nullable>annotations</Nullable>
     </PropertyGroup>
     <ItemGroup>
-        <Using Include="System" />
-    </ItemGroup>
-    <ItemGroup>
         <PackageReference Include="MoreLinq" Version="3.4.2" />
     </ItemGroup>
 

@@ -1,5 +1,6 @@
 // Copyright (c) 2023 Mick Krippendorf <m.krippendorf@freenet.de>
 
+using System;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -42,7 +43,9 @@ public static class Puzzle
     {
         return And(
             from pair in Simplify(puzzle)
-            select Or(from variable in pair.Value select Unify(variable, pair.Key))
+            select Or(
+                from variable in pair.Value select Unify(variable, pair.Key)
+            )
         );
     }
 

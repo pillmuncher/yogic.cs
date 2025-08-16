@@ -49,8 +49,8 @@
 //
 //
 // A resolution process is started by calling 'Resolve' on a goal. It returns
-// an enumerable collection of substitution environments (proxy mappings) of
-// variables to their bindings, each representing a solution.
+// an enumerable sequence of substitution environments (proxy mappings) of
+// variables to their bindings, each representing a distinct solution.
 //
 //
 // Under the hood, we make use of the algebraic structure of the monadic
@@ -74,23 +74,24 @@
 // lattice nor the monoids are commutative.
 //
 //
-// C# lacks proper Tail Call Elimination, which can lead to stack overflows.
-// To mitigate this, we use a technique known as Trampolining with Thunking.
-// Instead of returning only the solution, we also return a parameterless
-// function (called a thunk) to be executed next. The 'Resolve' function acts
-// as a driver that calls the thunks in a loop until no more solutions can be
-// found.
+// C# lacks proper Tail Call Elimination, which can lead to stack overflows in
+// heavily recursive code like this. To mitigate this, we use a technique known
+// as Trampolining with Thunking. Instead of returning only the solution, we
+// also return a parameterless function (called a thunk) to be executed next.
+// The 'Resolve' function acts as a driver that calls the thunks in a loop until
+// no more solutions can be found.
 
-
+using System;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 
 namespace Yogic;
 
 // The type of the Substitution Environment.
 // ImmutableDictionary brings everything we need for Trailing.
-using Subst = ImmutableDictionary<Variable, object>;
+using SubstImpl = ImmutableDictionary<Variable, object>;
 
 // A Tuple of this type is returned for each successful resolution step.
 // This enables Tail Call Elimination through Thunking and Trampolining.
@@ -100,16 +101,16 @@ using Result = (ImmutableDictionary<Variable, object> subst, Next next);
 public delegate Result? Next();
 
 // A function type that represents a successful resolution.
-public delegate Result? Emit(Subst subst, Next next);
+public delegate Result? Emit(SubstImpl subst, Next next);
 
 // The monadic computation type.
-// 'yes' wraps the current continuation and 'no' wraps the continuation for#
+// 'yes' wraps the current continuation and 'no' wraps the continuation for
 // normal backtracking. 'cut' wraps the continuation that a subsequent 'Cut'
 // invokes to curtail backtracking at the previous choice point.
 public delegate Result? Step(Emit yes, Next no, Next cut);
 
 // The monadic continuation type.
-public delegate Step Goal(Subst subst);
+public delegate Step Goal(SubstImpl subst);
 
 // This must be a class and not a record because we want equality tests to be
 // testing for object identity.
@@ -119,7 +120,8 @@ public class Variable(string name)
     public override string ToString() => $"""Variable(Name="{name}")""";
 }
 
-public readonly record struct SubstProxy(Subst subst)
+// A proxy struct for SubstImpl we return to the client:
+public readonly record struct Subst(SubstImpl subst)
 {
     // deref'ing here is the whole reason we need this struct:
     public object this[Variable v] => subst.deref(v);
@@ -127,7 +129,8 @@ public readonly record struct SubstProxy(Subst subst)
 
 public static class Combinators
 {
-    internal static object deref(this Subst subst, object obj)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static object deref(this SubstImpl subst, object obj)
     {
         // Chase down Variable bindings:
         while (obj is Variable variable && subst.ContainsKey(variable))
@@ -137,20 +140,53 @@ public static class Combinators
         return obj;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static Result tailcall(Next next)
+        => (null, next);
+
+    private static Result? emit(SubstImpl subst, Next next)
+        => (subst, next);
+
+    private static Result? quit()
+        => null;
+
+    public static IEnumerable<Subst> Resolve(Goal goal)
+    {
+        Result? result = goal(SubstImpl.Empty)(yes: emit, no: quit, cut: quit);
+        while (result is (var subst, var next))
+        {
+            // We have to implement Tail Call Elimination ourselves:
+            if (subst is not null)
+            {
+                yield return new Subst(subst);
+            }
+            result = next();
+        }
+    }
+
     public static Step Bind(this Step step, Goal goal)
         // Make 'goal' the continuation of 'step':
         => (yes, no, cut)
-        => tailcall(() => step(yes: (subst, next) => goal(subst)(yes, no: next, cut), no, cut));
+        => tailcall(
+            () => step(
+                yes: (subst, next) => goal(subst)(yes, no: next, cut),
+                no,
+                cut
+            )
+        );
 
-    public static Step Unit(Subst subst)
+    public static Step Unit(SubstImpl subst)
+        // Normal execution path with `no` as backracking path:
         => (yes, no, cut)
         => tailcall(() => yes(subst, next: no));
 
-    public static Step Cut(Subst subst)
+    public static Step Cut(SubstImpl subst)
+        // Like `Unit`, but we inject `cut` as backtracking path:
         => (yes, no, cut)
         => tailcall(() => yes(subst, next: cut));
 
-    public static Step Fail(Subst subst)
+    public static Step Fail(SubstImpl subst)
+        // Ignore yes and immediately backtrack:
         => (yes, no, cut)
         => tailcall(no);
 
@@ -159,81 +195,101 @@ public static class Combinators
         => subst
         => goal1(subst).Bind(goal2);
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Goal And(IEnumerable<Goal> goals)
         // 'Unit' and 'Then' form a monoid, so we can just fold:
         => goals.Aggregate<Goal, Goal>(Unit, Then);
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Goal And(params Goal[] goals)
-        => goals.Aggregate<Goal, Goal>(Unit, Then);
+        => And(goals);
 
     public static Goal Choice(Goal goal1, Goal goal2)
-        // We make 'goal2' the new backtracking path of 'goal1':
+        // Make 'goal2' the new backtracking path of 'goal1':
         => subst
         => (yes, no, cut)
-        => tailcall(() => goal1(subst)(yes, no: () => goal2(subst)(yes, no, cut), cut));
+        => tailcall(
+            () => goal1(subst)(
+                yes,
+                no: () => goal2(subst)(yes, no, cut),
+                cut
+            )
+        );
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static Goal or_impl(Goal goals)
-        // We inject 'no' as the new cut path, so we can curtail backtracking
+        // Inject 'no' as the new cut path, so we can curtail backtracking
         // here and immediately continue at the previous choice point instead:
         => subst
         => (yes, no, cut)
         => tailcall(() => goals(subst)(yes, no, cut: no));
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Goal Or(IEnumerable<Goal> goals)
         // 'Fail' and 'Choice' form a monoid, so we can just fold:
         => or_impl(goals.Aggregate<Goal, Goal>(Fail, Choice));
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Goal Or(params Goal[] goals)
-        => or_impl(goals.Aggregate<Goal, Goal>(Fail, Choice));
+        => Or(goals);
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Goal Not(Goal goal)
         // Negation as failure:
         => Or(And(goal, Cut, Fail), Unit);
 
-    public static Goal UnifyAny(Variable v, IEnumerable<object> objects)
-        => Or(from o in objects select Unify(v, o));
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static bool compatible(object seq1, object seq2)
+    {
+        if (seq1 is System.Collections.IList list1)
+        {
+            if (seq2 is System.Collections.IList list2)
+            {
+                return list1.Count == list2.Count
+                    && list1.GetType() == list2.GetType();
+            }
+        }
+        return false;
+    }
 
-    public static Goal UnifyAny(Variable variable, params object[] objects)
-        => UnifyAny(variable, objects);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static Goal unify_rec(object seq1, object seq2)
+    {
+        var list1 = ((System.Collections.IList)seq1).Cast<object>();
+        var list2 = ((System.Collections.IList)seq2).Cast<object>();
+        return UnifyAll(list1.Zip(list2));
+    }
 
-    public static Goal UnifyAll<T1, T2>(IEnumerable<(T1, T2)> pairs)
-        => And(from pair in pairs select Unify(pair.Item1, pair.Item2));
-
-    public static Goal UnifyAll<T1, T2>(params (T1, T2)[] pairs)
-        => UnifyAll(pairs);
-
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Goal Unify(object left, object right)
-        // Using an 'ImmutableDictionary' makes trailing easy:
         => subst
         => (subst.deref(left), subst.deref(right)) switch
         {
-            (var x1, var x2) when x1.Equals(x2) => Unit(subst),
+            // Equal things are already unified:
+            (var a, var b) when a.Equals(b) => Unit(subst),
+            // Recurse:
+            (var a, var b) when compatible(a, b) => unify_rec(a, b)(subst),
+            // Using an 'ImmutableDictionary' makes trailing easy:
             (Variable v, var o) => Unit(subst.Add(v, o)),
             (var o, Variable v) => Unit(subst.Add(v, o)),
+            // All else:
             _ => Fail(subst)
         };
 
-    private static Result? quit()
-        => null;
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Goal UnifyAny(Variable v, IEnumerable<object> objects)
+        => Or(from o in objects select Unify(v, o));
 
-    private static Result? emit(Subst subst, Next next)
-        => (subst, next);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Goal UnifyAny(Variable variable, params object[] objects)
+        => UnifyAny(variable, objects);
 
-    private static Result tailcall(Next next)
-        => (null, next);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Goal UnifyAll<T1, T2>(IEnumerable<(T1, T2)> pairs)
+        => And(from pair in pairs select Unify(pair.Item1, pair.Item2));
 
-    public static IEnumerable<SubstProxy> Resolve(Goal goal)
-    {
-        Result? result = goal(Subst.Empty)(emit, quit, quit);
-        // We have to implement Tail Call Elimination ourselves:
-        while (result is (var subst, var next))
-        {
-            if (subst is not null)
-            {
-                yield return new SubstProxy(subst);
-            }
-            result = next();
-        }
-    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Goal UnifyAll<T1, T2>(params (T1, T2)[] pairs)
+        => UnifyAll(pairs);
 
 }
